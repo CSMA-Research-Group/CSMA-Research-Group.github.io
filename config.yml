@@ -1,0 +1,6 @@
+title: CSMA Research Group
+description: Cognitive-driven Software · Machine · Application
+theme: jekyll-theme-cayman
+
+markdown: kramdown
+permalink: /:title/
