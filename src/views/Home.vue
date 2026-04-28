@@ -6,6 +6,14 @@
       <div class="hero-bg">
         <img src="/src/assets/img_2.png" alt="CSMA Background" />
       </div>
+
+      <!-- 动态提示 -->
+      <div class="hero-notice">
+        <span class="notice-dot"></span>
+        <span v-show="!isEnglish">主页持续更新中，内容仅供参考</span>
+        <span v-show="isEnglish">Homepage is under active update. Content for reference only.</span>
+      </div>
+
       <div class="hero-content">
         <h1>CSMA Research Group</h1>
         <p class="lab-intro">
@@ -268,6 +276,35 @@ const goToPositions = (anchor) => {
   justify-content: center;
   padding-bottom: 100px;
   z-index: 1;
+}
+.hero-notice {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+.notice-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 1.8s infinite;
+}
+@keyframes pulse {
+  0%   { transform: scale(1); opacity: 1; }
+  50%  { transform: scale(1.8); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 1; }
 }
 .hero-bg {
   position: absolute;
