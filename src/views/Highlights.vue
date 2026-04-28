@@ -10,25 +10,25 @@
         <p class="eyebrow">CSMA Research Group</p>
         <h1>
           <span v-show="!isEnglish">研究领域</span>
-          <span v-show="isEnglish">Research Highlights</span>
+          <span v-show="isEnglish">Research Fields</span>
         </h1>
         <p class="hero-desc">
           <span v-show="!isEnglish">研究领域涵盖人工智能、智能软件工程与智能机器人，聚焦认知驱动的理论创新、关键技术突破与系统应用落地。</span>
-          <span v-show="isEnglish">Advancing cognition-driven multi-agent collaboration and intelligent software engineering.</span>
+          <span v-show="isEnglish">Our research spans artificial intelligence, intelligent software engineering, and intelligent robotics, focusing on cognition-driven theoretical innovation, key technological breakthroughs, and real-world system applications.</span>
         </p>
       </div>
     </section>
 
-    <section class="research-highlights">
+    <section class="research-areas">
       <div class="container">
         <div class="section-title">
-          <p class="eyebrow">
+          <!-- <p class="eyebrow">
             <span v-show="!isEnglish">科研方向</span>
             <span v-show="isEnglish">Research Areas</span>
-          </p>
+          </p> -->
           <h2>
-            <span v-show="!isEnglish">研究亮点</span>
-            <span v-show="isEnglish">Research Highlights</span>
+            <span v-show="!isEnglish">研究方向</span>
+            <span v-show="isEnglish">Research Areas</span>
           </h2>
         </div>
 
@@ -37,8 +37,8 @@
             <div class="card-img gradient-one"></div>
             <div class="card-body">
               <h3>
-                <span v-show="!isEnglish">认知驱动多智能体协同</span>
-                <span v-show="isEnglish">Cognition-Driven Multi-Agent Collaboration</span>
+                <span v-show="!isEnglish">人工智能</span>
+                <span v-show="isEnglish">Artificial Intelligence</span>
               </h3>
               <p>
                 <span v-show="!isEnglish">研究具备推理、记忆、反思与协作能力的多智能体系统。</span>
