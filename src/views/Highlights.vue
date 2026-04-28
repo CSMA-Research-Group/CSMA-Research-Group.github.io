@@ -9,11 +9,11 @@
       <div class="hero-content">
         <p class="eyebrow">CSMA Research Group</p>
         <h1>
-          <span v-show="!isEnglish">研究亮点</span>
+          <span v-show="!isEnglish">研究领域</span>
           <span v-show="isEnglish">Research Highlights</span>
         </h1>
         <p class="hero-desc">
-          <span v-show="!isEnglish">面向认知驱动、多智能体协同与智能软件工程的前沿研究。</span>
+          <span v-show="!isEnglish">研究领域涵盖人工智能、智能软件工程与智能机器人，聚焦认知驱动的理论创新、关键技术突破与系统应用落地。</span>
           <span v-show="isEnglish">Advancing cognition-driven multi-agent collaboration and intelligent software engineering.</span>
         </p>
       </div>
