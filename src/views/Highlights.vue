@@ -1,500 +1,506 @@
 <template>
   <div class="home-page">
-    <!-- 顶部背景 + 简介 -->
     <section class="hero">
       <div class="hero-bg">
-        <img src="/src/assets/img_2.png" alt="CSMA Background" />
+        <img :src="heroImg" alt="CSMA Background" />
       </div>
+      <div class="hero-overlay"></div>
+
       <div class="hero-content">
+        <p class="eyebrow">CSMA Research Group</p>
         <h1>
           <span v-show="!isEnglish">研究亮点</span>
           <span v-show="isEnglish">Research Highlights</span>
         </h1>
+        <p class="hero-desc">
+          <span v-show="!isEnglish">面向认知驱动、多智能体协同与智能软件工程的前沿研究。</span>
+          <span v-show="isEnglish">Advancing cognition-driven multi-agent collaboration and intelligent software engineering.</span>
+        </p>
       </div>
     </section>
 
-    <!-- 研究成果卡片 -->
     <section class="research-highlights">
       <div class="container">
-        <h2>
-          <span v-show="!isEnglish">研究亮点</span>
-          <span v-show="isEnglish">Research Highlights</span>
-        </h2>
+        <div class="section-title">
+          <p class="eyebrow">
+            <span v-show="!isEnglish">科研方向</span>
+            <span v-show="isEnglish">Research Areas</span>
+          </p>
+          <h2>
+            <span v-show="!isEnglish">研究亮点</span>
+            <span v-show="isEnglish">Research Highlights</span>
+          </h2>
+        </div>
+
         <div class="grid">
-          <!-- 卡片1 -->
           <div class="card" @click="goTo('project1')">
-            <div class="card-img"></div>
-            <h3>
-              <span v-show="!isEnglish">基于地球气象数字孪生的预测与减灾研究</span>
-              <span v-show="isEnglish">Prediction-to-Mitigation with Digital Twins of the Earth’s Weather</span>
-            </h3>
-            <p>
-              <span v-show="!isEnglish">在气候变化背景下分析与预测极端天气事件。</span>
-              <span v-show="isEnglish">Analysing and forecasting extreme weather events under climate change.</span>
-            </p>
+            <div class="card-img gradient-one"></div>
+            <div class="card-body">
+              <h3>
+                <span v-show="!isEnglish">认知驱动多智能体协同</span>
+                <span v-show="isEnglish">Cognition-Driven Multi-Agent Collaboration</span>
+              </h3>
+              <p>
+                <span v-show="!isEnglish">研究具备推理、记忆、反思与协作能力的多智能体系统。</span>
+                <span v-show="isEnglish">Studying multi-agent systems with reasoning, memory, reflection, and collaboration.</span>
+              </p>
+            </div>
           </div>
 
-          <!-- 卡片2 -->
           <div class="card" @click="goTo('project2')">
-            <div class="card-img"></div>
-            <h3>
-              <span v-show="!isEnglish">面向可解释时序挖掘的领域知识驱动神经网络</span>
-              <span v-show="isEnglish">Discipline-Informed Neural Networks for Interpretable Time-Series Discovery</span>
-            </h3>
-            <p>
-              <span v-show="!isEnglish">为时序数据开发事后可解释性分析工具。</span>
-              <span v-show="isEnglish">Developing post-hoc interpretability tools for sequential data.</span>
-            </p>
+            <div class="card-img gradient-two"></div>
+            <div class="card-body">
+              <h3>
+                <span v-show="!isEnglish">智能需求工程</span>
+                <span v-show="isEnglish">Intelligent Requirements Engineering</span>
+              </h3>
+              <p>
+                <span v-show="!isEnglish">面向需求获取、分析、建模与规约生成的智能化方法研究。</span>
+                <span v-show="isEnglish">Intelligent methods for requirement elicitation, analysis, modeling, and specification generation.</span>
+              </p>
+            </div>
           </div>
 
-          <!-- 卡片3 -->
           <div class="card" @click="goTo('project3')">
-            <div class="card-img"></div>
-            <h3>
-              <span v-show="!isEnglish">REBOT——水下机器人操控技术革新研究</span>
-              <span v-show="isEnglish">REBOT – Rethinking Underwater Robot Manipulation</span>
-            </h3>
-            <p>
-              <span v-show="!isEnglish">基于章鱼仿生的水下软体机器人操控策略。</span>
-              <span v-show="isEnglish">Octopus-inspired underwater soft robot manipulation strategies.</span>
-            </p>
+            <div class="card-img gradient-three"></div>
+            <div class="card-body">
+              <h3>
+                <span v-show="!isEnglish">代码生成与自调试修复</span>
+                <span v-show="isEnglish">Code Generation and Self-Debugging</span>
+              </h3>
+              <p>
+                <span v-show="!isEnglish">基于运行轨迹、因果分析与历史经验的代码生成和自动修复研究。</span>
+                <span v-show="isEnglish">Trace-driven code generation and automated repair with causal analysis and historical learning.</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 项目1详情 -->
-    <div id="project1" class="project-section">
-      <div class="container">
-        <div class="project-card">
-          <div class="project-image">
-            <div class="img-placeholder"></div>
-          </div>
-          <div class="project-header">
-            <h1>
-              <span v-show="!isEnglish">基于地球气象数字孪生的预测与减灾研究</span>
-              <span v-show="isEnglish">Prediction-to-Mitigation with Digital Twins of the Earth’s Weather</span>
-            </h1>
-            <span class="badge">
-              <span v-show="!isEnglish">进行中</span>
-              <span v-show="isEnglish">Ongoing</span>
-            </span>
-          </div>
-          <p class="desc">
-            <span v-show="!isEnglish">
-              本项目结合动力系统理论与深度学习技术，聚焦气候变化下极端天气事件的分析与预测，同时开展灾害风险评估，为防灾减灾策略制定提供科学支撑。
-            </span>
-            <span v-show="isEnglish">
-              The project focuses on analysing and forecasting extreme weather events under climate change by blending dynamical system theory and deep learning technologies.
-              It also aims to assess damages and inform mitigation strategies.
-            </span>
-          </p>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">相关论文</span>
-              <span v-show="isEnglish">Publications</span>
-            </h3>
-            <p>A. Gualandi, D. Faranda, C. Marone, M. Cocco, G. Mengaldo, Deterministic and stochastic chaos characterize laboratory earthquakes, Earth and Planetary Science Letters (2023).</p>
-            <p>C. Duong, V. C. Raghuram, A. Lee, R. Mao, G. Mengaldo, E. Cambria, Neurosymbolic AI for mining public opinions about wildfires, Cognitive Computation (2023).</p>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">资助单位</span>
-              <span v-show="isEnglish">Sponsors</span>
-            </h3>
-            <div class="logo-row">
-              <div>MOE Singapore</div>
-            </div>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">合作单位</span>
-              <span v-show="isEnglish">Collaborators</span>
-            </h3>
-            <div class="logo-row">
-              <div>NUS</div>
-              <div>ECMWF</div>
-              <div>Argonne National Lab</div>
-              <div>CNRS</div>
-              <div>ENS</div>
-              <div>Cambridge</div>
-            </div>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">团队成员</span>
-              <span v-show="isEnglish">People</span>
-            </h3>
-            <div class="people">
-              <div>
-                <h4>
-                  <span v-show="!isEnglish">负责人</span>
-                  <span v-show="isEnglish">PI</span>
-                </h4>
-                <p>Zhou Chenyu</p>
-              </div>
-              <div>
-                <h4>
-                  <span v-show="!isEnglish">研究员</span>
-                  <span v-show="isEnglish">Researcher</span>
-                </h4>
-                <p>Xin</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section id="project1" class="project-section">
+      <ProjectBlock
+        :isEnglish="isEnglish"
+        zh-title="认知驱动多智能体协同"
+        en-title="Cognition-Driven Multi-Agent Collaboration"
+        zh-desc="本方向面向可信人工智能系统，研究认知驱动的多智能体协同机制，重点关注任务分解、角色协作、共享记忆、反思推理与协同决策。"
+        en-desc="This direction studies cognition-driven multi-agent collaboration for trustworthy AI systems, focusing on task decomposition, role coordination, shared memory, reflective reasoning, and collaborative decision-making."
+        :publications="[
+          'TraceCoder: A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code, ICSE 2026.',
+          'Envisioning Intelligent Requirements Engineering via Knowledge-Guided Multi-Agent Collaboration, ASE 2025.'
+        ]"
+        :people="['Zhou Chenyu', 'Xin']"
+      />
+    </section>
 
-    <!-- 项目2详情 -->
-    <div id="project2" class="project-section">
-      <div class="container">
-        <div class="project-card">
-          <div class="project-image">
-            <div class="img-placeholder"></div>
-          </div>
-          <div class="project-header">
-            <h1>
-              <span v-show="!isEnglish">面向可解释时序挖掘的领域知识驱动神经网络</span>
-              <span v-show="isEnglish">Discipline-Informed Neural Networks for Interpretable Time-Series Discovery</span>
-            </h1>
-            <span class="badge">
-              <span v-show="!isEnglish">进行中</span>
-              <span v-show="isEnglish">Ongoing</span>
-            </span>
-          </div>
-          <p class="desc">
-            <span v-show="!isEnglish">本项目针对时序与序列数据，构建神经网络事后可解释性分析方法与工具，提升模型透明性与可信度。</span>
-            <span v-show="isEnglish">This project develops post-hoc interpretability tools for neural networks applied to time series and sequential data.</span>
-          </p>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">相关论文</span>
-              <span v-show="isEnglish">Publications</span>
-            </h3>
-            <p>H. Turbé, M. Bjelogrlic, C. Lovis, G. Mengaldo, Evaluation of post-hoc interpretability methods in time-series classification, Nature Machine Intelligence (2023).</p>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">资助单位</span>
-              <span v-show="isEnglish">Sponsors</span>
-            </h3>
-            <div class="logo-row">
-              <div>A*STAR</div>
-              <div>MAECI</div>
-            </div>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">合作单位</span>
-              <span v-show="isEnglish">Collaborators</span>
-            </h3>
-            <div class="logo-row">
-              <div>University of Geneva</div>
-              <div>Sant'Anna</div>
-              <div>Cambridge</div>
-            </div>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">团队成员</span>
-              <span v-show="isEnglish">People</span>
-            </h3>
-            <div class="people">
-              <div>
-                <h4>
-                  <span v-show="!isEnglish">负责人</span>
-                  <span v-show="isEnglish">PI</span>
-                </h4>
-                <p>Jiawen</p>
-              </div>
-              <div>
-                <h4>
-                  <span v-show="!isEnglish">成员</span>
-                  <span v-show="isEnglish">Member</span>
-                </h4>
-                <p>Bayan</p>
-                <p>Keane</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section id="project2" class="project-section alt">
+      <ProjectBlock
+        :isEnglish="isEnglish"
+        zh-title="智能需求工程"
+        en-title="Intelligent Requirements Engineering"
+        zh-desc="本方向围绕需求获取、需求理解、需求建模与需求规约生成，探索知识引导、多智能体协作与人在回路相结合的智能化需求工程方法。"
+        en-desc="This direction explores knowledge-guided, multi-agent, and human-in-the-loop methods for requirement elicitation, understanding, modeling, and specification generation."
+        :publications="[
+          'Knowledge-Guided Multi-Agent Collaboration for Intelligent Requirements Engineering.',
+          'Cognition-in-the-Loop Requirement Generation Framework.'
+        ]"
+        :people="['Jiawen', 'Bayan', 'Keane']"
+      />
+    </section>
 
-    <!-- 项目3详情 -->
-    <div id="project3" class="project-section">
-      <div class="container">
-        <div class="project-card">
-          <div class="project-image">
-            <div class="img-placeholder"></div>
-          </div>
-          <div class="project-header">
-            <h1>
-              <span v-show="!isEnglish">REBOT——水下机器人操控技术革新研究</span>
-              <span v-show="isEnglish">REBOT – Rethinking Underwater Robot Manipulation</span>
-            </h1>
-            <span class="badge">
-              <span v-show="!isEnglish">进行中</span>
-              <span v-show="isEnglish">Ongoing</span>
-            </span>
-          </div>
-          <p class="desc">
-            <span v-show="!isEnglish">本项目结合建模、仿真与实验验证，探索基于章鱼仿生的水下软体机器人智能操控方法与环境适应策略。</span>
-            <span v-show="isEnglish">REBOT explores octopus-inspired manipulation strategies in aquatic environments through modeling, simulation, and experimental validation.</span>
-          </p>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">相关论文</span>
-              <span v-show="isEnglish">Publications</span>
-            </h3>
-            <p>G. Mengaldo, F. Renda, S. Brunton, et al., A concise guide to modelling the physics of embodied intelligence in soft robotics, Nature Reviews Physics (2022).</p>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">资助单位</span>
-              <span v-show="isEnglish">Sponsors</span>
-            </h3>
-            <div class="logo-row">
-              <div>MOE Singapore</div>
-            </div>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">合作单位</span>
-              <span v-show="isEnglish">Collaborators</span>
-            </h3>
-            <div class="logo-row">
-              <div>NUS</div>
-            </div>
-          </div>
-          <div class="section-block">
-            <h3>
-              <span v-show="!isEnglish">团队成员</span>
-              <span v-show="isEnglish">People</span>
-            </h3>
-            <div class="people">
-              <div>
-                <h4>
-                  <span v-show="!isEnglish">联合负责人</span>
-                  <span v-show="isEnglish">Co-PI</span>
-                </h4>
-                <p>Adamya</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section id="project3" class="project-section">
+      <ProjectBlock
+        :isEnglish="isEnglish"
+        zh-title="代码生成与自调试修复"
+        en-title="Code Generation and Self-Debugging"
+        zh-desc="本方向研究大语言模型生成代码的自动调试、自修复与可靠性提升，重点关注运行轨迹分析、错误定位、因果推理、历史经验学习与回滚机制。"
+        en-desc="This direction studies automated debugging, self-repair, and reliability improvement for LLM-generated code, focusing on runtime trace analysis, fault localization, causal reasoning, historical learning, and rollback mechanisms."
+        :publications="[
+          'TraceCoder: A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code, ICSE 2026.',
+          'RepoCoder: Context-Aware and Memory-Enhanced Repository-Level Code Generation.'
+        ]"
+        :people="['Adamya', 'Research Team']"
+      />
+    </section>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, defineComponent, h } from 'vue'
+import heroImg from '@/assets/img_2.png'
 
-// 全局语言状态
 const isEnglish = ref(false)
 
-// 页面加载时读取语言
-onMounted(() => {
+const updateLang = () => {
   isEnglish.value = localStorage.getItem('lang') === 'en'
+}
+
+onMounted(() => {
+  updateLang()
+  window.addEventListener('storage', updateLang)
+  window.addEventListener('lang-change', updateLang)
 })
 
-// 监听语言变化（关键！让切换后页面自动更新）
-watch(
-  () => localStorage.getItem('lang'),
-  () => {
-    isEnglish.value = localStorage.getItem('lang') === 'en'
-  }
-)
+onBeforeUnmount(() => {
+  window.removeEventListener('storage', updateLang)
+  window.removeEventListener('lang-change', updateLang)
+})
 
-// 滚动跳转
 const goTo = (id) => {
-  document.getElementById(id).scrollIntoView({ behavior: 'smooth' })
+  const el = document.getElementById(id)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+
+const ProjectBlock = defineComponent({
+  props: {
+    isEnglish: Boolean,
+    zhTitle: String,
+    enTitle: String,
+    zhDesc: String,
+    enDesc: String,
+    publications: Array,
+    people: Array
+  },
+  setup(props) {
+    return () =>
+      h('div', { class: 'container' }, [
+        h('div', { class: 'project-card' }, [
+          h('div', { class: 'project-visual' }),
+          h('div', { class: 'project-content' }, [
+            h('div', { class: 'project-header' }, [
+              h('div', [
+                h('p', { class: 'eyebrow' }, props.isEnglish ? 'Ongoing Project' : '进行中项目'),
+                h('h1', props.isEnglish ? props.enTitle : props.zhTitle)
+              ]),
+              h('span', { class: 'badge' }, props.isEnglish ? 'Ongoing' : '进行中')
+            ]),
+            h('p', { class: 'desc' }, props.isEnglish ? props.enDesc : props.zhDesc),
+            h('div', { class: 'section-block' }, [
+              h('h3', props.isEnglish ? 'Publications' : '相关论文'),
+              ...props.publications.map((item) => h('p', { class: 'paper' }, item))
+            ]),
+            h('div', { class: 'section-block' }, [
+              h('h3', props.isEnglish ? 'People' : '团队成员'),
+              h(
+                'div',
+                { class: 'people' },
+                props.people.map((name) => h('span', name))
+              )
+            ])
+          ])
+        ])
+      ])
+  }
+})
 </script>
 
 <style scoped>
-/* 样式 100% 完全不变 */
 .home-page {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   width: 100%;
   overflow-x: hidden;
+  color: #111827;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #ffffff;
+}
+
+.container {
+  width: min(1180px, 92%);
+  margin: 0 auto;
 }
 
 .hero {
   position: relative;
-  width: 100%;
-  height: 100vh;
+  min-height: 78vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 100px;
-  z-index: 1;
+  padding: 120px 20px 96px;
+  overflow: hidden;
 }
-.hero-bg {
+
+.hero-bg,
+.hero-bg img,
+.hero-overlay {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+  inset: 0;
 }
+
 .hero-bg img {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
+
+.hero-overlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.62));
+}
+
 .hero-content {
-  max-width: 1200px;
+  position: relative;
+  z-index: 2;
+  max-width: 960px;
   text-align: center;
-  color: white;
-  text-shadow: 0 0 4px rgba(0,0,0,0.3);
+  color: #ffffff;
 }
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.hero-content .eyebrow {
+  color: rgba(255, 255, 255, 0.82);
+}
+
 .hero-content h1 {
-  font-size: 64px;
-  margin-bottom: 24px;
+  margin: 0;
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
-.lab-intro {
-  font-size: 18px;
-  line-height: 1.8;
+
+.hero-desc {
+  max-width: 760px;
+  margin: 22px auto 0;
+  font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .research-highlights {
-  padding: 100px 20px;
-  background: #f7f7f7;
+  padding: 96px 0;
+  background: #f8fafc;
 }
-.container {
-  width: 70%;
-  margin: 0 auto;
-}
-.research-highlights h2 {
-  font-size: 42px;
+
+.section-title {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 48px;
 }
+
+.section-title h2 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
 }
 
 .card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  cursor: pointer;
-  transition: 0.3s;
+  background: #ffffff;
+  border-radius: 22px;
   overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
+
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+  border-color: #bfdbfe;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
 }
 
 .card-img {
-  width: 100%;
   height: 180px;
-  background-color: #d3e5ff;
 }
 
-.card h3,
-.card p {
-  padding: 0 28px;
+.gradient-one {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
 }
+
+.gradient-two {
+  background: linear-gradient(135deg, #7c3aed, #60a5fa);
+}
+
+.gradient-three {
+  background: linear-gradient(135deg, #0f766e, #67e8f9);
+}
+
+.card-body {
+  padding: 26px;
+}
+
 .card h3 {
-  font-size: 32px;
-  margin: 24px 0 12px;
-  color: #1a55c2;
+  margin: 0 0 14px;
+  font-size: 22px;
+  line-height: 1.35;
+  color: #0f172a;
 }
+
 .card p {
-  color: #444;
-  line-height: 1.6;
-  padding-bottom: 28px;
-  font-size: 28px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #475569;
 }
 
 .project-section {
-  padding: 100px 20px;
-  background: white;
-  border-bottom: 1px solid #eee;
+  padding: 88px 0;
+  background: #ffffff;
 }
+
+.project-section.alt {
+  background: #f8fafc;
+}
+
 .project-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 0 0 30px;
+  display: grid;
+  grid-template-columns: 38% 62%;
   overflow: hidden;
+  border-radius: 28px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
 }
-.project-image {
-  width: 100%;
-  height: 380px;
-  overflow: hidden;
+
+.project-visual {
+  min-height: 420px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.38), transparent 28%),
+    linear-gradient(135deg, #1d4ed8, #06b6d4);
 }
-.img-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  background-size: cover;
-  background-position: center;
+
+.project-content {
+  padding: 44px;
 }
+
 .project-header {
-  padding: 40px 40px 0;
-}
-.project-header h1 {
-  font-size: 52px;
-  color: #111;
-  margin-bottom: 16px;
-}
-.badge {
-  display: inline-block;
-  background: #eef5ff;
-  color: #1a55c2;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 37px;
-}
-.desc {
-  font-size: 30px;
-  line-height: 1.8;
-  color: #333;
-  margin: 24px 40px 50px;
-}
-.section-block {
-  margin: 0 30px 50px;
-}
-.section-block h3 {
-  font-size: 44px;
-  margin-bottom: 16px;
-  color: #111;
-}
-.section-block p {
-  font-size: 28px;
-  line-height: 1.7;
-  color: #333;
-  margin-bottom: 10px;
-}
-.logo-row {
   display: flex;
-  gap: 28px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 22px;
 }
-.logo-row div {
-  background: #f5f5f5;
-  padding: 14px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  color: #333;
-  font-size: 24px;
+
+.project-header h1 {
+  margin: 0;
+  font-size: clamp(28px, 3.2vw, 44px);
+  line-height: 1.22;
+  letter-spacing: -0.03em;
 }
+
+.badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.desc {
+  margin: 0 0 34px;
+  font-size: 18px;
+  line-height: 1.85;
+  color: #334155;
+}
+
+.section-block {
+  margin-top: 30px;
+}
+
+.section-block h3 {
+  margin: 0 0 14px;
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.paper {
+  margin: 0 0 10px;
+  padding-left: 14px;
+  border-left: 3px solid #dbeafe;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: #475569;
+}
+
 .people {
   display: flex;
-  gap: 40px;
   flex-wrap: wrap;
+  gap: 12px;
 }
-.people h4 {
-  font-size: 28px;
-  color: #666;
-  margin-bottom: 6px;
+
+.people span {
+  display: inline-flex;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 600;
 }
-.people p {
-  font-size: 29px;
-  font-weight: 500;
-  color: #111;
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-card {
+    grid-template-columns: 1fr;
+  }
+
+  .project-visual {
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    min-height: 68vh;
+    padding: 96px 18px 70px;
+  }
+
+  .research-highlights,
+  .project-section {
+    padding: 64px 0;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .card-img {
+    height: 150px;
+  }
+
+  .card-body {
+    padding: 22px;
+  }
+
+  .card h3 {
+    font-size: 20px;
+  }
+
+  .card p {
+    font-size: 15px;
+  }
+
+  .project-content {
+    padding: 28px 22px;
+  }
+
+  .project-header {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .desc {
+    font-size: 16px;
+  }
 }
 </style>
