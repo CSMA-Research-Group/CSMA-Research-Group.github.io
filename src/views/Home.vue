@@ -279,20 +279,38 @@ const goToPositions = (anchor) => {
 }
 .hero-notice {
   position: absolute;
-  top: 28px;
+  top: 72px;              /* 原来如果是 20/28px，改大 */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 5;
+  z-index: 10;
+
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  padding: 10px 18px;
+
+  min-width: 320px;
+  padding: 12px 24px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.14);
+
+  background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(10px);
-  color: #fff;
-  font-size: 14px;
+
+  color: #ffffff;
+  font-size: 16px;
   font-weight: 600;
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .hero-notice {
+    top: 86px;
+    width: 88%;
+    min-width: auto;
+    padding: 10px 16px;
+    font-size: 13px;
+    white-space: normal;
+    text-align: center;
+  }
 }
 .notice-dot {
   width: 8px;
