@@ -1,24 +1,15 @@
 <template>
-  <div class="app">
+  <div class="site-shell">
     <Navbar />
-
-    <main class="content">
-      <router-view />
+    <main>
+      <RouterView />
     </main>
+    <SiteFooter />
   </div>
 </template>
 
 <script setup>
+import { RouterView } from 'vue-router'
 import Navbar from './components/Navbar.vue'
+import SiteFooter from './components/Footer.vue'
 </script>
-
-<style scoped>
-.app {
-  width: 100%;
-}
-
-.content {
-  margin-top: 0; /* 不要占用 top，因为导航是 fixed 定位 */
-}
-
-</style>

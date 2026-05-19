@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" role="img" aria-labelledby="title desc">
+  <title id="title">KGMAF framework</title>
+  <desc id="desc">A knowledge-guided multi-agent requirements engineering framework with six agents, knowledge injection, a shared artifact pool, and human review.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2l8 4-8 4z" fill="#195f8f"/>
+    </marker>
+    <style>
+      .frame{fill:#f8fafb;stroke:#d9e2e8;stroke-width:2}
+      .agent{fill:#eef7f6;stroke:#1f8a8a;stroke-width:2}
+      .pool{fill:#ffffff;stroke:#195f8f;stroke-width:3}
+      .knowledge{fill:#fff7e8;stroke:#b88935;stroke-width:2}
+      .human{fill:#f1effb;stroke:#6155b8;stroke-width:2}
+      .text{font:600 20px Inter,Arial,sans-serif;fill:#102a43}
+      .small{font:500 15px Inter,Arial,sans-serif;fill:#4f5f6f}
+      .label{font:700 14px Inter,Arial,sans-serif;fill:#195f8f;text-transform:uppercase}
+      .arrow{fill:none;stroke:#195f8f;stroke-width:2.6;marker-end:url(#arrow)}
+      .soft{fill:none;stroke:#8aa5b5;stroke-width:2;stroke-dasharray:7 7;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <rect x="18" y="18" width="944" height="504" rx="18" class="frame"/>
+  <text x="54" y="64" class="label">KGMAF / ChatREQ</text>
+  <text x="54" y="96" class="text">Knowledge-guided multi-agent collaboration for intelligent requirements development</text>
+
+  <rect x="344" y="180" width="292" height="154" rx="10" class="pool"/>
+  <text x="490" y="232" text-anchor="middle" class="text">Shared Artifact Pool</text>
+  <text x="490" y="262" text-anchor="middle" class="small">PAR, IR, URL, OEL, SRL, RM, SRS</text>
+  <text x="490" y="292" text-anchor="middle" class="small">blackboard-style coordination</text>
+
+  <rect x="64" y="142" width="170" height="66" rx="8" class="agent"/>
+  <text x="149" y="182" text-anchor="middle" class="text">Interviewer</text>
+
+  <rect x="64" y="246" width="170" height="66" rx="8" class="agent"/>
+  <text x="149" y="286" text-anchor="middle" class="text">End-User</text>
+
+  <rect x="64" y="350" width="170" height="66" rx="8" class="agent"/>
+  <text x="149" y="390" text-anchor="middle" class="text">Deployer</text>
+
+  <rect x="746" y="142" width="170" height="66" rx="8" class="agent"/>
+  <text x="831" y="182" text-anchor="middle" class="text">Analyst</text>
+
+  <rect x="746" y="246" width="170" height="66" rx="8" class="agent"/>
+  <text x="831" y="286" text-anchor="middle" class="text">Archivist</text>
+
+  <rect x="746" y="350" width="170" height="66" rx="8" class="agent"/>
+  <text x="831" y="390" text-anchor="middle" class="text">Reviewer</text>
+
+  <rect x="300" y="394" width="380" height="74" rx="8" class="knowledge"/>
+  <text x="490" y="424" text-anchor="middle" class="text">Knowledge Injection</text>
+  <text x="490" y="450" text-anchor="middle" class="small">elicitation, analysis, specification, validation, context, cognitive strategies</text>
+
+  <rect x="334" y="116" width="312" height="58" rx="8" class="human"/>
+  <text x="490" y="151" text-anchor="middle" class="text">Human-in-the-Loop Review</text>
+
+  <path d="M234 175h106" class="arrow"/>
+  <path d="M234 279h106" class="arrow"/>
+  <path d="M234 383c56-2 84-24 118-66" class="arrow"/>
+  <path d="M636 208h106" class="arrow"/>
+  <path d="M636 279h106" class="arrow"/>
+  <path d="M636 318c48 26 72 42 106 60" class="arrow"/>
+  <path d="M490 394v-56" class="arrow"/>
+  <path d="M490 174v-30" class="soft"/>
+  <path d="M490 174v30" class="soft"/>
+
+  <text x="492" y="500" text-anchor="middle" class="small">Role-specialized agents observe and update shared artifacts while knowledge and human feedback guide quality control.</text>
+</svg>

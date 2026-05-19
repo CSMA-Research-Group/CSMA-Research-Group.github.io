@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" role="img" aria-labelledby="title desc">
+  <title id="title">TraceCoder workflow</title>
+  <desc id="desc">A trace-driven multi-agent debugging workflow with instrumentation, analysis, repair, historical lesson learning, and rollback.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2l8 4-8 4z" fill="#1f6f8b"/>
+    </marker>
+    <style>
+      .frame{fill:#f8fafb;stroke:#d9e2e8;stroke-width:2}
+      .panel{fill:#ffffff;stroke:#c8d6df;stroke-width:2}
+      .agent{fill:#eef7f6;stroke:#1f8a8a;stroke-width:2}
+      .memory{fill:#fff7e8;stroke:#b88935;stroke-width:2}
+      .text{font:600 21px Inter,Arial,sans-serif;fill:#102a43}
+      .small{font:500 16px Inter,Arial,sans-serif;fill:#4f5f6f}
+      .label{font:700 14px Inter,Arial,sans-serif;fill:#195f8f;text-transform:uppercase}
+      .arrow{fill:none;stroke:#1f6f8b;stroke-width:3;marker-end:url(#arrow)}
+      .loop{fill:none;stroke:#b88935;stroke-width:3;stroke-dasharray:8 8;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <rect x="18" y="18" width="944" height="504" rx="18" class="frame"/>
+  <text x="54" y="64" class="label">TraceCoder</text>
+  <text x="54" y="96" class="text">Trace-driven multi-agent repair loop for LLM-generated code</text>
+
+  <rect x="54" y="146" width="168" height="86" rx="8" class="panel"/>
+  <text x="138" y="181" text-anchor="middle" class="text">Initial Code</text>
+  <text x="138" y="207" text-anchor="middle" class="small">LLM output</text>
+
+  <rect x="278" y="130" width="182" height="118" rx="8" class="agent"/>
+  <text x="369" y="167" text-anchor="middle" class="text">Instrumentation</text>
+  <text x="369" y="194" text-anchor="middle" class="text">Agent</text>
+  <text x="369" y="222" text-anchor="middle" class="small">diagnostic probes</text>
+
+  <rect x="516" y="130" width="182" height="118" rx="8" class="agent"/>
+  <text x="607" y="168" text-anchor="middle" class="text">Analysis</text>
+  <text x="607" y="195" text-anchor="middle" class="text">Agent</text>
+  <text x="607" y="222" text-anchor="middle" class="small">causal reasoning</text>
+
+  <rect x="754" y="130" width="172" height="118" rx="8" class="agent"/>
+  <text x="840" y="168" text-anchor="middle" class="text">Repair</text>
+  <text x="840" y="195" text-anchor="middle" class="text">Agent</text>
+  <text x="840" y="222" text-anchor="middle" class="small">patch synthesis</text>
+
+  <rect x="292" y="314" width="166" height="92" rx="8" class="panel"/>
+  <text x="375" y="349" text-anchor="middle" class="text">Runtime</text>
+  <text x="375" y="376" text-anchor="middle" class="text">Traces</text>
+
+  <rect x="520" y="314" width="174" height="92" rx="8" class="memory"/>
+  <text x="607" y="349" text-anchor="middle" class="text">HLLM</text>
+  <text x="607" y="376" text-anchor="middle" class="small">lessons from failures</text>
+
+  <rect x="756" y="314" width="168" height="92" rx="8" class="memory"/>
+  <text x="840" y="349" text-anchor="middle" class="text">Rollback</text>
+  <text x="840" y="376" text-anchor="middle" class="small">stable iteration</text>
+
+  <rect x="54" y="340" width="168" height="76" rx="8" class="panel"/>
+  <text x="138" y="371" text-anchor="middle" class="text">Tests</text>
+  <text x="138" y="397" text-anchor="middle" class="small">pass/fail signals</text>
+
+  <path d="M222 189h52" class="arrow"/>
+  <path d="M460 189h52" class="arrow"/>
+  <path d="M698 189h52" class="arrow"/>
+  <path d="M840 248v62" class="arrow"/>
+  <path d="M754 360h-56" class="arrow"/>
+  <path d="M520 360h-58" class="arrow"/>
+  <path d="M375 314v-62" class="arrow"/>
+  <path d="M278 360H222" class="arrow"/>
+  <path d="M138 340V236" class="arrow"/>
+  <path d="M840 406c-40 72-366 72-466 4" class="loop"/>
+
+  <text x="492" y="476" text-anchor="middle" class="small">Observe execution, analyze causal failures, repair with memory, and roll back non-improving attempts.</text>
+</svg>

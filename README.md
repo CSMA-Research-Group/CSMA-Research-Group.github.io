@@ -1,5 +1,154 @@
-# Vue 3 + Vite
+# CSMA Research Group Website
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This repository contains the official website for **CSMA Research Group**, deployed through GitHub Pages.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+The site presents CSMA research on artificial intelligence, intelligent software engineering, intelligent robotics, and application-driven intelligent systems. Content is maintained through structured data files so publications, projects, people, news, research areas, and resources can be updated without rewriting page templates.
+
+## Tech Stack
+
+- Vue 3
+- Vite
+- JavaScript
+- CSS
+- vue-router
+- GitHub Pages
+
+## Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Vite will print a local URL such as `http://localhost:5173/`.
+
+## Build
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+The generated site is written to `dist/`.
+
+Preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## Deployment to GitHub Pages
+
+This repository is named `CSMA-Research-Group.github.io`, so GitHub Pages can serve it as an organization site.
+
+Recommended deployment flow:
+
+1. Update content in `src/data/`.
+2. Place production assets in `src/assets/` or `public/`.
+3. Run `npm run build`.
+4. Review the generated site locally.
+5. Commit and push changes manually after review.
+6. Configure GitHub Pages to deploy from the intended branch or GitHub Actions workflow.
+
+The router uses hash history for reliable static hosting on GitHub Pages without requiring a custom 404 fallback.
+
+## Structured Content
+
+Most public website content is stored in `src/data/`:
+
+- `src/data/site.js`: group name, slogan, description, contact, navigation, and homepage metrics
+- `src/data/researchAreas.js`: research directions and research highlights
+- `src/data/projects.js`: project prototypes, status, key ideas, links, figures, and related publications
+- `src/data/publications.js`: publication metadata, tags, DOI/code/PDF links, summaries, and contribution highlights
+- `src/data/people.js`: group members, student researchers, collaborators, and alumni placeholders
+- `src/data/news.js`: dated news entries with venue, location, type, and paper title
+- `src/data/resources.js`: software, datasets, teaching materials, and repository links
+
+## Updating Publications
+
+Edit `src/data/publications.js`. Each publication can include:
+
+- `id`
+- `title`
+- `authors`
+- `venue`
+- `venueFullName`
+- `year`
+- `publicationDate`
+- `conferenceDate`
+- `location`
+- `type`
+- `doi`
+- `pdf`
+- `code`
+- `tags`
+- `abstractSummary`
+- `contributionHighlights`
+- `relatedProjectId`
+- `featured`
+
+Only add verified publications. Do not invent papers, authors, venues, awards, grants, DOI values, code repositories, or PDF links. Leave `pdf` blank unless the group confirms that the PDF can be publicly hosted or linked.
+
+## Updating Projects
+
+Edit `src/data/projects.js`. Projects should include a stable `id`, status, type, description, key ideas, related publication IDs, links, tags, and optional figure metadata.
+
+Use confirmed code, artifact, DOI, and demo links only. If a project link is not confirmed, use `linkPlaceholders` rather than publishing an uncertain URL.
+
+## Updating People
+
+Edit `src/data/people.js`. Keep people grouped as:
+
+- Group Members
+- Student Researchers
+- Collaborators
+- Alumni
+
+Use publication metadata for names, affiliations, and emails. Add homepage links only when the source reliably matches the same person by name, affiliation, email, and research area. Do not assume that every paper author is an internal CSMA member.
+
+## Updating News
+
+Edit `src/data/news.js`. News entries should use confirmed dates, past tense for events that already happened, and structured fields such as `venue`, `location`, `type`, and `paperTitle`.
+
+The homepage displays the latest entries from this data file; the News page displays the full archive.
+
+## Paper PDFs and Overleaf Input
+
+The `tmp/` directory is an input-material directory, not a production asset directory.
+
+Use `tmp/` for newly supplied paper PDFs, Overleaf exports, LaTeX files, BibTeX files, figures, images, and review notes that need to be inspected before website updates. Formal website resources should be moved or redrawn into:
+
+- `src/assets/` for bundled images, SVG diagrams, and Vue-imported assets
+- `public/` for files that should be served directly
+
+Do not make production pages depend on `tmp/` paths.
+
+## Figures and Diagrams
+
+Paper figures or diagrams used on public pages should be clean, legible, and free from publisher watermarks or full-page screenshots. If paper figures are only available as PDF and cannot be loaded cleanly by Vue/Vite, redraw them as maintainable SVG assets under `src/assets/figures/`.
+
+## Placeholder Notes
+
+Use placeholders or blank fields for unconfirmed information. In particular, confirm before publishing:
+
+- author homepages
+- member photos
+- personal biographies
+- local paper PDFs
+- project code links
+- contact emails and office addresses
+- school, college, and institutional profile details
+
+## Verification Policy
+
+Publication and people data should be manually checked before release. Do not invent unverified publication, member, collaborator, award, grant, affiliation, news, or result information. The user reviews the final diff and runs the final Git workflow manually.
+
+Do not commit or push automatically from this repository.

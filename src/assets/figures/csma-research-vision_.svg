@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" role="img" aria-labelledby="title desc">
+  <title id="title">CSMA research vision</title>
+  <desc id="desc">Artificial intelligence, intelligent software engineering, intelligent robotics, and application scenarios connected through cognitive and collaborative multi-agent intelligence.</desc>
+  <defs>
+    <style>
+      .frame{fill:#f8fafb;stroke:#d9e2e8;stroke-width:2}
+      .core{fill:#102a43}
+      .area{fill:#ffffff;stroke:#c8d6df;stroke-width:2}
+      .bridge{fill:#eef7f6;stroke:#1f8a8a;stroke-width:2}
+      .line{fill:none;stroke:#1f8a8a;stroke-width:3}
+      .text{font:700 21px Inter,Arial,sans-serif;fill:#102a43}
+      .small{font:500 15px Inter,Arial,sans-serif;fill:#4f5f6f}
+      .white{fill:#ffffff}
+      .label{font:700 14px Inter,Arial,sans-serif;fill:#195f8f;text-transform:uppercase}
+    </style>
+  </defs>
+
+  <rect x="18" y="18" width="944" height="504" rx="18" class="frame"/>
+  <text x="54" y="64" class="label">CSMA Research Vision</text>
+  <text x="54" y="96" class="text">Cognitive and collaborative intelligence for software, robots, and real-world AI systems</text>
+
+  <path class="line" d="M490 272L210 164M490 272l280-108M490 272L210 382M490 272l280 110"/>
+  <path class="line" d="M210 164c160-78 400-78 560 0M210 382c160 78 400 78 560 0"/>
+
+  <circle cx="490" cy="272" r="88" class="core"/>
+  <text x="490" y="250" text-anchor="middle" class="text white">Cognitive</text>
+  <text x="490" y="280" text-anchor="middle" class="text white">Collaborative</text>
+  <text x="490" y="310" text-anchor="middle" class="text white">Intelligence</text>
+
+  <rect x="72" y="116" width="276" height="96" rx="8" class="area"/>
+  <text x="210" y="152" text-anchor="middle" class="text">Artificial Intelligence</text>
+  <text x="210" y="180" text-anchor="middle" class="small">reasoning, planning, memory, reflection</text>
+
+  <rect x="632" y="116" width="276" height="96" rx="8" class="area"/>
+  <text x="770" y="152" text-anchor="middle" class="text">Intelligent Software</text>
+  <text x="770" y="180" text-anchor="middle" class="small">requirements, code, debugging, repair</text>
+
+  <rect x="72" y="334" width="276" height="96" rx="8" class="area"/>
+  <text x="210" y="370" text-anchor="middle" class="text">Intelligent Robotics</text>
+  <text x="210" y="398" text-anchor="middle" class="small">perception, planning, control, embodiment</text>
+
+  <rect x="632" y="334" width="276" height="96" rx="8" class="area"/>
+  <text x="770" y="370" text-anchor="middle" class="text">Application Scenarios</text>
+  <text x="770" y="398" text-anchor="middle" class="small">prototypes, validation, real-world systems</text>
+
+  <rect x="352" y="432" width="276" height="56" rx="8" class="bridge"/>
+  <text x="490" y="467" text-anchor="middle" class="text">Knowledge + Human Feedback</text>
+</svg>

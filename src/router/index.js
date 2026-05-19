@@ -1,29 +1,40 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
-// 导入所有页面
 import Home from '../views/Home.vue'
-import Highlights from '../views/Highlights.vue'
-import People from '../views/People.vue'
+import Research from '../views/Research.vue'
+import Projects from '../views/Projects.vue'
 import Publications from '../views/Publications.vue'
-import Seminars from '../views/Seminars.vue'
-import Positions from '../views/Positions.vue'
-import Gallery from '../views/Gallery.vue'
-import Contact from '../views/Contact.vue'
+import People from '../views/People.vue'
+import News from '../views/News.vue'
+import Resources from '../views/Resources.vue'
+import About from '../views/About.vue'
 
 const routes = [
-    { path: '/', component: Home },
-    { path: '/highlights', component: Highlights },
-    { path: '/people', component: People },
-    { path: '/publications', component: Publications },
-    { path: '/seminars', component: Seminars },
-    { path: '/positions', component: Positions },
-    { path: '/gallery', component: Gallery },
-    { path: '/contact', component: Contact },
+  { path: '/', name: 'home', component: Home },
+  { path: '/research', name: 'research', component: Research },
+  { path: '/projects', name: 'projects', component: Projects },
+  { path: '/publications', name: 'publications', component: Publications },
+  { path: '/people', name: 'people', component: People },
+  { path: '/news', name: 'news', component: News },
+  { path: '/resources', name: 'resources', component: Resources },
+  { path: '/about', name: 'about', component: About },
+  { path: '/join-us', redirect: '/people#join-us' },
+  { path: '/contact', redirect: '/about' },
+  { path: '/highlights', redirect: '/research' },
+  { path: '/seminars', redirect: '/news' },
+  { path: '/positions', redirect: '/people#join-us' },
+  { path: '/gallery', redirect: '/resources' },
+  { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
+  history: createWebHashHistory(),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash, behavior: 'smooth', top: 96 }
+    return { top: 0 }
+  },
 })
 
 export default router
