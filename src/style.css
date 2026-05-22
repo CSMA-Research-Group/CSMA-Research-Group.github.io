@@ -1273,7 +1273,7 @@ li {
 .footer-contact-block {
   display: grid;
   gap: 4px;
-  margin-top: 8px;
+  margin-top: calc(8px + 0.5cm);
 }
 
 .footer-contact-list {

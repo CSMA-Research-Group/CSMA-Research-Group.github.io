@@ -3,7 +3,7 @@ export const siteInfo = {
   shortName: 'CSMA',
   slogan: 'Cognitive and collaborative intelligence for software, robotics, and real-world AI.',
   description:
-    'We study cognitive collaborative intelligence for software, robotics, and real-world intelligent systems. Our work focuses on cognition, reasoning, planning, memory, reflection, and multi-agent collaboration.',
+    'We study cognitive collaborative intelligence for software, robotics, and real-world intelligent systems.',
   vision:
     'Our research integrates artificial intelligence, intelligent software engineering, and intelligent robotics. We explore how multi-agent cognition, knowledge-guided reasoning, planning, and human-AI collaboration can enable reliable software development, autonomous robotic behavior, and continuously evolving intelligent systems in complex environments.',
   githubOrg: 'https://github.com/CSMA-Research-Group',
