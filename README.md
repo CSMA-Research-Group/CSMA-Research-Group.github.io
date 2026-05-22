@@ -29,6 +29,14 @@ npm run dev
 
 Vite will print a local URL such as `http://localhost:5173/`.
 
+To enable real footer visitor statistics locally, create `.env.local` from `.env.example` and point it at the deployed or local Worker:
+
+```bash
+VITE_VISITOR_API_BASE=https://your-worker-name.your-subdomain.workers.dev
+```
+
+If `VITE_VISITOR_API_BASE` is not configured or the API is unavailable, the footer globe keeps its visual shell but shows visitor statistics as unavailable and does not display fallback visitor counts or country markers.
+
 ## Build
 
 Create a production build:
@@ -59,6 +67,23 @@ Recommended deployment flow:
 6. Configure GitHub Pages to deploy from the intended branch or GitHub Actions workflow.
 
 The router uses hash history for reliable static hosting on GitHub Pages without requiring a custom 404 fallback.
+
+## Visitor Statistics Worker
+
+The footer visitor globe can use the Cloudflare Worker + D1 backend in `workers/visitor-stats/`.
+
+Worker setup summary:
+
+```bash
+cd workers/visitor-stats
+cp wrangler.toml.example wrangler.toml
+npx wrangler d1 create csma-visitor-stats
+npx wrangler d1 execute csma-visitor-stats --remote --file=./schema.sql
+npx wrangler secret put VISITOR_HASH_SALT
+npx wrangler deploy
+```
+
+Set `ALLOWED_ORIGIN` in the Worker config for the production GitHub Pages domain, then set the frontend `VITE_VISITOR_API_BASE` to the deployed Worker URL. See `workers/visitor-stats/README.md` for the full API, privacy notes, and local testing commands.
 
 ## Structured Content
 

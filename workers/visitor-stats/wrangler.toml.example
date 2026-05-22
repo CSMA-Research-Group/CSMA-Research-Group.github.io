@@ -1,0 +1,12 @@
+name = "csma-visitor-stats"
+main = "src/index.js"
+compatibility_date = "2026-05-19"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "csma-visitor-stats"
+database_id = "replace-with-your-database-id"
+
+# Optional production CORS origin. For multiple origins, separate with commas.
+# [vars]
+# ALLOWED_ORIGIN = "https://csma-research-group.github.io"

@@ -37,7 +37,7 @@
       <dl>
         <div>
           <dt>Founded</dt>
-          <dd>{{ visitorGlobeInfo.foundedAt }}</dd>
+          <dd>{{ foundedAtLabel }}</dd>
         </div>
         <div>
           <dt>Total Visitors</dt>
@@ -48,25 +48,27 @@
           <dd>{{ countriesReachedLabel }}</dd>
         </div>
         <div>
-          <dt>Current Visitor ID</dt>
-          <dd class="visitor-id">{{ currentVisitorId }}</dd>
+          <dt>Current Visitor #</dt>
+          <dd class="visitor-id">{{ currentVisitorLabel }}</dd>
         </div>
       </dl>
-      <p class="analytics-note">Visitor totals are ready for analytics integration.</p>
+      <p class="analytics-note">{{ analyticsNote }}</p>
     </aside>
   </section>
 </template>
 
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import { visitorGlobeInfo, visitorSources } from '../data/visitorStats'
+import { trackVisitor } from '../services/visitorStats'
 
 const DEG = Math.PI / 180
-const visitorIdKey = 'csma-current-visitor-id'
+const foundedAtFallback = '2026-05-19 05:19'
 
 const canvasRef = ref(null)
 const wrapRef = ref(null)
-const currentVisitorId = ref('Generating...')
+const visitorStats = ref(null)
+const visitorSources = ref([])
+const statsStatus = ref('loading')
 const utcLabel = ref('UTC --:--')
 const tooltip = reactive({
   visible: false,
@@ -162,30 +164,83 @@ const cityLights = [
   [28, -26.2],
 ]
 
-const totalVisitorsLabel = computed(() => (
-  Number.isFinite(visitorGlobeInfo.totalVisitors)
-    ? visitorGlobeInfo.totalVisitors.toLocaleString()
-    : 'Pending analytics'
+const loadingOrUnavailableLabel = computed(() => (
+  statsStatus.value === 'loading' ? 'Loading...' : 'Unavailable'
 ))
 
-const countriesReachedLabel = computed(() => {
-  const reached = visitorSources.filter((source) => Number.isFinite(source.visits) && source.visits > 0)
-  return reached.length ? reached.length.toLocaleString() : 'Pending analytics'
+const hasVisitorStats = computed(() => statsStatus.value === 'available' && visitorStats.value?.ok)
+
+const foundedAtLabel = computed(() => (
+  hasVisitorStats.value && visitorStats.value.foundedAt
+    ? visitorStats.value.foundedAt
+    : foundedAtFallback
+))
+
+const formatStatCount = (value) => {
+  const count = Number(value)
+  return Number.isFinite(count) ? count.toLocaleString() : loadingOrUnavailableLabel.value
+}
+
+const totalVisitorsLabel = computed(() => (
+  hasVisitorStats.value
+    ? formatStatCount(visitorStats.value.uniqueVisitors)
+    : loadingOrUnavailableLabel.value
+))
+
+const countriesReachedLabel = computed(() => (
+  hasVisitorStats.value
+    ? formatStatCount(visitorStats.value.countriesReached)
+    : loadingOrUnavailableLabel.value
+))
+
+const currentVisitorLabel = computed(() => {
+  if (!hasVisitorStats.value) return loadingOrUnavailableLabel.value
+
+  const visitorNumber = Number(visitorStats.value.currentVisitorNumber)
+  return Number.isFinite(visitorNumber) ? `#${visitorNumber.toLocaleString()}` : 'Unavailable'
 })
 
-const createVisitorId = () => {
-  try {
-    const existing = window.localStorage.getItem(visitorIdKey)
-    if (existing) return existing
+const analyticsNote = computed(() => {
+  if (statsStatus.value === 'loading') return 'Loading visitor statistics...'
+  if (statsStatus.value === 'available') return 'Anonymous visitor statistics updated live.'
+  return 'Visitor statistics unavailable'
+})
 
-    const suffix = Math.random().toString(36).slice(2, 8).toUpperCase()
-    const stamp = Date.now().toString(36).toUpperCase()
-    const nextId = `CSMA-${stamp}-${suffix}`
-    window.localStorage.setItem(visitorIdKey, nextId)
-    return nextId
-  } catch {
-    return 'CSMA-LOCAL'
+const normalizeVisitorCountries = (countries = []) => (
+  countries
+    .map((country) => {
+      const latitude = Number(country.lat ?? country.latitude)
+      const longitude = Number(country.lng ?? country.longitude)
+      const visits = Number(country.visits)
+      const uniqueVisitors = Number(country.uniqueVisitors)
+
+      return {
+        country: country.countryName || country.countryCode || 'Unknown',
+        latitude,
+        longitude,
+        visits: Number.isFinite(visits) ? visits : null,
+        uniqueVisitors: Number.isFinite(uniqueVisitors) ? uniqueVisitors : null,
+      }
+    })
+    .filter((country) => Number.isFinite(country.latitude) && Number.isFinite(country.longitude))
+)
+
+const loadVisitorStats = async () => {
+  statsStatus.value = 'loading'
+  const stats = await trackVisitor()
+
+  if (!stats?.ok) {
+    visitorStats.value = null
+    visitorSources.value = []
+    statsStatus.value = 'unavailable'
+    drawGlobe(performance.now())
+    return
   }
+
+  visitorStats.value = stats
+  visitorSources.value = normalizeVisitorCountries(stats.countries)
+  statsStatus.value = 'available'
+  drawGlobe(performance.now())
 }
 
 const updateUtcLabel = () => {
@@ -337,7 +392,7 @@ const drawCityLights = (rotation, sun, time) => {
 const drawVisitorMarkers = (rotation, time) => {
   visibleMarkers = []
 
-  visitorSources.forEach((source, index) => {
+  visitorSources.value.forEach((source, index) => {
     const point = project(source.latitude, source.longitude, rotation)
     if (!point.visible || point.z < 0.08) return
 
@@ -481,7 +536,6 @@ const handleMotionChange = () => {
 }
 
 onMounted(() => {
-  currentVisitorId.value = createVisitorId()
   updateUtcLabel()
   utcTimer = window.setInterval(updateUtcLabel, 60000)
 
@@ -498,6 +552,7 @@ onMounted(() => {
 
   startTime = performance.now()
   drawGlobe(startTime)
+  void loadVisitorStats()
 })
 
 onUnmounted(() => {
