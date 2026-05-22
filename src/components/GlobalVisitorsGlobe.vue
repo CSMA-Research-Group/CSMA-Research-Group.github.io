@@ -3,9 +3,9 @@
     <div class="globe-panel">
       <div class="globe-heading">
         <p class="globe-kicker">Global Visitors</p>
-        <h2>Research reach around the world</h2>
+        <h2>Research Reach Around the World</h2>
         <p>
-          A live-ready visitor globe with UTC-based day-night lighting and configurable country markers.
+          This globe visualizes anonymous visitor statistics and the global reach of CSMA Research Group.
         </p>
       </div>
 
@@ -63,6 +63,8 @@ import { trackVisitor } from '../services/visitorStats'
 
 const DEG = Math.PI / 180
 const foundedAtFallback = '2026-05-19 05:19'
+// Local copy from NASA Earth Observatory, Blue Marble: Next Generation with Topography and Bathymetry.
+const EARTH_TEXTURE_URL = `${import.meta.env.BASE_URL}textures/earth-blue-marble.jpg`
 
 const canvasRef = ref(null)
 const wrapRef = ref(null)
@@ -91,6 +93,12 @@ let reducedMotion = false
 let startTime = 0
 let visibleMarkers = []
 let utcTimer = 0
+let earthTextureState = 'idle'
+let earthTextureData = null
+let earthTextureWidth = 0
+let earthTextureHeight = 0
+let earthFrameCanvas = null
+let earthFrameCtx = null
 
 const continents = [
   [
@@ -202,7 +210,7 @@ const currentVisitorLabel = computed(() => {
 
 const analyticsNote = computed(() => {
   if (statsStatus.value === 'loading') return 'Loading visitor statistics...'
-  if (statsStatus.value === 'available') return 'Anonymous visitor statistics updated live.'
+  if (statsStatus.value === 'available') return 'Anonymous visitor statistics are updated in real time.'
   return 'Visitor statistics unavailable'
 })
 
@@ -291,6 +299,35 @@ const project = (latitude, longitude, rotation) => {
 const illuminationAt = (latitude, longitude, sunVector) => {
   const point = vectorFromLatLng(latitude, longitude)
   return point.x * sunVector.x + point.y * sunVector.y + point.z * sunVector.z
+}
+
+const clampColor = (value) => Math.max(0, Math.min(255, value))
+
+const loadEarthTexture = () => {
+  if (earthTextureState !== 'idle') return
+
+  earthTextureState = 'loading'
+  const image = new Image()
+  image.decoding = 'async'
+  image.onload = () => {
+    const textureCanvas = document.createElement('canvas')
+    textureCanvas.width = image.naturalWidth || image.width
+    textureCanvas.height = image.naturalHeight || image.height
+
+    const textureCtx = textureCanvas.getContext('2d', { willReadFrequently: true })
+    textureCtx.drawImage(image, 0, 0, textureCanvas.width, textureCanvas.height)
+
+    earthTextureWidth = textureCanvas.width
+    earthTextureHeight = textureCanvas.height
+    earthTextureData = textureCtx.getImageData(0, 0, earthTextureWidth, earthTextureHeight).data
+    earthTextureState = 'ready'
+    drawGlobe(performance.now())
+  }
+  image.onerror = () => {
+    earthTextureState = 'failed'
+    drawGlobe(performance.now())
+  }
+  image.src = EARTH_TEXTURE_URL
 }
 
 const resizeCanvas = () => {
@@ -389,6 +426,68 @@ const drawCityLights = (rotation, sun, time) => {
   })
 }
 
+const drawTexturedEarth = (rotation, sun) => {
+  if (!earthTextureData || !earthTextureWidth || !earthTextureHeight) return false
+
+  const diameter = Math.max(1, Math.ceil(radius * 2))
+  if (!earthFrameCanvas) {
+    earthFrameCanvas = document.createElement('canvas')
+    earthFrameCtx = earthFrameCanvas.getContext('2d')
+  }
+  if (earthFrameCanvas.width !== diameter || earthFrameCanvas.height !== diameter) {
+    earthFrameCanvas.width = diameter
+    earthFrameCanvas.height = diameter
+  }
+
+  const frame = earthFrameCtx.createImageData(diameter, diameter)
+  const output = frame.data
+  const texture = earthTextureData
+  const textureStride = earthTextureWidth * 4
+
+  for (let y = 0; y < diameter; y += 1) {
+    const sphereY = 1 - (y + 0.5) / radius
+
+    for (let x = 0; x < diameter; x += 1) {
+      const sphereX = (x + 0.5) / radius - 1
+      const distanceSquared = sphereX * sphereX + sphereY * sphereY
+      const outputIndex = (y * diameter + x) * 4
+
+      if (distanceSquared > 1) {
+        output[outputIndex + 3] = 0
+        continue
+      }
+
+      const sphereZ = Math.sqrt(1 - distanceSquared)
+      const latitude = Math.asin(sphereY) / DEG
+      const rotatedLongitude = Math.atan2(sphereX, sphereZ) / DEG
+      const longitude = rotatedLongitude - rotation
+      const wrappedLongitude = ((longitude + 540) % 360) - 180
+      const textureX = Math.min(
+        earthTextureWidth - 1,
+        Math.max(0, Math.floor(((wrappedLongitude + 180) / 360) * earthTextureWidth))
+      )
+      const textureY = Math.min(
+        earthTextureHeight - 1,
+        Math.max(0, Math.floor(((90 - latitude) / 180) * earthTextureHeight))
+      )
+      const textureIndex = textureY * textureStride + textureX * 4
+      const light = illuminationAt(latitude, wrappedLongitude, sun.vector)
+      const limbShade = 0.38 + sphereZ * 0.72
+      const sunShade = 0.66 + Math.max(-0.35, Math.min(0.65, light)) * 0.26
+      const shade = limbShade * sunShade
+
+      output[outputIndex] = clampColor(texture[textureIndex] * 0.62 * shade)
+      output[outputIndex + 1] = clampColor(texture[textureIndex + 1] * 0.82 * shade)
+      output[outputIndex + 2] = clampColor(texture[textureIndex + 2] * 1.08 * shade + 10)
+      output[outputIndex + 3] = Math.round(255 * Math.min(1, (1 - Math.sqrt(distanceSquared)) * radius * 1.7))
+    }
+  }
+
+  earthFrameCtx.putImageData(frame, 0, 0)
+  ctx.drawImage(earthFrameCanvas, centerX - radius, centerY - radius, radius * 2, radius * 2)
+  return true
+}
+
 const drawVisitorMarkers = (rotation, time) => {
   visibleMarkers = []
 
@@ -446,44 +545,49 @@ const drawGlobe = (time = 0) => {
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
   ctx.clip()
 
-  const base = ctx.createRadialGradient(centerX - radius * 0.32, centerY - radius * 0.4, radius * 0.1, centerX, centerY, radius)
-  base.addColorStop(0, '#123f68')
-  base.addColorStop(0.46, '#06274a')
-  base.addColorStop(1, '#020a1b')
-  ctx.fillStyle = base
-  ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
+  const renderedTexture = earthTextureState === 'ready' && drawTexturedEarth(rotation, sun)
 
-  const dayGlow = ctx.createRadialGradient(
-    sunPoint.visible ? sunPoint.x : centerX + radius * 0.25,
-    sunPoint.visible ? sunPoint.y : centerY - radius * 0.15,
-    0,
-    sunPoint.visible ? sunPoint.x : centerX,
-    sunPoint.visible ? sunPoint.y : centerY,
-    radius * 1.28
-  )
-  dayGlow.addColorStop(0, 'rgba(88, 214, 255, 0.34)')
-  dayGlow.addColorStop(0.42, 'rgba(37, 122, 202, 0.16)')
-  dayGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
-  ctx.fillStyle = dayGlow
-  ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
+  if (!renderedTexture) {
+    const base = ctx.createRadialGradient(centerX - radius * 0.32, centerY - radius * 0.4, radius * 0.1, centerX, centerY, radius)
+    base.addColorStop(0, '#123f68')
+    base.addColorStop(0.46, '#06274a')
+    base.addColorStop(1, '#020a1b')
+    ctx.fillStyle = base
+    ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
 
-  const nightShade = ctx.createRadialGradient(
-    antiSunPoint.visible ? antiSunPoint.x : centerX - radius * 0.35,
-    antiSunPoint.visible ? antiSunPoint.y : centerY + radius * 0.1,
-    radius * 0.12,
-    antiSunPoint.visible ? antiSunPoint.x : centerX,
-    antiSunPoint.visible ? antiSunPoint.y : centerY,
-    radius * 1.18
-  )
-  nightShade.addColorStop(0, 'rgba(0, 8, 25, 0.56)')
-  nightShade.addColorStop(0.58, 'rgba(0, 8, 25, 0.24)')
-  nightShade.addColorStop(1, 'rgba(0, 8, 25, 0)')
-  ctx.fillStyle = nightShade
-  ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
+    const dayGlow = ctx.createRadialGradient(
+      sunPoint.visible ? sunPoint.x : centerX + radius * 0.25,
+      sunPoint.visible ? sunPoint.y : centerY - radius * 0.15,
+      0,
+      sunPoint.visible ? sunPoint.x : centerX,
+      sunPoint.visible ? sunPoint.y : centerY,
+      radius * 1.28
+    )
+    dayGlow.addColorStop(0, 'rgba(88, 214, 255, 0.34)')
+    dayGlow.addColorStop(0.42, 'rgba(37, 122, 202, 0.16)')
+    dayGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
+    ctx.fillStyle = dayGlow
+    ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
 
-  drawContinents(rotation)
-  drawGrid(rotation)
-  drawCityLights(rotation, sun, time)
+    const nightShade = ctx.createRadialGradient(
+      antiSunPoint.visible ? antiSunPoint.x : centerX - radius * 0.35,
+      antiSunPoint.visible ? antiSunPoint.y : centerY + radius * 0.1,
+      radius * 0.12,
+      antiSunPoint.visible ? antiSunPoint.x : centerX,
+      antiSunPoint.visible ? antiSunPoint.y : centerY,
+      radius * 1.18
+    )
+    nightShade.addColorStop(0, 'rgba(0, 8, 25, 0.56)')
+    nightShade.addColorStop(0.58, 'rgba(0, 8, 25, 0.24)')
+    nightShade.addColorStop(1, 'rgba(0, 8, 25, 0)')
+    ctx.fillStyle = nightShade
+    ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
+
+    drawContinents(rotation)
+    drawGrid(rotation)
+    drawCityLights(rotation, sun, time)
+  }
+
   drawVisitorMarkers(rotation, time)
 
   ctx.restore()
@@ -551,6 +655,7 @@ onMounted(() => {
   if (wrapRef.value) resizeObserver.observe(wrapRef.value)
 
   startTime = performance.now()
+  loadEarthTexture()
   drawGlobe(startTime)
   void loadVisitorStats()
 })

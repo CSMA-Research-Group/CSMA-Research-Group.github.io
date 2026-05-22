@@ -57,7 +57,7 @@
 
     <div class="footer-bottom">
       <span>© {{ currentYear }} {{ siteInfo.name }}.</span>
-      <span>Built with Vue 3 and Vite for GitHub Pages.</span>
+      <span>Cognitive Collaborative Intelligence for Software, Robotics, and Real-World Systems.</span>
     </div>
   </footer>
 </template>
