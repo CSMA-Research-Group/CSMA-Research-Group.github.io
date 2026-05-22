@@ -86,6 +86,7 @@ let height = 0
 let centerX = 0
 let centerY = 0
 let radius = 0
+let renderPixelRatio = 1
 let animationFrame = 0
 let resizeObserver
 let motionQuery
@@ -302,6 +303,7 @@ const illuminationAt = (latitude, longitude, sunVector) => {
 }
 
 const clampColor = (value) => Math.max(0, Math.min(255, value))
+const enhanceContrast = (value) => (value - 128) * 1.08 + 128
 
 const loadEarthTexture = () => {
   if (earthTextureState !== 'idle') return
@@ -337,11 +339,12 @@ const resizeCanvas = () => {
 
   const rect = wrap.getBoundingClientRect()
   const dpr = Math.min(window.devicePixelRatio || 1, 2)
+  renderPixelRatio = dpr
   width = rect.width
   height = rect.height
   centerX = width / 2
   centerY = height / 2 + 4
-  radius = Math.min(width, height) * 0.38
+  radius = Math.min(width, height) * 0.42
   canvas.width = Math.max(1, Math.floor(width * dpr))
   canvas.height = Math.max(1, Math.floor(height * dpr))
   canvas.style.width = `${width}px`
@@ -349,6 +352,8 @@ const resizeCanvas = () => {
 
   ctx = canvas.getContext('2d')
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
 }
 
 const drawVisiblePolyline = (points, rotation, strokeStyle, lineWidth = 1) => {
@@ -429,7 +434,8 @@ const drawCityLights = (rotation, sun, time) => {
 const drawTexturedEarth = (rotation, sun) => {
   if (!earthTextureData || !earthTextureWidth || !earthTextureHeight) return false
 
-  const diameter = Math.max(1, Math.ceil(radius * 2))
+  const diameter = Math.max(1, Math.ceil(radius * 2 * renderPixelRatio))
+  const sphereRadius = diameter / 2
   if (!earthFrameCanvas) {
     earthFrameCanvas = document.createElement('canvas')
     earthFrameCtx = earthFrameCanvas.getContext('2d')
@@ -437,6 +443,8 @@ const drawTexturedEarth = (rotation, sun) => {
   if (earthFrameCanvas.width !== diameter || earthFrameCanvas.height !== diameter) {
     earthFrameCanvas.width = diameter
     earthFrameCanvas.height = diameter
+    earthFrameCtx.imageSmoothingEnabled = true
+    earthFrameCtx.imageSmoothingQuality = 'high'
   }
 
   const frame = earthFrameCtx.createImageData(diameter, diameter)
@@ -445,10 +453,10 @@ const drawTexturedEarth = (rotation, sun) => {
   const textureStride = earthTextureWidth * 4
 
   for (let y = 0; y < diameter; y += 1) {
-    const sphereY = 1 - (y + 0.5) / radius
+    const sphereY = 1 - (y + 0.5) / sphereRadius
 
     for (let x = 0; x < diameter; x += 1) {
-      const sphereX = (x + 0.5) / radius - 1
+      const sphereX = (x + 0.5) / sphereRadius - 1
       const distanceSquared = sphereX * sphereX + sphereY * sphereY
       const outputIndex = (y * diameter + x) * 4
 
@@ -462,24 +470,49 @@ const drawTexturedEarth = (rotation, sun) => {
       const rotatedLongitude = Math.atan2(sphereX, sphereZ) / DEG
       const longitude = rotatedLongitude - rotation
       const wrappedLongitude = ((longitude + 540) % 360) - 180
-      const textureX = Math.min(
-        earthTextureWidth - 1,
-        Math.max(0, Math.floor(((wrappedLongitude + 180) / 360) * earthTextureWidth))
+      const textureU = ((wrappedLongitude + 180) / 360) * (earthTextureWidth - 1)
+      const textureV = ((90 - latitude) / 180) * (earthTextureHeight - 1)
+      const textureX0 = Math.floor(textureU)
+      const textureY0 = Math.floor(textureV)
+      const textureX1 = (textureX0 + 1) % earthTextureWidth
+      const textureY1 = Math.min(earthTextureHeight - 1, textureY0 + 1)
+      const mixX = textureU - textureX0
+      const mixY = textureV - textureY0
+      const topLeftIndex = textureY0 * textureStride + textureX0 * 4
+      const topRightIndex = textureY0 * textureStride + textureX1 * 4
+      const bottomLeftIndex = textureY1 * textureStride + textureX0 * 4
+      const bottomRightIndex = textureY1 * textureStride + textureX1 * 4
+      const topWeight = 1 - mixY
+      const bottomWeight = mixY
+      const leftWeight = 1 - mixX
+      const rightWeight = mixX
+      const red = (
+        texture[topLeftIndex] * leftWeight * topWeight
+        + texture[topRightIndex] * rightWeight * topWeight
+        + texture[bottomLeftIndex] * leftWeight * bottomWeight
+        + texture[bottomRightIndex] * rightWeight * bottomWeight
       )
-      const textureY = Math.min(
-        earthTextureHeight - 1,
-        Math.max(0, Math.floor(((90 - latitude) / 180) * earthTextureHeight))
+      const green = (
+        texture[topLeftIndex + 1] * leftWeight * topWeight
+        + texture[topRightIndex + 1] * rightWeight * topWeight
+        + texture[bottomLeftIndex + 1] * leftWeight * bottomWeight
+        + texture[bottomRightIndex + 1] * rightWeight * bottomWeight
       )
-      const textureIndex = textureY * textureStride + textureX * 4
+      const blue = (
+        texture[topLeftIndex + 2] * leftWeight * topWeight
+        + texture[topRightIndex + 2] * rightWeight * topWeight
+        + texture[bottomLeftIndex + 2] * leftWeight * bottomWeight
+        + texture[bottomRightIndex + 2] * rightWeight * bottomWeight
+      )
       const light = illuminationAt(latitude, wrappedLongitude, sun.vector)
-      const limbShade = 0.38 + sphereZ * 0.72
-      const sunShade = 0.66 + Math.max(-0.35, Math.min(0.65, light)) * 0.26
+      const limbShade = 0.48 + sphereZ * 0.58
+      const sunShade = 0.8 + Math.max(-0.2, Math.min(0.7, light)) * 0.16
       const shade = limbShade * sunShade
 
-      output[outputIndex] = clampColor(texture[textureIndex] * 0.62 * shade)
-      output[outputIndex + 1] = clampColor(texture[textureIndex + 1] * 0.82 * shade)
-      output[outputIndex + 2] = clampColor(texture[textureIndex + 2] * 1.08 * shade + 10)
-      output[outputIndex + 3] = Math.round(255 * Math.min(1, (1 - Math.sqrt(distanceSquared)) * radius * 1.7))
+      output[outputIndex] = clampColor(enhanceContrast(red) * 0.82 * shade + 8)
+      output[outputIndex + 1] = clampColor(enhanceContrast(green) * 0.95 * shade + 8)
+      output[outputIndex + 2] = clampColor(enhanceContrast(blue) * 1.06 * shade + 12)
+      output[outputIndex + 3] = Math.round(255 * Math.min(1, (1 - Math.sqrt(distanceSquared)) * sphereRadius * 2.2))
     }
   }
 
