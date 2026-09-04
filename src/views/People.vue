@@ -13,8 +13,8 @@
     <section class="section people-sections">
       <section v-for="section in peopleSections" :key="section.id" class="people-section">
         <div class="section-heading compact">
-          <p class="eyebrow">{{ section.title }}</p>
-          <h2>{{ section.people.length }} Profile{{ section.people.length === 1 ? '' : 's' }}</h2>
+          <p class="eyebrow">{{ section.people.length }} Profile{{ section.people.length === 1 ? '' : 's' }}</p>
+          <h2>{{ section.title }}</h2>
         </div>
         <div class="people-grid">
           <PeopleCard v-for="person in section.people" :key="person.id" :person="person" />

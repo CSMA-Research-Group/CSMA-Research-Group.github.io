@@ -23,7 +23,7 @@
 
       <article class="contact-card">
         <p class="eyebrow">GitHub</p>
-        <h2><a :href="siteInfo.githubOrg" target="_blank" rel="noreferrer">CSMA-Research-Group</a></h2>
+        <h2><a :href="siteInfo.githubOrg" target="_blank" rel="noopener noreferrer">CSMA-Research-Group</a></h2>
         <p>Public repositories and website source code are maintained through the group GitHub organization.</p>
       </article>
 

@@ -2,7 +2,7 @@
 
 This repository contains the official website for **CSMA Research Group**, deployed through GitHub Pages.
 
-The site presents CSMA research on artificial intelligence, intelligent software engineering, intelligent robotics, and application-driven intelligent systems. Content is maintained through structured data files so publications, projects, people, news, research areas, and resources can be updated without rewriting page templates.
+The site presents CSMA research on **Cognitive and Collaborative Intelligence**. Cognitive intelligence is the core; intelligent software and robotics are the primary carriers; application scenarios provide grounding; knowledge and human feedback form cross-cutting support. Content is maintained through structured data files so publications, projects, people, news, research areas, and resources can be updated without rewriting page templates.
 
 ## Tech Stack
 
@@ -18,7 +18,7 @@ The site presents CSMA research on artificial intelligence, intelligent software
 Install dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 Start the development server:
@@ -83,14 +83,15 @@ npx wrangler secret put VISITOR_HASH_SALT
 npx wrangler deploy
 ```
 
-Set `ALLOWED_ORIGIN` in the Worker config for the production GitHub Pages domain, then set the frontend `VITE_VISITOR_API_BASE` to the deployed Worker URL. See `workers/visitor-stats/README.md` for the full API, privacy notes, and local testing commands.
+Set `ALLOWED_ORIGIN` in the Worker config for the production GitHub Pages domain, then set the frontend `VITE_VISITOR_API_BASE` to the deployed Worker URL. Never expose `VISITOR_HASH_SALT` in frontend variables or documentation. See `workers/visitor-stats/README.md` and `docs/visitor-stats.md` for the full API, privacy notes, fallback behavior, and local testing commands.
 
 ## Structured Content
 
 Most public website content is stored in `src/data/`:
 
-- `src/data/site.js`: group name, slogan, description, contact, navigation, and homepage metrics
+- `src/data/site.js`: group name, slogan, description, contact, affiliation, and navigation
 - `src/data/researchAreas.js`: research directions and research highlights
+- `src/data/researchPresentation.js`: presentation-only research titles, roles, and homepage ordering; canonical IDs remain in `researchAreas.js`
 - `src/data/projects.js`: project prototypes, status, key ideas, links, figures, and related publications
 - `src/data/publications.js`: publication metadata, tags, DOI/code/PDF links, summaries, and contribution highlights
 - `src/data/people.js`: group members, student researchers, collaborators, and alumni placeholders
@@ -177,3 +178,9 @@ Use placeholders or blank fields for unconfirmed information. In particular, con
 Publication and people data should be manually checked before release. Do not invent unverified publication, member, collaborator, award, grant, affiliation, news, or result information. The user reviews the final diff and runs the final Git workflow manually.
 
 Do not commit or push automatically from this repository.
+
+## Maintenance Guides
+
+- [`docs/site-maintenance.md`](docs/site-maintenance.md): structured content, Interactive Research Vision, assets, responsive QA, and safe Git workflow
+- [`docs/deployment.md`](docs/deployment.md): GitHub Pages build pipeline, Vite base, environment variables, and production checks
+- [`docs/visitor-stats.md`](docs/visitor-stats.md): frontend → Worker → D1 data flow, privacy, CORS, API behavior, and Globe maintenance

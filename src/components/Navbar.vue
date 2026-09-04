@@ -1,5 +1,5 @@
 <template>
-  <header class="site-navbar" :class="{ 'menu-open': isOpen }">
+  <header class="site-navbar" :class="{ 'menu-open': isOpen }" @keydown.esc="handleEscape">
     <RouterLink class="brand" to="/" @click="closeMenu">
       <span class="brand-mark" aria-hidden="true">{{ siteInfo.shortName }}</span>
       <span>
@@ -9,10 +9,12 @@
     </RouterLink>
 
     <button
+      ref="toggleRef"
       class="nav-toggle"
       type="button"
       :aria-expanded="isOpen"
-      aria-label="Toggle navigation"
+      aria-controls="primary-navigation"
+      :aria-label="isOpen ? 'Close navigation' : 'Open navigation'"
       @click="isOpen = !isOpen"
     >
       <span></span>
@@ -20,7 +22,7 @@
       <span></span>
     </button>
 
-    <nav class="nav-links" aria-label="Primary navigation">
+    <nav id="primary-navigation" class="nav-links" aria-label="Primary navigation">
       <RouterLink
         v-for="item in navigationItems"
         :key="item.path"
@@ -35,15 +37,23 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { navigationItems, siteInfo } from '../data/site'
 
 const route = useRoute()
 const isOpen = ref(false)
+const toggleRef = ref(null)
 
 const closeMenu = () => {
   isOpen.value = false
+}
+
+const handleEscape = async () => {
+  if (!isOpen.value) return
+  closeMenu()
+  await nextTick()
+  toggleRef.value?.focus()
 }
 
 watch(

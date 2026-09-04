@@ -1,8 +1,15 @@
 <template>
   <article class="research-card">
-    <p class="card-kicker">{{ indexLabel }}</p>
-    <h2>{{ area.title }}</h2>
+    <p class="card-kicker">{{ indexLabel }} · {{ getResearchAreaRole(area.id) }}</p>
+    <h2>{{ getResearchAreaDisplayTitle(area) }}</h2>
     <p>{{ area.summary }}</p>
+
+    <div v-if="area.keyTopics?.length" class="card-section">
+      <h3>Focus</h3>
+      <div class="tag-row">
+        <span v-for="topic in area.keyTopics" :key="topic">{{ topic }}</span>
+      </div>
+    </div>
 
     <div class="card-section">
       <h3>Motivation</h3>
@@ -34,14 +41,14 @@
           :key="`project-${projectId}`"
           :to="`/projects#${projectId}`"
         >
-          Project
+          Project: {{ projectTitleFor(projectId) }}
         </RouterLink>
         <RouterLink
           v-for="publicationId in area.relatedPublicationIds"
           :key="`publication-${publicationId}`"
           :to="`/publications#${publicationId}`"
         >
-          Publication
+          Publication: {{ publicationTitleFor(publicationId) }}
         </RouterLink>
       </div>
     </div>
@@ -55,6 +62,17 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import { projects } from '../data/projects'
+import { publications } from '../data/publications'
+import { getResearchAreaDisplayTitle, getResearchAreaRole } from '../data/researchPresentation'
+
+const projectTitleFor = (projectId) => (
+  projects.find((project) => project.id === projectId)?.title || projectId
+)
+
+const publicationTitleFor = (publicationId) => (
+  publications.find((publication) => publication.id === publicationId)?.title || publicationId
+)
 
 defineProps({
   area: {

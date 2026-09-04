@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://csma-research-group.github.io/sitemap.xml

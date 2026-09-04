@@ -1,10 +1,10 @@
 <template>
-  <section class="global-visitors" aria-label="Global visitors globe">
+  <section class="global-visitors" aria-labelledby="visitor-globe-title">
     <div class="globe-panel">
       <div class="globe-heading">
         <p class="globe-kicker">Global Visitors</p>
-        <h2>Research Reach Around the World</h2>
-        <p>
+        <h2 id="visitor-globe-title">Research Reach Around the World</h2>
+        <p id="visitor-globe-description">
           This globe visualizes anonymous visitor statistics and the global reach of CSMA Research Group.
         </p>
       </div>
@@ -18,8 +18,10 @@
         <canvas
           ref="canvasRef"
           class="global-globe-canvas"
-          aria-label="Animated global visitors globe"
-        ></canvas>
+          role="img"
+          aria-label="Global visitor locations plotted from the live visitor statistics API"
+          aria-describedby="visitor-globe-description"
+        >Global visitor visualization</canvas>
         <span class="utc-chip">{{ utcLabel }}</span>
         <div
           v-if="tooltip.visible"
@@ -33,7 +35,12 @@
       </div>
     </div>
 
-    <aside class="visitor-stat-panel" aria-label="Visitor statistics">
+    <aside
+      class="visitor-stat-panel"
+      aria-label="Visitor statistics"
+      aria-live="polite"
+      :aria-busy="statsStatus === 'loading'"
+    >
       <dl>
         <div>
           <dt>Founded</dt>
@@ -60,9 +67,11 @@
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { trackVisitor } from '../services/visitorStats'
+import { visitorGlobeInfo } from '../data/visitorStats'
 
 const DEG = Math.PI / 180
-const foundedAtFallback = '2026-05-19 05:19'
+const FRAME_INTERVAL = 1000 / 24
+const foundedAtFallback = visitorGlobeInfo.foundedAt
 // Local copy from NASA Earth Observatory, Blue Marble: Next Generation with Topography and Bathymetry.
 const EARTH_TEXTURE_URL = `${import.meta.env.BASE_URL}textures/earth-blue-marble.jpg`
 
@@ -89,9 +98,13 @@ let radius = 0
 let renderPixelRatio = 1
 let animationFrame = 0
 let resizeObserver
+let intersectionObserver
 let motionQuery
 let reducedMotion = false
 let startTime = 0
+let lastRenderTime = 0
+let isMounted = false
+let isGlobeVisible = true
 let visibleMarkers = []
 let utcTimer = 0
 let earthTextureState = 'idle'
@@ -100,6 +113,7 @@ let earthTextureWidth = 0
 let earthTextureHeight = 0
 let earthFrameCanvas = null
 let earthFrameCtx = null
+let earthFrameImageData = null
 
 const continents = [
   [
@@ -179,11 +193,7 @@ const loadingOrUnavailableLabel = computed(() => (
 
 const hasVisitorStats = computed(() => statsStatus.value === 'available' && visitorStats.value?.ok)
 
-const foundedAtLabel = computed(() => (
-  hasVisitorStats.value && visitorStats.value.foundedAt
-    ? visitorStats.value.foundedAt
-    : foundedAtFallback
-))
+const foundedAtLabel = computed(() => foundedAtFallback)
 
 const formatStatCount = (value) => {
   const count = Number(value)
@@ -238,18 +248,20 @@ const loadVisitorStats = async () => {
   statsStatus.value = 'loading'
   const stats = await trackVisitor()
 
+  if (!isMounted) return
+
   if (!stats?.ok) {
     visitorStats.value = null
     visitorSources.value = []
     statsStatus.value = 'unavailable'
-    drawGlobe(performance.now())
+    requestRender()
     return
   }
 
   visitorStats.value = stats
   visitorSources.value = normalizeVisitorCountries(stats.countries)
   statsStatus.value = 'available'
-  drawGlobe(performance.now())
+  requestRender()
 }
 
 const updateUtcLabel = () => {
@@ -312,6 +324,8 @@ const loadEarthTexture = () => {
   const image = new Image()
   image.decoding = 'async'
   image.onload = () => {
+    if (!isMounted) return
+
     const textureCanvas = document.createElement('canvas')
     textureCanvas.width = image.naturalWidth || image.width
     textureCanvas.height = image.naturalHeight || image.height
@@ -323,11 +337,12 @@ const loadEarthTexture = () => {
     earthTextureHeight = textureCanvas.height
     earthTextureData = textureCtx.getImageData(0, 0, earthTextureWidth, earthTextureHeight).data
     earthTextureState = 'ready'
-    drawGlobe(performance.now())
+    requestRender()
   }
   image.onerror = () => {
+    if (!isMounted) return
     earthTextureState = 'failed'
-    drawGlobe(performance.now())
+    requestRender()
   }
   image.src = EARTH_TEXTURE_URL
 }
@@ -443,12 +458,16 @@ const drawTexturedEarth = (rotation, sun) => {
   if (earthFrameCanvas.width !== diameter || earthFrameCanvas.height !== diameter) {
     earthFrameCanvas.width = diameter
     earthFrameCanvas.height = diameter
+    earthFrameImageData = null
     earthFrameCtx.imageSmoothingEnabled = true
     earthFrameCtx.imageSmoothingQuality = 'high'
   }
 
-  const frame = earthFrameCtx.createImageData(diameter, diameter)
-  const output = frame.data
+  if (!earthFrameImageData) {
+    earthFrameImageData = earthFrameCtx.createImageData(diameter, diameter)
+  }
+
+  const output = earthFrameImageData.data
   const texture = earthTextureData
   const textureStride = earthTextureWidth * 4
 
@@ -516,7 +535,7 @@ const drawTexturedEarth = (rotation, sun) => {
     }
   }
 
-  earthFrameCtx.putImageData(frame, 0, 0)
+  earthFrameCtx.putImageData(earthFrameImageData, 0, 0)
   ctx.drawImage(earthFrameCanvas, centerX - radius, centerY - radius, radius * 2, radius * 2)
   return true
 }
@@ -634,7 +653,34 @@ const drawGlobe = (time = 0) => {
   ctx.stroke()
   ctx.shadowBlur = 0
 
-  if (!reducedMotion) animationFrame = requestAnimationFrame(drawGlobe)
+}
+
+const stopAnimation = () => {
+  if (animationFrame) cancelAnimationFrame(animationFrame)
+  animationFrame = 0
+}
+
+const runAnimation = (time) => {
+  animationFrame = 0
+  if (!isMounted || reducedMotion || !isGlobeVisible || document.hidden) return
+
+  if (!lastRenderTime || time - lastRenderTime >= FRAME_INTERVAL) {
+    lastRenderTime = time
+    drawGlobe(time)
+  }
+
+  animationFrame = requestAnimationFrame(runAnimation)
+}
+
+const requestRender = () => {
+  if (!isMounted || !ctx || !isGlobeVisible || document.hidden) return
+
+  if (reducedMotion) {
+    drawGlobe(performance.now())
+    return
+  }
+
+  if (!animationFrame) animationFrame = requestAnimationFrame(runAnimation)
 }
 
 const handlePointerMove = (event) => {
@@ -667,12 +713,21 @@ const hideTooltip = () => {
 
 const handleMotionChange = () => {
   reducedMotion = Boolean(motionQuery?.matches)
-  if (animationFrame) cancelAnimationFrame(animationFrame)
-  animationFrame = 0
-  drawGlobe(performance.now())
+  stopAnimation()
+  requestRender()
+}
+
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    stopAnimation()
+    return
+  }
+
+  requestRender()
 }
 
 onMounted(() => {
+  isMounted = true
   updateUtcLabel()
   utcTimer = window.setInterval(updateUtcLabel, 60000)
 
@@ -683,20 +738,42 @@ onMounted(() => {
   resizeCanvas()
   resizeObserver = new ResizeObserver(() => {
     resizeCanvas()
-    drawGlobe(performance.now())
+    requestRender()
   })
   if (wrapRef.value) resizeObserver.observe(wrapRef.value)
 
   startTime = performance.now()
-  loadEarthTexture()
   drawGlobe(startTime)
+
+  if ('IntersectionObserver' in window && wrapRef.value) {
+    isGlobeVisible = false
+    intersectionObserver = new IntersectionObserver((entries) => {
+      isGlobeVisible = Boolean(entries[0]?.isIntersecting)
+      if (!isGlobeVisible) {
+        stopAnimation()
+        return
+      }
+
+      loadEarthTexture()
+      requestRender()
+    }, { rootMargin: '120px' })
+    intersectionObserver.observe(wrapRef.value)
+  } else {
+    loadEarthTexture()
+    requestRender()
+  }
+
+  document.addEventListener('visibilitychange', handleVisibilityChange)
   void loadVisitorStats()
 })
 
 onUnmounted(() => {
-  if (animationFrame) cancelAnimationFrame(animationFrame)
+  isMounted = false
+  stopAnimation()
   resizeObserver?.disconnect()
+  intersectionObserver?.disconnect()
   motionQuery?.removeEventListener?.('change', handleMotionChange)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
   if (utcTimer) window.clearInterval(utcTimer)
 })
 </script>
@@ -707,9 +784,7 @@ onUnmounted(() => {
   grid-template-columns: minmax(240px, 1fr) minmax(180px, 0.58fr);
   gap: 16px;
   align-items: stretch;
-  height: 260px;
-  max-height: 260px;
-  min-height: 0;
+  min-height: 320px;
 }
 
 .globe-panel,
@@ -729,7 +804,7 @@ onUnmounted(() => {
   grid-template-rows: auto minmax(0, 1fr);
   gap: 11px;
   padding: 16px;
-  min-height: 0;
+  min-height: 320px;
   overflow: hidden;
 }
 
@@ -889,12 +964,15 @@ onUnmounted(() => {
 @media (max-width: 980px) {
   .global-visitors {
     grid-template-columns: 1fr;
-    height: auto;
-    max-height: none;
+    min-height: 0;
+  }
+
+  .globe-panel {
+    min-height: 0;
   }
 
   .globe-canvas-wrap {
-    height: 210px;
+    height: 260px;
   }
 }
 
@@ -905,7 +983,7 @@ onUnmounted(() => {
   }
 
   .globe-canvas-wrap {
-    height: 180px;
+    height: 220px;
   }
 }
 </style>

@@ -3,7 +3,7 @@
     <div class="avatar" aria-hidden="true">{{ initials }}</div>
     <div>
       <p class="card-kicker">{{ person.role }}</p>
-      <h2>{{ person.name }}</h2>
+      <h3>{{ person.name }}</h3>
       <p v-if="person.affiliation" class="affiliation">{{ person.affiliation }}</p>
 
       <div class="tag-row">
@@ -11,13 +11,19 @@
       </div>
 
       <div v-if="person.relatedPublications?.length" class="related-pubs">
-        <h3>Related Publications</h3>
+        <h4>Related Publications</h4>
         <span v-for="publication in person.relatedPublications" :key="publication">{{ publication }}</span>
       </div>
 
       <div class="profile-links">
         <a v-if="person.email" :href="`mailto:${person.email}`">Email</a>
-        <a v-if="person.homepage" :href="person.homepage" target="_blank" rel="noreferrer">Homepage</a>
+        <a
+          v-if="person.homepage"
+          :href="person.homepage"
+          target="_blank"
+          rel="noopener noreferrer"
+          :aria-label="`${person.name} homepage`"
+        >Homepage</a>
       </div>
 
       <p v-if="person.source && !person.placeholder" class="source-note">{{ person.source }}</p>

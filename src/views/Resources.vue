@@ -13,16 +13,24 @@
     <section class="section resource-sections">
       <article v-for="group in resourceGroups" :key="group.id" class="resource-group">
         <div class="section-heading compact">
-          <p class="eyebrow">{{ group.title }}</p>
-          <h2>{{ group.description }}</h2>
+          <p class="eyebrow">Resource Category</p>
+          <h2>{{ group.title }}</h2>
+          <p class="section-description">{{ group.description }}</p>
         </div>
         <div class="resource-list">
           <div v-for="item in group.items" :key="item.name" class="resource-item">
             <div>
+              <p v-if="item.type" class="card-kicker">{{ item.type }}</p>
               <h3>{{ item.name }}</h3>
               <p>{{ item.description }}</p>
             </div>
-            <a v-if="item.link" :href="item.link" target="_blank" rel="noreferrer">{{ item.status }}</a>
+            <a
+              v-if="item.link"
+              :href="item.link"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="`Open ${item.name}`"
+            >{{ item.status }}</a>
             <span v-else>{{ item.status }}</span>
           </div>
         </div>

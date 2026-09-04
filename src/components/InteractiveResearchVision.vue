@@ -18,7 +18,8 @@
       <img
         class="vision-image"
         :src="visionImage"
-        alt="CSMA research vision connecting artificial intelligence, intelligent software, intelligent robotics, and application scenarios"
+        alt="CSMA research vision connecting cognitive intelligence, intelligent software engineering, intelligent robotics, and application scenarios"
+        decoding="async"
         draggable="false"
       />
 
@@ -131,7 +132,7 @@
             height: `${area.hotspot.height}%`,
           }"
           type="button"
-          :aria-label="`${area.title}: open research direction`"
+          :aria-label="`${area.title}: ${area.tooltip.text} Open research direction.`"
           @mouseenter="setActiveArea(area.id)"
           @mouseleave="clearActiveArea"
           @focus="setActiveArea(area.id)"
@@ -154,14 +155,25 @@
         <span>{{ activeAreaData.tooltip.text }}</span>
       </div>
     </div>
+
+    <nav class="vision-mobile-links" aria-label="Research vision directions">
+      <RouterLink
+        v-for="area in areas"
+        :key="`mobile-${area.id}`"
+        :to="{ path: '/research', hash: area.targetHash }"
+      >
+        <strong>{{ area.title }}</strong>
+        <span>{{ area.tooltip.text }}</span>
+      </RouterLink>
+    </nav>
   </section>
 </template>
 
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 
-const visionImage = '/figures/csma-research-vision.svg'
+const visionImage = `${import.meta.env.BASE_URL}figures/csma-research-vision.svg`
 const router = useRouter()
 const wrapRef = ref(null)
 const activeArea = ref(null)
@@ -179,7 +191,7 @@ let lastPointerEvent = null
 const areas = [
   {
     id: 'ai',
-    title: 'Artificial Intelligence',
+    title: 'Cognitive Intelligence',
     color: '#55ddff',
     targetHash: '#artificial-intelligence',
     flowPath: 'M887 386 C820 284 710 236 614 234',
@@ -194,7 +206,7 @@ const areas = [
   },
   {
     id: 'software',
-    title: 'Intelligent Software',
+    title: 'Intelligent Software Engineering',
     color: '#61f2d3',
     targetHash: '#intelligent-software-engineering',
     flowPath: 'M887 386 C960 284 1060 235 1146 234',
@@ -829,7 +841,7 @@ onUnmounted(() => {
 }
 
 .hotspot:focus-visible {
-  outline: 2px solid rgba(137, 229, 255, 0.88);
+  outline: 3px solid #7eecff;
   outline-offset: 4px;
 }
 
@@ -894,6 +906,10 @@ onUnmounted(() => {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.vision-mobile-links {
+  display: none;
 }
 
 @keyframes coreBreathe {
@@ -1024,6 +1040,10 @@ onUnmounted(() => {
 }
 
 @media (max-width: 820px) {
+  .hotspots {
+    display: none;
+  }
+
   .flow-line {
     stroke-width: 3;
   }
@@ -1038,6 +1058,43 @@ onUnmounted(() => {
 
   .vision-tooltip-layer {
     display: none;
+  }
+
+  .vision-mobile-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .vision-mobile-links a {
+    display: grid;
+    min-height: 54px;
+    gap: 4px;
+    padding: 11px 12px;
+    border: 1px solid rgba(16, 42, 67, 0.16);
+    border-radius: 8px;
+    background: #ffffff;
+    color: #102a43;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .vision-mobile-links strong {
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .vision-mobile-links span {
+    color: #5f6b7a;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .vision-mobile-links a:focus-visible {
+    outline: 3px solid #195f8f;
+    outline-offset: 2px;
   }
 }
 
@@ -1060,6 +1117,10 @@ onUnmounted(() => {
 
   .feedback-orbit-layer {
     opacity: 0.45;
+  }
+
+  .vision-mobile-links {
+    grid-template-columns: 1fr;
   }
 }
 

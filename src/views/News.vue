@@ -11,6 +11,7 @@
     </section>
 
     <section class="section">
+      <h2 class="sr-only">All news</h2>
       <NewsList :items="newsItems" />
     </section>
   </div>

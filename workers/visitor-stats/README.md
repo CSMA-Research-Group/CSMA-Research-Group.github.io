@@ -7,7 +7,7 @@ Cloudflare Worker + D1 backend for anonymous visitor statistics used by the foot
 - `POST /api/visitor/track`: records one visit and returns the latest aggregate stats.
 - `GET /api/visitor/stats`: returns aggregate stats without increasing visit counts.
 
-The frontend calls `POST /api/visitor/track` with:
+The frontend calls `POST /api/visitor/track` with an origin-only referrer value:
 
 ```json
 {
@@ -89,7 +89,7 @@ For production CORS, set `ALLOWED_ORIGIN` in `wrangler.toml`:
 ALLOWED_ORIGIN = "https://csma-research-group.github.io"
 ```
 
-If `ALLOWED_ORIGIN` is not configured, local development origins `http://localhost:5173` and `http://localhost:4173` are allowed.
+The Worker code includes the official GitHub Pages origin and local development origins as safe defaults. `ALLOWED_ORIGIN` can add permitted origins without removing those defaults. Requests carrying any other browser `Origin` are rejected.
 
 ## Local Worker Testing
 
@@ -120,3 +120,5 @@ After deployment, set the frontend environment variable:
 ```bash
 VITE_VISITOR_API_BASE=https://your-worker-name.your-subdomain.workers.dev
 ```
+
+Deployment and remote schema commands mutate external state. Run them only after reviewing the diff, confirming the D1 target, and checking the production origin. The website maintenance workflow does not deploy the Worker automatically.

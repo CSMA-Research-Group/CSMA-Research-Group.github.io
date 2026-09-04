@@ -1,5 +1,5 @@
 <template>
-  <section class="hero-section">
+  <section class="hero-section" :class="{ 'hero-section-copy-only': !$slots.default }">
     <div class="hero-copy">
       <p class="eyebrow">{{ eyebrow }}</p>
       <h1>{{ title }}</h1>
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="hero-visual" aria-label="CSMA research vision diagram">
+    <div v-if="$slots.default" class="hero-visual" aria-label="CSMA research vision diagram">
       <slot />
     </div>
   </section>

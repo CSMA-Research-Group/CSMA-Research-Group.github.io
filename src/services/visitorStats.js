@@ -1,4 +1,5 @@
 const VISITOR_ID_KEY = 'csma_visitor_id'
+const REQUEST_TIMEOUT_MS = 8000
 
 const getVisitorApiBase = () => {
   const base = import.meta.env.VITE_VISITOR_API_BASE
@@ -36,24 +37,41 @@ const readJson = async (response) => {
   }
 }
 
-export const trackVisitor = async () => {
-  if (typeof window === 'undefined') return null
+const fetchWithTimeout = async (url, options = {}) => {
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
 
-  const visitorId = getOrCreateVisitorId()
+  try {
+    return await fetch(url, {
+      ...options,
+      credentials: 'omit',
+      signal: controller.signal,
+    })
+  } finally {
+    window.clearTimeout(timeoutId)
+  }
+}
+
+const getReferrerOrigin = () => {
+  if (!document.referrer) return ''
+
+  try {
+    return new URL(document.referrer).origin
+  } catch {
+    return ''
+  }
+}
+
+export const fetchVisitorStats = async () => {
   const apiBase = getVisitorApiBase()
   if (!apiBase) return null
 
   try {
-    const response = await fetch(`${apiBase}/api/visitor/track`, {
-      method: 'POST',
+    const response = await fetchWithTimeout(`${apiBase}/api/visitor/stats`, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
-      body: JSON.stringify({
-        visitorId,
-        path: window.location.pathname,
-        referrer: document.referrer || '',
-      }),
     })
 
     if (!response.ok) return null
@@ -65,20 +83,32 @@ export const trackVisitor = async () => {
   }
 }
 
-export const fetchVisitorStats = async () => {
+export const trackVisitor = async () => {
+  if (typeof window === 'undefined') return null
+
+  const visitorId = getOrCreateVisitorId()
   const apiBase = getVisitorApiBase()
   if (!apiBase) return null
 
   try {
-    const response = await fetch(`${apiBase}/api/visitor/stats`, {
-      method: 'GET',
+    const response = await fetchWithTimeout(`${apiBase}/api/visitor/track`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        visitorId,
+        path: `${window.location.pathname}${window.location.hash}`,
+        referrer: getReferrerOrigin(),
+      }),
     })
 
-    if (!response.ok) return null
+    if (!response.ok) return fetchVisitorStats()
 
     const data = await readJson(response)
-    return data?.ok ? data : null
+    return data?.ok ? data : fetchVisitorStats()
   } catch {
-    return null
+    return fetchVisitorStats()
   }
 }

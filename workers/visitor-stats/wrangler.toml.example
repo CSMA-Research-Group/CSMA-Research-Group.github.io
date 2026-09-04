@@ -7,6 +7,6 @@ binding = "DB"
 database_name = "csma-visitor-stats"
 database_id = "replace-with-your-database-id"
 
-# Optional production CORS origin. For multiple origins, separate with commas.
-# [vars]
-# ALLOWED_ORIGIN = "https://csma-research-group.github.io"
+# Browser origins permitted to call the public API. Separate multiple origins with commas.
+[vars]
+ALLOWED_ORIGIN = "https://csma-research-group.github.io,http://localhost:5173,http://localhost:4173"

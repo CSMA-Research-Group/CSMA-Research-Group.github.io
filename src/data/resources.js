@@ -7,12 +7,14 @@ export const resourceGroups = [
     items: [
       {
         name: 'TraceCoder',
-        status: 'Coming soon',
+        type: 'Code / Tool',
+        status: 'Available',
         description: 'Trace-driven debugging and repair prototype.',
-        link: '',
+        link: 'https://github.com/CSMA-Research-Group/TraceCoder',
       },
       {
         name: 'ChatREQ',
+        type: 'Tool / Demo',
         status: 'Coming soon',
         description: 'Knowledge-driven requirements engineering prototype.',
         link: '',
@@ -27,6 +29,7 @@ export const resourceGroups = [
     items: [
       {
         name: 'Requirements and traceability benchmark',
+        type: 'Data',
         status: 'Coming soon',
         description: 'Benchmark details will be updated after public release.',
         link: '',
@@ -41,6 +44,7 @@ export const resourceGroups = [
     items: [
       {
         name: 'Reading list',
+        type: 'Course / Document',
         status: 'Coming soon',
         description: 'Recommended papers and learning resources will be added.',
         link: '',
@@ -55,6 +59,7 @@ export const resourceGroups = [
     items: [
       {
         name: 'CSMA GitHub organization',
+        type: 'Code',
         status: 'Available',
         description: 'Official GitHub organization for the group website and future releases.',
         link: 'https://github.com/CSMA-Research-Group',

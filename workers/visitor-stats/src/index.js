@@ -1,4 +1,5 @@
-const LOCAL_ALLOWED_ORIGINS = new Set([
+const DEFAULT_ALLOWED_ORIGINS = new Set([
+  'https://csma-research-group.github.io',
   'http://localhost:5173',
   'http://localhost:4173',
 ])
@@ -40,8 +41,7 @@ const resolveAllowedOrigin = (request, env) => {
     .filter(Boolean)
 
   if (configuredOrigins.includes('*')) return '*'
-  if (configuredOrigins.includes(origin)) return origin
-  if (!configuredOrigins.length && LOCAL_ALLOWED_ORIGINS.has(origin)) return origin
+  if (configuredOrigins.includes(origin) || DEFAULT_ALLOWED_ORIGINS.has(origin)) return origin
 
   return ''
 }
@@ -375,6 +375,11 @@ const handleStats = async (request, env) => {
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') return handleOptions(request, env)
+
+    const requestOrigin = request.headers.get('Origin')
+    if (requestOrigin && !resolveAllowedOrigin(request, env)) {
+      return jsonResponse(request, env, { ok: false, error: 'Origin not allowed.' }, 403)
+    }
 
     const url = new URL(request.url)
 
