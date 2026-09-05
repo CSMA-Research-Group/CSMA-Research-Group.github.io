@@ -30,6 +30,8 @@ export const researchAreaPresentation = Object.freeze({
 export const researchNarrative = Object.freeze({
   description:
     'We study cognitive and collaborative intelligence for software, robotics, and real-world intelligent systems.',
+  homepageVision:
+    'Cognitive intelligence is our core, carried by intelligent software and robotics, grounded in real-world scenarios, and strengthened by multi-agent collaboration, knowledge, and human feedback.',
   vision:
     'Our research places cognitive intelligence at the core, with intelligent software and robotics as the primary carriers and application scenarios as the grounding for evaluation. Multi-agent collaboration, knowledge-guided reasoning, and human feedback support reliable, adaptive, and accountable intelligent systems across these areas.',
 })

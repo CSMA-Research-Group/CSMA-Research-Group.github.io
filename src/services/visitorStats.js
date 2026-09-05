@@ -37,6 +37,21 @@ const readJson = async (response) => {
   }
 }
 
+const withTrackingMode = (data, trackingMode) => {
+  if (!data?.ok) return null
+
+  const visitorNumber = Number(data.currentVisitorNumber)
+  const resolvedMode = trackingMode === 'tracked'
+    && data.currentVisitorNumber !== null
+    && data.currentVisitorNumber !== ''
+    && Number.isFinite(visitorNumber)
+    && visitorNumber > 0
+    ? 'tracked'
+    : 'aggregate'
+
+  return { ...data, trackingMode: resolvedMode }
+}
+
 const fetchWithTimeout = async (url, options = {}) => {
   const controller = new AbortController()
   const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
@@ -49,16 +64,6 @@ const fetchWithTimeout = async (url, options = {}) => {
     })
   } finally {
     window.clearTimeout(timeoutId)
-  }
-}
-
-const getReferrerOrigin = () => {
-  if (!document.referrer) return ''
-
-  try {
-    return new URL(document.referrer).origin
-  } catch {
-    return ''
   }
 }
 
@@ -77,7 +82,7 @@ export const fetchVisitorStats = async () => {
     if (!response.ok) return null
 
     const data = await readJson(response)
-    return data?.ok ? data : null
+    return withTrackingMode(data, 'aggregate')
   } catch {
     return null
   }
@@ -99,15 +104,13 @@ export const trackVisitor = async () => {
       },
       body: JSON.stringify({
         visitorId,
-        path: `${window.location.pathname}${window.location.hash}`,
-        referrer: getReferrerOrigin(),
       }),
     })
 
     if (!response.ok) return fetchVisitorStats()
 
     const data = await readJson(response)
-    return data?.ok ? data : fetchVisitorStats()
+    return withTrackingMode(data, 'tracked') || fetchVisitorStats()
   } catch {
     return fetchVisitorStats()
   }

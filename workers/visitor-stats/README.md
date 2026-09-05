@@ -7,13 +7,11 @@ Cloudflare Worker + D1 backend for anonymous visitor statistics used by the foot
 - `POST /api/visitor/track`: records one visit and returns the latest aggregate stats.
 - `GET /api/visitor/stats`: returns aggregate stats without increasing visit counts.
 
-The frontend calls `POST /api/visitor/track` with an origin-only referrer value:
+The frontend calls `POST /api/visitor/track` with only its browser-local pseudonymous ID:
 
 ```json
 {
-  "visitorId": "browser-local-anonymous-id",
-  "path": "/",
-  "referrer": ""
+  "visitorId": "browser-local-anonymous-id"
 }
 ```
 
@@ -22,6 +20,7 @@ The response shape is:
 ```json
 {
   "ok": true,
+  "apiVersion": 2,
   "foundedAt": "2026-05-19 05:19",
   "totalVisits": 123,
   "uniqueVisitors": 45,
@@ -30,15 +29,18 @@ The response shape is:
   "currentVisitor": {
     "countryCode": "SG",
     "countryName": "Singapore",
-    "city": "Singapore",
-    "region": "Singapore"
+    "region": "Singapore",
+    "lat": 1.5,
+    "lng": 104,
+    "timezone": "Asia/Singapore",
+    "accuracy": "region"
   },
   "countries": [
     {
       "countryCode": "SG",
       "countryName": "Singapore",
-      "lat": 1.3521,
-      "lng": 103.8198,
+      "lat": 2,
+      "lng": 104,
       "visits": 20,
       "uniqueVisitors": 5
     }
@@ -48,7 +50,7 @@ The response shape is:
 
 ## Privacy
 
-This backend does not store full IP addresses or precise personal identity. The browser stores an anonymous `visitorId` in `localStorage` under `csma_visitor_id`; the Worker combines that ID with the User-Agent and `VISITOR_HASH_SALT`, then stores only the SHA-256 `visitor_hash`. Cloudflare GeoIP data is used for aggregate country/region/city statistics and map markers.
+This backend does not store full IP addresses or precise personal identity. The browser stores an anonymous `visitorId` in `localStorage` under `csma_visitor_id`; the Worker combines that ID with the User-Agent and `VISITOR_HASH_SALT`, then stores only the SHA-256 `visitor_hash`. The visitor number remains stable while that local ID and User-Agent remain unchanged. Cloudflare GeoIP data is used for country/region statistics and map markers. New coordinates are rounded to the nearest half degree before storage and the active visitor's own response. Each country keeps one representative point rather than following the latest visit. Public country markers appear only after three unique visitors and are rounded to a two-degree grid, so sparse country data does not expose an individual visitor's regional point.
 
 ## Setup
 
@@ -89,7 +91,7 @@ For production CORS, set `ALLOWED_ORIGIN` in `wrangler.toml`:
 ALLOWED_ORIGIN = "https://csma-research-group.github.io"
 ```
 
-The Worker code includes the official GitHub Pages origin and local development origins as safe defaults. `ALLOWED_ORIGIN` can add permitted origins without removing those defaults. Requests carrying any other browser `Origin` are rejected.
+The Worker code includes the official GitHub Pages origin and HTTP loopback development origins (`localhost`, `127.0.0.1`, and `[::1]` on non-privileged ports) as safe defaults. This keeps Vite working when its preferred port is occupied. `ALLOWED_ORIGIN` can add permitted origins without removing those defaults. Requests carrying any other browser `Origin` are rejected.
 
 ## Local Worker Testing
 
@@ -104,7 +106,7 @@ In another terminal:
 ```bash
 curl -X POST http://localhost:8787/api/visitor/track \
   -H 'Content-Type: application/json' \
-  -d '{"visitorId":"local-test","path":"/","referrer":""}'
+  -d '{"visitorId":"local-test"}'
 ```
 
 ## Deploy
@@ -112,8 +114,27 @@ curl -X POST http://localhost:8787/api/visitor/track \
 From this directory:
 
 ```bash
+npx wrangler secret list
 npx wrangler deploy
 ```
+
+Confirm that the secret list contains `VISITOR_HASH_SALT` before deployment. Do not print or rotate its value as part of a routine code deploy.
+
+The GitHub Pages workflow deploys only the Vue frontend; it does not deploy this Worker. After changing Worker code or CORS configuration, deploy the Worker separately and verify the public endpoint before publishing the frontend.
+
+Read-only production checks:
+
+```bash
+curl -i -X OPTIONS https://your-worker-name.your-subdomain.workers.dev/api/visitor/track \
+  -H 'Origin: https://csma-research-group.github.io' \
+  -H 'Access-Control-Request-Method: POST' \
+  -H 'Access-Control-Request-Headers: content-type'
+
+curl -i https://your-worker-name.your-subdomain.workers.dev/api/visitor/stats \
+  -H 'Origin: https://csma-research-group.github.io'
+```
+
+Both responses must include `Access-Control-Allow-Origin: https://csma-research-group.github.io`; the preflight must return `204`, and the GET payload must include `"apiVersion": 2`.
 
 After deployment, set the frontend environment variable:
 

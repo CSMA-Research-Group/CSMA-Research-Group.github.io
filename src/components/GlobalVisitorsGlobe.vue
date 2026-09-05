@@ -3,9 +3,9 @@
     <div class="globe-panel">
       <div class="globe-heading">
         <p class="globe-kicker">Global Visitors</p>
-        <h2 id="visitor-globe-title">Research Reach Around the World</h2>
+        <h2 id="visitor-globe-title">Research reach, mapped live</h2>
         <p id="visitor-globe-description">
-          This globe visualizes anonymous visitor statistics and the global reach of CSMA Research Group.
+          Privacy-aware regional statistics from visitors to the CSMA website.
         </p>
       </div>
 
@@ -13,24 +13,29 @@
         ref="wrapRef"
         class="globe-canvas-wrap"
         @pointermove="handlePointerMove"
-        @pointerleave="hideTooltip"
+        @pointerleave="handlePointerLeave"
       >
         <canvas
           ref="canvasRef"
           class="global-globe-canvas"
           role="img"
-          aria-label="Global visitor locations plotted from the live visitor statistics API"
-          aria-describedby="visitor-globe-description"
+          :aria-label="globeAriaLabel"
+          aria-describedby="visitor-globe-description visitor-marker-summary"
         >Global visitor visualization</canvas>
-        <span class="utc-chip">{{ utcLabel }}</span>
+        <span class="local-time-chip">
+          <small>Your local time</small>
+          <strong>{{ visitorTimeLabel }}</strong>
+          <span>{{ visitorTimeZoneLabel }}</span>
+        </span>
         <div
           v-if="tooltip.visible"
           class="globe-tooltip"
           :style="{ left: `${tooltip.x}px`, top: `${tooltip.y}px` }"
           role="status"
         >
-          <strong>{{ tooltip.country }}</strong>
-          <span>{{ tooltip.visits }}</span>
+          <strong>{{ tooltip.title }}</strong>
+          <span>{{ tooltip.detail }}</span>
+          <small v-if="tooltip.meta">{{ tooltip.meta }}</small>
         </div>
       </div>
     </div>
@@ -59,6 +64,19 @@
           <dd class="visitor-id">{{ currentVisitorLabel }}</dd>
         </div>
       </dl>
+      <div v-if="currentLocationLabel" class="current-visitor-location">
+        <span class="current-location-mark" aria-hidden="true"></span>
+        <p>
+          <strong>Your approximate region</strong>
+          <span>{{ currentLocationLabel }}</span>
+        </p>
+      </div>
+      <p id="visitor-marker-summary" class="marker-summary">{{ markerSummaryLabel }}</p>
+      <ul v-if="visitorSources.length" class="sr-only" aria-label="Aggregate visitor marker details">
+        <li v-for="source in visitorSources" :key="source.countryCode || source.country">
+          {{ source.country }}: {{ markerVisitorLabel(source) }}, {{ markerVisitLabel(source) }}.
+        </li>
+      </ul>
       <p class="analytics-note">{{ analyticsNote }}</p>
     </aside>
   </section>
@@ -68,9 +86,17 @@
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { trackVisitor } from '../services/visitorStats'
 import { visitorGlobeInfo } from '../data/visitorStats'
+import {
+  formatStatCount,
+  formatVisitorNumber,
+  isValidTimeZone,
+  toFiniteCoordinate,
+  toFiniteNumber,
+} from '../utils/visitorDisplay'
 
 const DEG = Math.PI / 180
-const FRAME_INTERVAL = 1000 / 24
+const FRAME_INTERVAL = 1000 / 20
+const STATS_RETRY_DELAYS = [4000, 12000, 30000]
 const foundedAtFallback = visitorGlobeInfo.foundedAt
 // Local copy from NASA Earth Observatory, Blue Marble: Next Generation with Topography and Bathymetry.
 const EARTH_TEXTURE_URL = `${import.meta.env.BASE_URL}textures/earth-blue-marble.jpg`
@@ -79,14 +105,17 @@ const canvasRef = ref(null)
 const wrapRef = ref(null)
 const visitorStats = ref(null)
 const visitorSources = ref([])
+const currentVisitor = ref(null)
 const statsStatus = ref('loading')
-const utcLabel = ref('UTC --:--')
+const visitorTimeLabel = ref('--:--')
+const visitorTimeZoneLabel = ref('Detecting timezone')
 const tooltip = reactive({
   visible: false,
   x: 0,
   y: 0,
-  country: '',
-  visits: '',
+  title: '',
+  detail: '',
+  meta: '',
 })
 
 let ctx
@@ -101,12 +130,16 @@ let resizeObserver
 let intersectionObserver
 let motionQuery
 let reducedMotion = false
-let startTime = 0
+let rotationDegrees = -18
+let lastAnimationTime = 0
 let lastRenderTime = 0
 let isMounted = false
 let isGlobeVisible = true
 let visibleMarkers = []
-let utcTimer = 0
+let localTimeTimer = 0
+let statsRetryTimer = 0
+let statsRetryAttempt = 0
+let statsRequestInFlight = false
 let earthTextureState = 'idle'
 let earthTextureData = null
 let earthTextureWidth = 0
@@ -114,6 +147,9 @@ let earthTextureHeight = 0
 let earthFrameCanvas = null
 let earthFrameCtx = null
 let earthFrameImageData = null
+let pointerIsActive = false
+let pointerX = 0
+let pointerY = 0
 
 const continents = [
   [
@@ -195,78 +231,212 @@ const hasVisitorStats = computed(() => statsStatus.value === 'available' && visi
 
 const foundedAtLabel = computed(() => foundedAtFallback)
 
-const formatStatCount = (value) => {
-  const count = Number(value)
-  return Number.isFinite(count) ? count.toLocaleString() : loadingOrUnavailableLabel.value
-}
-
 const totalVisitorsLabel = computed(() => (
   hasVisitorStats.value
-    ? formatStatCount(visitorStats.value.uniqueVisitors)
+    ? formatStatCount(visitorStats.value.uniqueVisitors, loadingOrUnavailableLabel.value)
     : loadingOrUnavailableLabel.value
 ))
 
 const countriesReachedLabel = computed(() => (
   hasVisitorStats.value
-    ? formatStatCount(visitorStats.value.countriesReached)
+    ? formatStatCount(visitorStats.value.countriesReached, loadingOrUnavailableLabel.value)
     : loadingOrUnavailableLabel.value
 ))
 
 const currentVisitorLabel = computed(() => {
   if (!hasVisitorStats.value) return loadingOrUnavailableLabel.value
 
-  const visitorNumber = Number(visitorStats.value.currentVisitorNumber)
-  return Number.isFinite(visitorNumber) ? `#${visitorNumber.toLocaleString()}` : 'Unavailable'
+  return formatVisitorNumber(visitorStats.value.currentVisitorNumber)
 })
 
 const analyticsNote = computed(() => {
   if (statsStatus.value === 'loading') return 'Loading visitor statistics...'
-  if (statsStatus.value === 'available') return 'Anonymous visitor statistics are updated in real time.'
-  return 'Visitor statistics unavailable'
+  if (visitorStats.value?.trackingMode === 'tracked') {
+    return 'Live aggregate statistics; location is rounded to an approximate region.'
+  }
+  if (statsStatus.value === 'available') {
+    return 'Aggregate totals loaded; current visitor details are temporarily unavailable.'
+  }
+  return 'Visitor statistics are temporarily unavailable.'
 })
+
+const currentLocationLabel = computed(() => {
+  if (!currentVisitor.value) return ''
+
+  const country = currentVisitor.value.country === 'Unknown' ? '' : currentVisitor.value.country
+  return [...new Set([currentVisitor.value.region, country].filter(Boolean))].join(', ')
+})
+
+const markerSummaryLabel = computed(() => {
+  if (statsStatus.value === 'loading') return 'Loading privacy-qualified country markers...'
+  if (visitorSources.value.length) {
+    return `${visitorSources.value.length} privacy-qualified country markers are shown.`
+  }
+  if (statsStatus.value === 'available') return 'No country markers meet the public display threshold yet.'
+  return 'Country markers are temporarily unavailable.'
+})
+
+const markerVisitorLabel = (source) => (
+  source.uniqueVisitors !== null
+    ? `${Math.trunc(source.uniqueVisitors).toLocaleString()} visitors`
+    : 'visitor count unavailable'
+)
+
+const markerVisitLabel = (source) => (
+  source.visits !== null
+    ? `${Math.trunc(source.visits).toLocaleString()} visits`
+    : 'visit count unavailable'
+)
+
+const hasCurrentMarker = computed(() => (
+  currentVisitor.value?.latitude !== null
+  && currentVisitor.value?.latitude !== undefined
+  && currentVisitor.value?.longitude !== null
+  && currentVisitor.value?.longitude !== undefined
+))
+
+const globeAriaLabel = computed(() => (
+  currentLocationLabel.value && hasCurrentMarker.value
+    ? `Globe of aggregate visitor regions. Your approximate region, ${currentLocationLabel.value}, is highlighted.`
+    : 'Globe of aggregate visitor regions from live website statistics.'
+))
 
 const normalizeVisitorCountries = (countries = []) => (
   countries
     .map((country) => {
-      const latitude = Number(country.lat ?? country.latitude)
-      const longitude = Number(country.lng ?? country.longitude)
-      const visits = Number(country.visits)
-      const uniqueVisitors = Number(country.uniqueVisitors)
+      const latitude = toFiniteCoordinate(country.lat ?? country.latitude, -90, 90)
+      const longitude = toFiniteCoordinate(country.lng ?? country.longitude, -180, 180)
+      const visits = toFiniteNumber(country.visits)
+      const uniqueVisitors = toFiniteNumber(country.uniqueVisitors)
 
       return {
+        countryCode: country.countryCode || '',
         country: country.countryName || country.countryCode || 'Unknown',
         latitude,
         longitude,
-        visits: Number.isFinite(visits) ? visits : null,
-        uniqueVisitors: Number.isFinite(uniqueVisitors) ? uniqueVisitors : null,
+        visits,
+        uniqueVisitors,
       }
     })
-    .filter((country) => Number.isFinite(country.latitude) && Number.isFinite(country.longitude))
+    .filter((country) => country.latitude !== null && country.longitude !== null)
 )
 
+const normalizeCurrentVisitor = (stats, countries) => {
+  const visitor = stats?.currentVisitor
+  if (!visitor) return null
+
+  const countryCode = visitor.countryCode || ''
+  const aggregateCountry = countries.find((country) => country.countryCode === countryCode)
+  const latitude = toFiniteCoordinate(visitor.lat ?? visitor.latitude, -90, 90)
+  const longitude = toFiniteCoordinate(visitor.lng ?? visitor.longitude, -180, 180)
+  const hasCoordinatePair = latitude !== null && longitude !== null
+
+  return {
+    countryCode,
+    country: visitor.countryName || aggregateCountry?.country || countryCode || 'Unknown',
+    region: visitor.region || '',
+    latitude: hasCoordinatePair ? latitude : null,
+    longitude: hasCoordinatePair ? longitude : null,
+    timezone: visitor.timezone || '',
+  }
+}
+
+const deviceTimeZone = () => {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  } catch {
+    return 'UTC'
+  }
+}
+
+let activeTimeZone = ''
+let localTimeFormatter = null
+
+const clearStatsRetry = () => {
+  if (statsRetryTimer) window.clearTimeout(statsRetryTimer)
+  statsRetryTimer = 0
+}
+
+const scheduleStatsRetry = () => {
+  if (
+    !isMounted
+    || statsRetryTimer
+    || statsRetryAttempt >= STATS_RETRY_DELAYS.length
+  ) return
+
+  const delay = STATS_RETRY_DELAYS[statsRetryAttempt]
+  statsRetryAttempt += 1
+  statsRetryTimer = window.setTimeout(() => {
+    statsRetryTimer = 0
+    void loadVisitorStats()
+  }, delay)
+}
+
+const updateVisitorTime = () => {
+  const apiTimeZone = currentVisitor.value?.timezone
+  const usesVisitorTimeZone = isValidTimeZone(apiTimeZone)
+  const timeZone = usesVisitorTimeZone ? apiTimeZone : deviceTimeZone()
+
+  if (timeZone !== activeTimeZone || !localTimeFormatter) {
+    activeTimeZone = timeZone
+    localTimeFormatter = new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+      timeZone,
+    })
+  }
+
+  visitorTimeLabel.value = localTimeFormatter.format(new Date())
+  visitorTimeZoneLabel.value = usesVisitorTimeZone
+    ? timeZone.replaceAll('_', ' ')
+    : `${timeZone.replaceAll('_', ' ')} · device timezone`
+}
+
 const loadVisitorStats = async () => {
-  statsStatus.value = 'loading'
+  if (statsRequestInFlight) return
+
+  statsRequestInFlight = true
+  if (!visitorStats.value?.ok) statsStatus.value = 'loading'
   const stats = await trackVisitor()
+  statsRequestInFlight = false
 
   if (!isMounted) return
 
   if (!stats?.ok) {
     visitorStats.value = null
     visitorSources.value = []
+    currentVisitor.value = null
     statsStatus.value = 'unavailable'
+    updateVisitorTime()
     requestRender()
+    scheduleStatsRetry()
     return
   }
 
+  const countries = normalizeVisitorCountries(stats.countries)
   visitorStats.value = stats
-  visitorSources.value = normalizeVisitorCountries(stats.countries)
+  visitorSources.value = countries
+  currentVisitor.value = normalizeCurrentVisitor(stats, countries)
   statsStatus.value = 'available'
-  requestRender()
-}
+  updateVisitorTime()
 
-const updateUtcLabel = () => {
-  const now = new Date()
-  utcLabel.value = `UTC ${now.toISOString().slice(11, 16)}`
+  if (stats.trackingMode === 'tracked') {
+    clearStatsRetry()
+    statsRetryAttempt = 0
+  } else {
+    // A read-only fallback keeps aggregate counts visible; retry tracking in
+    // the background so the current visitor number and region can recover.
+    scheduleStatsRetry()
+  }
+
+  if (hasCurrentMarker.value) {
+    rotationDegrees = -currentVisitor.value.longitude
+    lastAnimationTime = 0
+    lastRenderTime = 0
+  }
+
+  requestRender()
 }
 
 const vectorFromLatLng = (latitude, longitude) => {
@@ -350,25 +520,36 @@ const loadEarthTexture = () => {
 const resizeCanvas = () => {
   const canvas = canvasRef.value
   const wrap = wrapRef.value
-  if (!canvas || !wrap) return
+  if (!canvas || !wrap) return false
 
   const rect = wrap.getBoundingClientRect()
-  const dpr = Math.min(window.devicePixelRatio || 1, 2)
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+  const nextWidth = Math.max(1, rect.width)
+  const nextHeight = Math.max(1, rect.height)
+  const nextCanvasWidth = Math.max(1, Math.floor(nextWidth * dpr))
+  const nextCanvasHeight = Math.max(1, Math.floor(nextHeight * dpr))
+  const sizeChanged = canvas.width !== nextCanvasWidth || canvas.height !== nextCanvasHeight
+
   renderPixelRatio = dpr
-  width = rect.width
-  height = rect.height
+  width = nextWidth
+  height = nextHeight
   centerX = width / 2
   centerY = height / 2 + 4
   radius = Math.min(width, height) * 0.42
-  canvas.width = Math.max(1, Math.floor(width * dpr))
-  canvas.height = Math.max(1, Math.floor(height * dpr))
-  canvas.style.width = `${width}px`
-  canvas.style.height = `${height}px`
+
+  // CSS owns the canvas layout size. Writing that measured size back as an
+  // inline height created a ResizeObserver feedback loop that repeatedly grew
+  // the footer and cleared the bitmap before it could be painted.
+  if (sizeChanged) {
+    canvas.width = nextCanvasWidth
+    canvas.height = nextCanvasHeight
+  }
 
   ctx = canvas.getContext('2d')
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   ctx.imageSmoothingEnabled = true
   ctx.imageSmoothingQuality = 'high'
+  return sizeChanged
 }
 
 const drawVisiblePolyline = (points, rotation, strokeStyle, lineWidth = 1) => {
@@ -470,9 +651,22 @@ const drawTexturedEarth = (rotation, sun) => {
   const output = earthFrameImageData.data
   const texture = earthTextureData
   const textureStride = earthTextureWidth * 4
+  const rotationRadians = rotation * DEG
+  const rotationCosine = Math.cos(rotationRadians)
+  const rotationSine = Math.sin(rotationRadians)
+  const sunCameraX = sun.vector.x * rotationCosine + sun.vector.z * rotationSine
+  const sunCameraY = sun.vector.y
+  const sunCameraZ = sun.vector.z * rotationCosine - sun.vector.x * rotationSine
 
   for (let y = 0; y < diameter; y += 1) {
     const sphereY = 1 - (y + 0.5) / sphereRadius
+    const latitude = Math.asin(sphereY) / DEG
+    const textureV = ((90 - latitude) / 180) * (earthTextureHeight - 1)
+    const textureY0 = Math.floor(textureV)
+    const textureY1 = Math.min(earthTextureHeight - 1, textureY0 + 1)
+    const mixY = textureV - textureY0
+    const topWeight = 1 - mixY
+    const bottomWeight = mixY
 
     for (let x = 0; x < diameter; x += 1) {
       const sphereX = (x + 0.5) / sphereRadius - 1
@@ -485,24 +679,17 @@ const drawTexturedEarth = (rotation, sun) => {
       }
 
       const sphereZ = Math.sqrt(1 - distanceSquared)
-      const latitude = Math.asin(sphereY) / DEG
       const rotatedLongitude = Math.atan2(sphereX, sphereZ) / DEG
       const longitude = rotatedLongitude - rotation
       const wrappedLongitude = ((longitude + 540) % 360) - 180
       const textureU = ((wrappedLongitude + 180) / 360) * (earthTextureWidth - 1)
-      const textureV = ((90 - latitude) / 180) * (earthTextureHeight - 1)
       const textureX0 = Math.floor(textureU)
-      const textureY0 = Math.floor(textureV)
       const textureX1 = (textureX0 + 1) % earthTextureWidth
-      const textureY1 = Math.min(earthTextureHeight - 1, textureY0 + 1)
       const mixX = textureU - textureX0
-      const mixY = textureV - textureY0
       const topLeftIndex = textureY0 * textureStride + textureX0 * 4
       const topRightIndex = textureY0 * textureStride + textureX1 * 4
       const bottomLeftIndex = textureY1 * textureStride + textureX0 * 4
       const bottomRightIndex = textureY1 * textureStride + textureX1 * 4
-      const topWeight = 1 - mixY
-      const bottomWeight = mixY
       const leftWeight = 1 - mixX
       const rightWeight = mixX
       const red = (
@@ -523,7 +710,11 @@ const drawTexturedEarth = (rotation, sun) => {
         + texture[bottomLeftIndex + 2] * leftWeight * bottomWeight
         + texture[bottomRightIndex + 2] * rightWeight * bottomWeight
       )
-      const light = illuminationAt(latitude, wrappedLongitude, sun.vector)
+      const light = (
+        sphereX * sunCameraX
+        + sphereY * sunCameraY
+        + sphereZ * sunCameraZ
+      )
       const limbShade = 0.48 + sphereZ * 0.58
       const sunShade = 0.8 + Math.max(-0.2, Math.min(0.7, light)) * 0.16
       const shade = limbShade * sunShade
@@ -569,16 +760,63 @@ const drawVisitorMarkers = (rotation, time) => {
       x: point.x,
       y: point.y,
       radius: 14,
+      kind: 'aggregate',
       source,
     })
+  })
+}
+
+const drawCurrentVisitorMarker = (rotation, time) => {
+  const visitor = currentVisitor.value
+  if (!visitor || !hasCurrentMarker.value) return
+
+  const point = project(visitor.latitude, visitor.longitude, rotation)
+  if (!point.visible || point.z < 0.04) return
+
+  const pulse = reducedMotion ? 0.55 : 0.5 + Math.sin(time / 520) * 0.5
+  const outerRadius = 12 + pulse * 5
+
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(point.x, point.y, outerRadius, 0, Math.PI * 2)
+  ctx.strokeStyle = `rgba(255, 177, 92, ${0.46 + pulse * 0.3})`
+  ctx.lineWidth = 1.6
+  ctx.shadowColor = 'rgba(255, 156, 72, 0.78)'
+  ctx.shadowBlur = 13
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.arc(point.x, point.y, 5, 0, Math.PI * 2)
+  ctx.fillStyle = '#ffad5c'
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 2
+  ctx.fill()
+  ctx.stroke()
+
+  ctx.shadowBlur = 0
+  ctx.font = '800 10px Inter, ui-sans-serif, system-ui, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillStyle = 'rgba(255, 241, 224, 0.96)'
+  const labelAbove = point.y - outerRadius - 14 >= 4
+  ctx.textBaseline = labelAbove ? 'bottom' : 'top'
+  ctx.fillText('YOU', point.x, labelAbove
+    ? point.y - outerRadius - 3
+    : point.y + outerRadius + 3)
+  ctx.restore()
+
+  visibleMarkers.unshift({
+    x: point.x,
+    y: point.y,
+    radius: Math.max(18, outerRadius + 3),
+    kind: 'current',
+    source: visitor,
   })
 }
 
 const drawGlobe = (time = 0) => {
   if (!ctx || !width || !height) return
 
-  const elapsed = startTime ? (time - startTime) / 1000 : 0
-  const rotation = reducedMotion ? -18 : -18 + elapsed * 2.1
+  const rotation = rotationDegrees
   const sun = getSunPosition()
   const sunPoint = project(sun.latitude, sun.longitude, rotation)
   const antiSunPoint = project(-sun.latitude, sun.longitude + 180, rotation)
@@ -652,17 +890,27 @@ const drawGlobe = (time = 0) => {
   ctx.shadowBlur = 18
   ctx.stroke()
   ctx.shadowBlur = 0
-
+  // Draw the active visitor after restoring the sphere clip so its label and
+  // focus ring remain readable near polar regions and the globe edge.
+  drawCurrentVisitorMarker(rotation, time)
+  updateTooltipAtPointer()
 }
 
 const stopAnimation = () => {
   if (animationFrame) cancelAnimationFrame(animationFrame)
   animationFrame = 0
+  lastAnimationTime = 0
 }
 
 const runAnimation = (time) => {
   animationFrame = 0
   if (!isMounted || reducedMotion || !isGlobeVisible || document.hidden) return
+
+  if (lastAnimationTime) {
+    const elapsedSeconds = Math.min(0.1, (time - lastAnimationTime) / 1000)
+    rotationDegrees = (rotationDegrees + elapsedSeconds * 2.1) % 360
+  }
+  lastAnimationTime = time
 
   if (!lastRenderTime || time - lastRenderTime >= FRAME_INTERVAL) {
     lastRenderTime = time
@@ -683,32 +931,64 @@ const requestRender = () => {
   if (!animationFrame) animationFrame = requestAnimationFrame(runAnimation)
 }
 
-const handlePointerMove = (event) => {
-  if (!wrapRef.value) return
-  const rect = wrapRef.value.getBoundingClientRect()
-  const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
+const updateTooltipAtPointer = () => {
+  if (!pointerIsActive) {
+    tooltip.visible = false
+    return
+  }
+
   const marker = visibleMarkers.find((item) => {
-    const distance = Math.hypot(item.x - x, item.y - y)
+    const distance = Math.hypot(item.x - pointerX, item.y - pointerY)
     return distance <= item.radius
   })
 
   if (!marker) {
-    hideTooltip()
+    tooltip.visible = false
     return
   }
 
   tooltip.visible = true
-  tooltip.x = Math.min(rect.width - 170, Math.max(12, marker.x + 14))
-  tooltip.y = Math.min(rect.height - 70, Math.max(12, marker.y - 8))
-  tooltip.country = marker.source.country
-  tooltip.visits = Number.isFinite(marker.source.visits)
-    ? `${marker.source.visits.toLocaleString()} visits`
-    : 'Visits pending analytics'
+  tooltip.x = Math.min(width - 170, Math.max(12, marker.x + 14))
+  tooltip.y = Math.min(height - 92, Math.max(12, marker.y - 8))
+
+  if (marker.kind === 'current') {
+    tooltip.title = 'Your approximate region'
+    tooltip.detail = currentLocationLabel.value || marker.source.country
+    tooltip.meta = `${visitorTimeLabel.value} · ${visitorTimeZoneLabel.value}`
+    return
+  }
+
+  tooltip.title = marker.source.country
+  tooltip.detail = marker.source.uniqueVisitors !== null
+    ? `${Math.trunc(marker.source.uniqueVisitors).toLocaleString()} visitors`
+    : 'Visitor count unavailable'
+  tooltip.meta = marker.source.visits !== null
+    ? `${Math.trunc(marker.source.visits).toLocaleString()} visits`
+    : ''
 }
 
-const hideTooltip = () => {
+const handlePointerMove = (event) => {
+  if (!wrapRef.value) return
+  const rect = wrapRef.value.getBoundingClientRect()
+  pointerIsActive = true
+  pointerX = event.clientX - rect.left
+  pointerY = event.clientY - rect.top
+  updateTooltipAtPointer()
+}
+
+const handlePointerLeave = () => {
+  pointerIsActive = false
   tooltip.visible = false
+}
+
+const scheduleLocalTimeUpdate = () => {
+  if (!isMounted) return
+
+  updateVisitorTime()
+  updateTooltipAtPointer()
+  if (localTimeTimer) window.clearTimeout(localTimeTimer)
+  const nextMinuteDelay = 60000 - (Date.now() % 60000) + 50
+  localTimeTimer = window.setTimeout(scheduleLocalTimeUpdate, nextMinuteDelay)
 }
 
 const handleMotionChange = () => {
@@ -720,16 +1000,23 @@ const handleMotionChange = () => {
 const handleVisibilityChange = () => {
   if (document.hidden) {
     stopAnimation()
+    if (localTimeTimer) window.clearTimeout(localTimeTimer)
+    localTimeTimer = 0
     return
   }
 
+  scheduleLocalTimeUpdate()
+  if (statsStatus.value === 'unavailable') {
+    clearStatsRetry()
+    statsRetryAttempt = 0
+    void loadVisitorStats()
+  }
   requestRender()
 }
 
 onMounted(() => {
   isMounted = true
-  updateUtcLabel()
-  utcTimer = window.setInterval(updateUtcLabel, 60000)
+  scheduleLocalTimeUpdate()
 
   motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
   reducedMotion = Boolean(motionQuery.matches)
@@ -737,16 +1024,15 @@ onMounted(() => {
 
   resizeCanvas()
   resizeObserver = new ResizeObserver(() => {
-    resizeCanvas()
+    const sizeChanged = resizeCanvas()
+    if (sizeChanged) drawGlobe(performance.now())
     requestRender()
   })
   if (wrapRef.value) resizeObserver.observe(wrapRef.value)
 
-  startTime = performance.now()
-  drawGlobe(startTime)
+  drawGlobe(performance.now())
 
   if ('IntersectionObserver' in window && wrapRef.value) {
-    isGlobeVisible = false
     intersectionObserver = new IntersectionObserver((entries) => {
       isGlobeVisible = Boolean(entries[0]?.isIntersecting)
       if (!isGlobeVisible) {
@@ -754,7 +1040,11 @@ onMounted(() => {
         return
       }
 
+      resizeCanvas()
       loadEarthTexture()
+      // Paint synchronously when the off-screen footer becomes visible. This
+      // prevents a blank frame if a prior resize cleared the backing bitmap.
+      drawGlobe(performance.now())
       requestRender()
     }, { rootMargin: '120px' })
     intersectionObserver.observe(wrapRef.value)
@@ -774,37 +1064,36 @@ onUnmounted(() => {
   intersectionObserver?.disconnect()
   motionQuery?.removeEventListener?.('change', handleMotionChange)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
-  if (utcTimer) window.clearInterval(utcTimer)
+  if (localTimeTimer) window.clearTimeout(localTimeTimer)
+  clearStatsRetry()
 })
 </script>
 
 <style scoped>
 .global-visitors {
   display: grid;
-  grid-template-columns: minmax(240px, 1fr) minmax(180px, 0.58fr);
-  gap: 16px;
+  grid-template-columns: minmax(420px, 1.42fr) minmax(240px, 0.72fr);
+  gap: 12px;
   align-items: stretch;
-  min-height: 320px;
+  min-height: 288px;
 }
 
 .globe-panel,
 .visitor-stat-panel {
   border: 1px solid rgba(126, 236, 255, 0.16);
-  border-radius: 18px;
+  border-radius: 10px;
   background:
     linear-gradient(135deg, rgba(12, 38, 70, 0.94), rgba(5, 18, 42, 0.9)),
     #06142c;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 18px 44px rgba(0, 0, 0, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
 }
 
 .globe-panel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 11px;
-  padding: 16px;
-  min-height: 320px;
+  gap: 9px;
+  padding: 14px;
+  min-height: 288px;
   overflow: hidden;
 }
 
@@ -825,7 +1114,7 @@ onUnmounted(() => {
 .globe-heading h2 {
   margin: 0;
   color: #ffffff;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.2;
 }
 
@@ -838,11 +1127,11 @@ onUnmounted(() => {
 
 .globe-canvas-wrap {
   position: relative;
-  min-height: 0;
-  height: 100%;
+  height: 230px;
+  min-height: 230px;
   overflow: hidden;
   border: 1px solid rgba(126, 236, 255, 0.1);
-  border-radius: 16px;
+  border-radius: 8px;
   background:
     radial-gradient(circle at 50% 42%, rgba(67, 130, 255, 0.18), transparent 55%),
     radial-gradient(circle at 18% 22%, rgba(126, 236, 255, 0.08), transparent 32%),
@@ -855,19 +1144,45 @@ onUnmounted(() => {
   height: 100%;
 }
 
-.utc-chip {
+.local-time-chip {
   position: absolute;
   top: 12px;
   right: 12px;
-  padding: 5px 9px;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2px 7px;
+  align-items: baseline;
+  padding: 7px 9px;
   border: 1px solid rgba(126, 236, 255, 0.16);
-  border-radius: 999px;
+  border-radius: 7px;
   background: rgba(3, 11, 29, 0.72);
   color: rgba(216, 235, 255, 0.72);
-  font-size: 11px;
-  font-weight: 750;
-  line-height: 1;
+  line-height: 1.1;
   backdrop-filter: blur(8px);
+}
+
+.local-time-chip small {
+  color: rgba(126, 236, 255, 0.68);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.local-time-chip strong {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.local-time-chip > span {
+  grid-column: 1 / -1;
+  max-width: 190px;
+  overflow: hidden;
+  color: rgba(216, 235, 255, 0.66);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .globe-tooltip {
@@ -889,6 +1204,14 @@ onUnmounted(() => {
   display: block;
 }
 
+.globe-tooltip small {
+  display: block;
+  margin-top: 3px;
+  color: rgba(216, 235, 255, 0.58);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
 .globe-tooltip strong {
   color: rgba(126, 236, 255, 0.94);
   font-size: 12px;
@@ -905,28 +1228,33 @@ onUnmounted(() => {
 .visitor-stat-panel {
   display: grid;
   align-content: start;
-  gap: 10px;
-  padding: 16px;
+  gap: 12px;
+  padding: 14px;
   min-height: 0;
   overflow: hidden;
 }
 
 .visitor-stat-panel dl {
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   margin: 0;
 }
 
 .visitor-stat-panel div {
   display: grid;
   gap: 3px;
-  padding-bottom: 9px;
-  border-bottom: 1px solid rgba(126, 236, 255, 0.1);
+  align-content: start;
+  min-height: 66px;
+  padding: 10px;
+  border: 1px solid rgba(126, 236, 255, 0.1);
+  border-radius: 7px;
+  background: rgba(126, 236, 255, 0.035);
 }
 
 .visitor-stat-panel div:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
+  padding: 10px;
+  border: 1px solid rgba(126, 236, 255, 0.1);
 }
 
 .visitor-stat-panel dt {
@@ -961,7 +1289,54 @@ onUnmounted(() => {
   line-height: 1.35;
 }
 
-@media (max-width: 980px) {
+.marker-summary {
+  margin: 0;
+  color: rgba(216, 235, 255, 0.72);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.current-visitor-location {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 10px;
+  border: 1px solid rgba(255, 177, 92, 0.2);
+  border-radius: 7px;
+  background: rgba(255, 177, 92, 0.07);
+}
+
+.current-location-mark {
+  width: 10px;
+  height: 10px;
+  margin: 4px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #ffad5c;
+  box-shadow: 0 0 0 4px rgba(255, 173, 92, 0.18);
+}
+
+.current-visitor-location p {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+
+.current-visitor-location strong {
+  color: rgba(255, 227, 198, 0.92);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.current-visitor-location span {
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+@media (max-width: 1000px) {
   .global-visitors {
     grid-template-columns: 1fr;
     min-height: 0;
@@ -973,6 +1348,7 @@ onUnmounted(() => {
 
   .globe-canvas-wrap {
     height: 260px;
+    min-height: 260px;
   }
 }
 
@@ -984,6 +1360,7 @@ onUnmounted(() => {
 
   .globe-canvas-wrap {
     height: 220px;
+    min-height: 220px;
   }
 }
 </style>

@@ -37,11 +37,14 @@ VITE_VISITOR_API_BASE=https://your-worker-name.your-subdomain.workers.dev
 
 If `VITE_VISITOR_API_BASE` is not configured or the API is unavailable, the footer globe keeps its visual shell but shows visitor statistics as unavailable and does not display fallback visitor counts or country markers.
 
+When tracking succeeds, the Globe highlights the current visitor's approximate region and formats the clock with the visitor timezone returned by Cloudflare. It does not request browser GPS/location permission.
+
 ## Build
 
 Create a production build:
 
 ```bash
+npm test
 npm run build
 ```
 
@@ -61,7 +64,7 @@ Recommended deployment flow:
 
 1. Update content in `src/data/`.
 2. Place production assets in `src/assets/` or `public/`.
-3. Run `npm run build`.
+3. Run `npm test` and `npm run build`.
 4. Review the generated site locally.
 5. Commit and push changes manually after review.
 6. Configure GitHub Pages to deploy from the intended branch or GitHub Actions workflow.
@@ -84,6 +87,8 @@ npx wrangler deploy
 ```
 
 Set `ALLOWED_ORIGIN` in the Worker config for the production GitHub Pages domain, then set the frontend `VITE_VISITOR_API_BASE` to the deployed Worker URL. Never expose `VISITOR_HASH_SALT` in frontend variables or documentation. See `workers/visitor-stats/README.md` and `docs/visitor-stats.md` for the full API, privacy notes, fallback behavior, and local testing commands.
+
+The GitHub Pages workflow does not deploy the Worker. Changes under `workers/visitor-stats/` require a separate, manually authorized `wrangler deploy` and an official-origin CORS check.
 
 ## Structured Content
 

@@ -156,7 +156,11 @@
       </div>
     </div>
 
-    <nav class="vision-mobile-links" aria-label="Research vision directions">
+    <nav
+      v-if="showMobileLinks"
+      class="vision-mobile-links"
+      aria-label="Research vision directions"
+    >
       <RouterLink
         v-for="area in areas"
         :key="`mobile-${area.id}`"
@@ -172,6 +176,13 @@
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+
+defineProps({
+  showMobileLinks: {
+    type: Boolean,
+    default: true,
+  },
+})
 
 const visionImage = `${import.meta.env.BASE_URL}figures/csma-research-vision.svg`
 const router = useRouter()

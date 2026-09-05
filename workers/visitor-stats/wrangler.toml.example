@@ -9,4 +9,4 @@ database_id = "replace-with-your-database-id"
 
 # Browser origins permitted to call the public API. Separate multiple origins with commas.
 [vars]
-ALLOWED_ORIGIN = "https://csma-research-group.github.io,http://localhost:5173,http://localhost:4173"
+ALLOWED_ORIGIN = "https://csma-research-group.github.io,http://localhost:5173,http://localhost:4173,http://127.0.0.1:5173,http://127.0.0.1:4173"

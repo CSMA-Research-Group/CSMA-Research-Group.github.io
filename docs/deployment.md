@@ -46,6 +46,7 @@ From a clean dependency installation:
 
 ```bash
 npm ci
+npm test
 npm run build
 git diff --check
 find dist -maxdepth 3 -type f | sort
@@ -58,7 +59,7 @@ Confirm:
 - `dist/robots.txt` and `dist/sitemap.xml` exist;
 - no `work/homepage-audit/` file appears under `dist/`;
 - the client bundle contains the intended public visitor API base and no secret;
-- all eight primary navigation routes work in a local preview;
+- all seven primary navigation routes work in a local preview, with the brand link returning home;
 - all four Interactive Research Vision targets resolve;
 - the footer and Globe do not cover content at laptop/tablet/mobile widths.
 
@@ -81,7 +82,27 @@ After a human pushes an approved commit and the Actions run succeeds:
 3. verify the current route title and description;
 4. verify all primary navigation items and compatibility redirects;
 5. verify that Globe markers and counts originate from the Worker response;
-6. confirm the displayed established time remains `2026-05-19 05:19`;
-7. verify the production bundle does not contain internal audit reports or secrets.
+6. verify that the current visitor has a positive number, an orange approximate-region marker, and a clock in the returned timezone;
+7. confirm the displayed established time remains `2026-05-19 05:19`;
+8. verify the production bundle does not contain internal audit reports or secrets.
 
 Changing the Worker or applying a D1 schema is a separate external-state operation. Review and authorize it independently; the Pages workflow does not deploy the Worker.
+
+## Worker deployment checklist
+
+The public counters require the Worker CORS configuration as well as the Pages build. Before deploying, confirm that the ignored `workers/visitor-stats/wrangler.toml` binds the intended D1 database and contains:
+
+```toml
+[vars]
+ALLOWED_ORIGIN = "https://csma-research-group.github.io"
+```
+
+Then, from the repository root, run the tests and deploy only after reviewing the exact account/database target:
+
+```bash
+npm test
+npx wrangler secret list --config workers/visitor-stats/wrangler.toml
+npx wrangler deploy --config workers/visitor-stats/wrangler.toml
+```
+
+Confirm that `VISITOR_HASH_SALT` appears by name in the secret list; never print or replace its value during routine deployment. After deployment, the official-origin OPTIONS request must return `204` with the exact `Access-Control-Allow-Origin`, and the official-origin GET must return `200` with the same header and `apiVersion: 2`. A POST is a real analytics write; use the website itself for the final tracked-visitor check rather than a synthetic production write.

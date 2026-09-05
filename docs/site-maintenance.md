@@ -17,6 +17,7 @@ Use npm because `package-lock.json` is the repository lockfile.
 
 ```bash
 npm ci
+npm test
 npm run dev
 ```
 
@@ -27,7 +28,7 @@ npm run build
 npm run preview -- --host 127.0.0.1
 ```
 
-The package currently has no `lint` or `test` script. Do not assume those commands exist; inspect `package.json` before running project scripts.
+The package has a dependency-free Node test suite for the visitor Worker. It does not currently have a lint script; inspect `package.json` before running additional project commands.
 
 ## Structured content sources
 
@@ -103,6 +104,8 @@ When the base artwork changes, adjust hotspot percentages against the actual vis
 ## Global Visitors Globe
 
 See `docs/visitor-stats.md`. Keep country markers derived only from API data. Do not add sample counts or synthetic countries. Preserve the single animation scheduler, visibility/intersection pausing, frame-buffer reuse, resize cleanup, and request timeout/fallback behavior.
+
+Keep the current-visitor marker separate from aggregate country markers. It must use only the coarse coordinates returned for the active POST response, follow the globe projection during rotation, disappear on the back of the sphere, and remain labeled as approximate. Keep time formatting outside the animation loop and use the Worker timezone with a device-timezone fallback.
 
 ## Assets and performance
 

@@ -10,6 +10,8 @@ export const projects = [
     status: 'Published / Research Prototype',
     description:
       'TraceCoder is a trace-driven multi-agent framework for automated debugging and repair of LLM-generated code. It emulates the human observe-analyze-repair debugging loop by combining runtime tracing, causal analysis, historical lesson learning, and rollback-based iterative repair.',
+    homeSummary:
+      'A trace-driven multi-agent framework for debugging and repairing LLM-generated code.',
     keyIdeas: [
       'Runtime tracing',
       'Instrumentation Agent',
@@ -56,6 +58,8 @@ export const projects = [
     status: 'Published / Prototype',
     description:
       'KGMAF is a knowledge-guided multi-agent framework for intelligent requirements development. It supports software requirements specification generation through role-specialized agents, shared artifacts, injected requirements knowledge, and human-in-the-loop review.',
+    homeSummary:
+      'A knowledge-guided multi-agent framework for requirements development and SRS generation.',
     keyIdeas: [
       'Role-specialized agents',
       'Shared artifact pool',

@@ -17,7 +17,6 @@ export const siteInfo = {
 }
 
 export const navigationItems = [
-  { label: 'Home', path: '/' },
   { label: 'Research', path: '/research' },
   { label: 'Projects', path: '/projects' },
   { label: 'Publications', path: '/publications' },
