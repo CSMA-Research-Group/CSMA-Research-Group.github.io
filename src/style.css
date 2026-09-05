@@ -1766,12 +1766,12 @@ li {
   display: grid;
   grid-template-columns: minmax(250px, 0.62fr) minmax(0, 1.72fr);
   gap: 14px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .footer-about-contact {
   display: grid;
-  grid-template-rows: auto auto auto auto;
+  grid-template-rows: auto auto auto 1fr;
   align-content: start;
   gap: 8px;
   min-height: 288px;
@@ -1901,7 +1901,8 @@ li {
 .footer-box-bottom {
   display: flex;
   justify-content: flex-start;
-  align-items: start;
+  align-items: flex-end;
+  align-self: stretch;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 0;
@@ -1964,6 +1965,7 @@ li {
 .hero-lede,
 .page-hero p:not(.eyebrow),
 .prose p,
+.research-framework-summary p,
 .feature-card p,
 .highlight-card p,
 .research-card > p:not(.card-kicker),
@@ -1972,17 +1974,24 @@ li {
 .info-panel p:not(.eyebrow):not(.placeholder-note),
 .contact-card p:not(.eyebrow),
 .about-card > p:not(.eyebrow),
-.join-card p,
-.resource-item p,
+.join-card p:not(.eyebrow),
+.resource-item p:not(.card-kicker),
 .news-item section > p:not(.paper-title),
 .abstract-summary,
 .vision-note,
-.footer-about-contact > div:first-of-type p {
+.home-research-intro p:not(.eyebrow),
+.home-area-item p,
+.home-project-row > p:not(.home-work-subtitle),
+.home-news-row p:not(.home-news-meta),
+.home-collaborate p:not(.eyebrow),
+.footer-about-text {
   max-width: 900px;
   overflow-wrap: break-word;
   hyphens: auto;
   line-height: 1.72;
-  text-align: left;
+  text-align: justify;
+  text-align-last: left;
+  text-justify: inter-word;
 }
 
 @media (max-width: 1040px) {
@@ -2192,30 +2201,6 @@ li {
 
   .support-links {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .text-justify-body,
-  .section-description,
-  .hero-lede,
-  .page-hero p:not(.eyebrow),
-  .prose p,
-  .feature-card p,
-  .highlight-card p,
-  .research-card > p:not(.card-kicker),
-  .research-card .card-section p:not(.placeholder-note),
-  .project-card > p:not(.card-kicker):not(.project-subtitle):not(.placeholder-note),
-  .info-panel p:not(.eyebrow):not(.placeholder-note),
-  .contact-card p:not(.eyebrow),
-  .about-card > p:not(.eyebrow),
-  .join-card p,
-  .resource-item p,
-  .news-item section > p:not(.paper-title),
-  .abstract-summary,
-  .vision-note,
-  .footer-about-contact > div:first-of-type p {
-    text-align: left;
   }
 }
 

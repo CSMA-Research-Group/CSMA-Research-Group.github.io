@@ -18,8 +18,7 @@
             <p class="footer-contact-row">
               <span class="footer-social-icon" aria-hidden="true">@</span>
               <span>
-                <strong>Email:</strong>
-                <a :href="`mailto:${siteInfo.contactEmail}`">{{ siteInfo.contactEmail }}</a>
+                <strong>Email:</strong>{{ ' ' }}<a :href="`mailto:${siteInfo.contactEmail}`">{{ siteInfo.contactEmail }}</a>
               </span>
             </p>
             <a
@@ -29,7 +28,7 @@
               rel="noopener noreferrer"
             >
               <span class="footer-social-icon" aria-hidden="true">W</span>
-              <span><strong>Weibo:</strong> @jiangpinghuang</span>
+              <span><strong>Weibo:</strong>{{ ' ' }}@jiangpinghuang</span>
             </a>
             <a
               class="footer-contact-row"
@@ -38,7 +37,7 @@
               rel="noopener noreferrer"
             >
               <span class="footer-social-icon" aria-hidden="true">X</span>
-              <span><strong>X:</strong> @jiangpinghuang</span>
+              <span><strong>X:</strong>{{ ' ' }}@jiangpinghuang</span>
             </a>
           </div>
         </div>

@@ -28,10 +28,19 @@ test('coordinates require finite values inside geographic bounds', () => {
   assert.equal(toFiniteCoordinate(false, -90, 90), null)
 })
 
-test('real zero totals and positive visitor numbers are formatted correctly', () => {
+test('real zero totals and the stable VCN identifier contract are formatted correctly', () => {
   assert.equal(formatStatCount(0), '0')
   assert.equal(formatStatCount(12345), '12,345')
-  assert.equal(formatVisitorNumber(12345), '#12,345')
+  assert.equal(formatVisitorNumber(22), 'VCN00000022')
+  assert.equal(formatVisitorNumber(9999), 'VCN00009999')
+  assert.equal(formatVisitorNumber(10000), 'VCN00010000')
+  assert.equal(formatVisitorNumber(359999), 'VCN000Z9999')
+  assert.equal(formatVisitorNumber(360000), 'VCN00100000')
+  assert.equal(formatVisitorNumber(9999999), 'VCN00RR9999')
+  assert.equal(formatVisitorNumber(466559999), 'VCN0ZZZ9999')
+  assert.equal(formatVisitorNumber(466560000), 'VCN10000000')
+  assert.equal(formatVisitorNumber(16796159999), 'VCNZZZZ9999')
+  assert.equal(formatVisitorNumber(16796160000), 'Unavailable')
 })
 
 test('IANA timezone validation rejects unusable API values', () => {

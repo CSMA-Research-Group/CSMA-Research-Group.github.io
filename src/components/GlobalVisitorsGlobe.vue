@@ -60,7 +60,7 @@
           <dd>{{ countriesReachedLabel }}</dd>
         </div>
         <div>
-          <dt>Current Visitor #</dt>
+          <dt>Your Visitor No.</dt>
           <dd class="visitor-id">{{ currentVisitorLabel }}</dd>
         </div>
       </dl>
