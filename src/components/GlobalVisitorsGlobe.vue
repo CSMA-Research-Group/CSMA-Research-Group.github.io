@@ -1290,7 +1290,7 @@ onUnmounted(() => {
   display: grid;
   gap: 2px;
   width: min(100px, calc(50% - 12px));
-  padding: 6px;
+  padding: 6px 4px;
   border: 1px solid rgba(170, 215, 255, 0.2);
   border-radius: 6px;
   background: rgba(8, 26, 51, 0.7);
