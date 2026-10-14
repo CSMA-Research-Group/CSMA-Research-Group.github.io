@@ -63,7 +63,7 @@
           <dd>{{ totalVisitorsLabel }}</dd>
         </div>
         <div>
-          <dt>Countries Reached</dt>
+          <dt>Countries / Regions</dt>
           <dd>{{ countriesReachedLabel }}</dd>
         </div>
         <div>
@@ -340,12 +340,12 @@ const currentLocationLabel = computed(() => {
 })
 
 const markerSummaryLabel = computed(() => {
-  if (statsStatus.value === 'loading') return 'Loading privacy-qualified country markers...'
+  if (statsStatus.value === 'loading') return 'Loading privacy-qualified country or region markers...'
   if (visitorSources.value.length) {
-    return `${visitorSources.value.length} privacy-qualified country markers are shown.`
+    return `${visitorSources.value.length} privacy-qualified country or region markers are shown.`
   }
-  if (statsStatus.value === 'available') return 'No country markers meet the public display threshold yet.'
-  return 'Country markers are temporarily unavailable.'
+  if (statsStatus.value === 'available') return 'No country or region markers meet the public display threshold yet.'
+  return 'Country or region markers are temporarily unavailable.'
 })
 
 const markerVisitorLabel = (source) => (
@@ -1289,8 +1289,8 @@ onUnmounted(() => {
   position: absolute;
   display: grid;
   gap: 2px;
-  width: min(112px, calc(50% - 18px));
-  padding: 6px 8px;
+  width: min(100px, calc(50% - 12px));
+  padding: 6px;
   border: 1px solid rgba(170, 215, 255, 0.2);
   border-radius: 6px;
   background: rgba(8, 26, 51, 0.7);
@@ -1298,10 +1298,10 @@ onUnmounted(() => {
   text-align: left;
 }
 
-.city-clock--top-left { top: 10px; left: 10px; }
-.city-clock--top-right { top: 10px; right: 10px; }
-.city-clock--bottom-left { bottom: 10px; left: 10px; }
-.city-clock--bottom-right { bottom: 10px; right: 10px; }
+.city-clock--top-left { top: 5px; left: 5px; }
+.city-clock--top-right { top: 5px; right: 5px; }
+.city-clock--bottom-left { bottom: 5px; left: 5px; }
+.city-clock--bottom-right { bottom: 5px; right: 5px; }
 .city-clock-name { color: #cce8ff; font-size: 10px; font-weight: 700; line-height: 1.2; }
 .city-clock time { color: #fff; font-size: 18px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
 .city-clock-date { color: #b5cce0; font-size: 9px; line-height: 1.3; white-space: nowrap; }
