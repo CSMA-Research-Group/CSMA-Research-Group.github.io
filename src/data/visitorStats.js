@@ -4,4 +4,11 @@ export const visitorGlobeInfo = {
   totalVisitors: null,
 }
 
+// Fixed, user-requested display additions. Apply once to each live API value.
+export const visitorDisplayOffsets = Object.freeze({
+  uniqueVisitors: 11000,
+  countriesReached: 32,
+  currentVisitorNumber: 5000,
+})
+
 export const visitorSources = []

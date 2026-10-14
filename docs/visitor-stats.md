@@ -32,6 +32,22 @@ The frontend first attempts POST. If tracking is unavailable or rejected, it per
 
 The response fields consumed by the UI are `ok`, `foundedAt`, `uniqueVisitors`, `countriesReached`, `currentVisitorNumber`, `currentVisitor`, and `countries`. A successful POST returns `currentVisitor.lat`, `currentVisitor.lng`, `currentVisitor.timezone`, and `accuracy: "region"`. The GET endpoint deliberately returns no current-visitor context. `countriesReached` counts every reached country, while the public `countries` marker list includes only countries with at least three unique visitors.
 
+## Display adjustments
+
+The fixed additions requested on 2026-10-15 are maintained in `visitorDisplayOffsets` in `src/data/visitorStats.js`:
+
+| Display | API field | Fixed addition |
+| --- | --- | --- |
+| Total Visitors | `uniqueVisitors` | 11,000 |
+| Countries / Regions | `countriesReached` | 32 |
+| Your Visitor No. | `currentVisitorNumber` | 5,000 before VCN formatting |
+
+Each display value is computed from the latest raw API value plus its addition. Refreshes, retries, and returning visits do not accumulate the addition. The existing Total Visitors metric continues to use unique visitors, rather than the separate `totalVisits` page-visit counter.
+
+These are display adjustments, not measured visits or an imported historical dataset. The statistics note identifies the adjusted totals. The Worker, D1 records, browser visitor ID, country list, and map markers are unchanged. Missing or invalid values remain unavailable; in particular, a read-only aggregate response does not produce a visitor number. A raw visitor number of 22 displays as `VCN00005022`; 5,000 displays as `VCN00010000`. Keep the visitor offset fixed after publication so returning visitors retain their adjusted number.
+
+Publishing the rebuilt frontend applies these additions; no Worker deployment or database migration is required.
+
 ## Privacy model
 
 The browser stores a random local pseudonymous ID under `csma_visitor_id` and sends only that ID in the request body. The Worker combines the local ID with the User-Agent and a private `VISITOR_HASH_SALT`, then stores the resulting SHA-256 hash. A visitor number is stable while that browser ID and User-Agent remain unchanged; clearing site storage or changing the User-Agent can create a new pseudonymous profile. The D1 schema still contains a legacy `city` column, but new tracking writes clear it; the active API contract returns country, administrative region, coarse coordinates, and timezone instead of a city label.

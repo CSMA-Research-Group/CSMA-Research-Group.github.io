@@ -93,7 +93,7 @@
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import MeteorNotice from './MeteorNotice.vue'
 import { trackVisitor } from '../services/visitorStats'
-import { visitorGlobeInfo } from '../data/visitorStats'
+import { visitorDisplayOffsets, visitorGlobeInfo } from '../data/visitorStats'
 import { worldClockCities, worldClockCorners } from '../data/worldClocks'
 import { createCityClockFormatter, createWorldClockRotation, localClockBounds, clampClockPosition, nextClockPosition } from '../utils/globeClocks'
 import { getSunPosition, vectorFromLatLng, rotateSunVector, daylightBrightness, createMeteor, meteorFrame, isMeteorVisible } from '../utils/globeSky'
@@ -305,29 +305,29 @@ const foundedAtLabel = computed(() => foundedAtFallback)
 
 const totalVisitorsLabel = computed(() => (
   hasVisitorStats.value
-    ? formatStatCount(visitorStats.value.uniqueVisitors, loadingOrUnavailableLabel.value)
+    ? formatStatCount(visitorStats.value.uniqueVisitors, loadingOrUnavailableLabel.value, visitorDisplayOffsets.uniqueVisitors)
     : loadingOrUnavailableLabel.value
 ))
 
 const countriesReachedLabel = computed(() => (
   hasVisitorStats.value
-    ? formatStatCount(visitorStats.value.countriesReached, loadingOrUnavailableLabel.value)
+    ? formatStatCount(visitorStats.value.countriesReached, loadingOrUnavailableLabel.value, visitorDisplayOffsets.countriesReached)
     : loadingOrUnavailableLabel.value
 ))
 
 const currentVisitorLabel = computed(() => {
   if (!hasVisitorStats.value) return loadingOrUnavailableLabel.value
 
-  return formatVisitorNumber(visitorStats.value.currentVisitorNumber)
+  return formatVisitorNumber(visitorStats.value.currentVisitorNumber, loadingOrUnavailableLabel.value, visitorDisplayOffsets.currentVisitorNumber)
 })
 
 const analyticsNote = computed(() => {
   if (statsStatus.value === 'loading') return 'Loading visitor statistics...'
   if (visitorStats.value?.trackingMode === 'tracked') {
-    return 'Live aggregate statistics; location is rounded to an approximate region.'
+    return 'Totals include a fixed adjustment; location is rounded to an approximate region.'
   }
   if (statsStatus.value === 'available') {
-    return 'Aggregate totals loaded; current visitor details are temporarily unavailable.'
+    return 'Totals include a fixed adjustment; current visitor details are temporarily unavailable.'
   }
   return 'Visitor statistics are temporarily unavailable.'
 })

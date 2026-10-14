@@ -3,7 +3,8 @@
  *
  * VCN means "Visitor of CSMA Number". The Worker remains the source of truth
  * for the positive, globally increasing visitor_number; this module only
- * converts that number into its public, fixed-width representation.
+ * converts that number into its public, fixed-width representation, with
+ * an optional fixed display offset. The stored Worker number is unchanged.
  *
  * Layout (11 ASCII characters): VCN + BBBB + NNNN
  * - VCN: permanent prefix.
@@ -42,16 +43,18 @@ export const toFiniteCoordinate = (value, min, max) => {
     : null
 }
 
-export const formatStatCount = (value, fallback = 'Unavailable') => {
+export const formatStatCount = (value, fallback = 'Unavailable', offset = 0) => {
   const count = toFiniteNumber(value)
   return count !== null && count >= 0
-    ? Math.trunc(count).toLocaleString('en-US')
+    ? (Math.trunc(count) + offset).toLocaleString('en-US')
     : fallback
 }
 
-export const formatVisitorNumber = (value, fallback = 'Unavailable') => {
+export const formatVisitorNumber = (value, fallback = 'Unavailable', offset = 0) => {
   const visitorNumber = toFiniteNumber(value)
-  const sequence = visitorNumber === null ? 0 : Math.trunc(visitorNumber)
+  if (visitorNumber === null || visitorNumber < 1) return fallback
+
+  const sequence = Math.trunc(visitorNumber) + offset
   if (sequence < 1 || sequence > VCN_MAX_VISITOR_NUMBER) return fallback
 
   const bucket = Math.floor(sequence / VCN_BLOCK_SIZE)
