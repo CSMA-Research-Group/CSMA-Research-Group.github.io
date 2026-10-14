@@ -6,7 +6,7 @@
 
 - 品牌和导航 Home 均返回首页；导航依次为 Home、News、Research、Projects、Publications、People、Resources、About，无语言切换。旧 `/zh` 地址返回首页。
 - 首页依次为欢迎与愿景图、News、并列的论文与项目、Research、People、Resources、About、原页脚与地球。
-- Home 与 Research 愿景图共同使用 `temp/Cognitive Collaborative Intelligence Vision.png` 的原样副本，保存为 `src/assets/figures/csma-home-research-vision.png`，尺寸为 1774 × 887，与现有容器比例一致。原 SVG 文件仍保留在原路径，共享组件未指定图片时仍可使用原图。
+- Home 与 Research 愿景图共同使用用户提供的 `Cognitive Collaborative Intelligence Vision.png` 的原样副本，正式保存为 `src/assets/figures/csma-home-research-vision.png`，尺寸为 1774 × 887，与现有容器比例一致。原 SVG 文件仍保留在原路径，共享组件未指定图片时仍可使用原图。
 - 两处新图均启用轻量动效：中央水平光环每隔约 12–22 秒随机选择转速、方向与轻微倾角，平滑变速和换向，目标转速相当于每圈约 24–40 秒；较细的第二段光弧同步绕行，外侧光环约 42 秒一周，各区域插图内有 18 个小光点轻微明暗变化，窄屏减少光点。底图保持静止，保留热点提示与方向链接。新的动效组件为 `ResearchVisionMotion.vue`，水平光环的平滑随机运动维护在 `src/utils/visionMotion.js`，通过 `ambientMotion` 单独启用；离开视口或隐藏标签页时暂停，系统减少动态效果时隐藏。原有方向流线、扫描效果和鼠标倾斜不在这两处启用。
 - 桌面首屏标题的可见顶边、按钮底边与右图对齐；宽度小于 1180px 时上下排列。四个研究方向采用通栏 2 × 2 卡片，手机单列。
 - 首页 Explore Research 使用原深蓝填充；View Publications 改用浅蓝填充，保留原字体、尺寸、边框与圆角。论文列表标题移除额外的 940px 限宽，用满所在内容列；所有论文标题均无手动断行，长标题在列宽不足时自然换行，完整显示。
@@ -40,7 +40,7 @@
 | 在研项目 | `src/data/proposalProjects.js` | 保留周期、公开题名中的 `[MASK]` 与已确认简介。 |
 | 系统 | `src/data/systems.js` | `researchSystems` 用于框架目录；`projectApplications` 用于 Resources；`systemProfiles` 提供全部详情路由。KGMAF 与 ChatREQ 分开命名，详情说明关系；可选动图维护在对应介绍中。 |
 | 研究方向 | `src/data/researchAreas.js`、`researchPresentation.js` | 认知与协同智能、智能软件工程、智能机器人、应用场景；保留稳定 ID 和旧锚点兼容。 |
-| Home / Research 主图与动效 | `src/assets/figures/csma-home-research-vision.png`、`src/views/Home.vue`、`src/views/Research.vue`、`src/components/ResearchVisionMotion.vue` | 从 temp 原样复制，通过 Vite 导入；保持 2:1 比例，SVG 叠层绘制缓慢光环与分区微光，原 SVG 保留。 |
+| Home / Research 主图与动效 | `src/assets/figures/csma-home-research-vision.png`、`src/views/Home.vue`、`src/views/Research.vue`、`src/components/ResearchVisionMotion.vue` | 用户提供图像的原样副本，通过 Vite 导入；保持 2:1 比例，SVG 叠层绘制缓慢光环与分区微光，原 SVG 保留。 |
 | 架构图 | `src/assets/figures/`、`src/data/systems.js` | CMCS.pdf、SemFaith.pdf 为用户原件，已从 Downloads 移入；同名小写 framework PNG 用于网页。`ProjectFigure.vue` 统一显示，点击新图打开原 PDF。 |
 | 洞见文章 | `src/data/researchInsights.js` | 两篇英文介绍、洞见和原始来源；首页展示前两篇，Resources 展示全部，详情路由按稳定 ID 生成。 |
 | 附加资源 | `src/data/resources.js` | GitHub 入口来自 repositories 分组，其余历史记录保留；兼容导出 researchInsights。 |

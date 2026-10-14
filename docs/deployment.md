@@ -57,7 +57,7 @@ Confirm:
 - the build exits successfully;
 - `dist/index.html` uses root-relative asset paths;
 - `dist/robots.txt` and `dist/sitemap.xml` exist;
-- no `work/homepage-audit/` file appears under `dist/`;
+- no drafts, internal audit records, or backup archives appear under `dist/`;
 - the client bundle contains the intended public visitor API base and no secret;
 - all eight primary navigation routes work in a local preview, with the brand link returning home;
 - all four Interactive Research Vision targets resolve;

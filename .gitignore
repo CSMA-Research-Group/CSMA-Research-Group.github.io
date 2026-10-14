@@ -6,3 +6,6 @@ workers/visitor-stats/wrangler.toml
 **/.DS_Store
 /temp/
 /tmp/
+.idea/
+*.iml
+/work/homepage-audit/
