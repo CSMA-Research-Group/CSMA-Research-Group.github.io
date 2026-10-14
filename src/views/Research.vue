@@ -1,23 +1,20 @@
 <template>
-  <div>
+  <div class="research-body-page">
     <section class="page-hero research-page-hero">
-      <div>
+      <div class="research-hero-copy">
         <p class="eyebrow">Research</p>
         <h1 class="research-page-title">
           Cognitive and collaborative intelligence for software, robotics, and grounded applications.
         </h1>
-        <p>
+        <p class="research-hero-intro">
           CSMA studies the cognitive, reasoning, planning, and collaborative foundations of multi-agent intelligence, then instantiates those ideas in software engineering, robotics, and application-driven research prototypes.
         </p>
       </div>
-      <VisionDiagram />
+      <VisionDiagram :image-src="researchVisionImage" :animated="false" ambient-motion />
     </section>
 
-    <section class="section muted">
-      <div class="section-heading">
-        <p class="eyebrow">Research Highlights</p>
-        <h2>Representative systems extracted from the latest paper materials.</h2>
-      </div>
+    <section class="section muted" aria-labelledby="research-highlights-title">
+      <div class="section-heading"><h2 id="research-highlights-title">Research Highlights</h2></div>
       <div class="highlight-grid">
         <article v-for="highlight in researchHighlights" :key="highlight.id" class="highlight-card">
           <figure>
@@ -36,15 +33,16 @@
               <span v-for="tag in highlight.tags" :key="tag">{{ tag }}</span>
             </div>
             <div class="research-links">
-              <RouterLink :to="`/projects#${highlight.projectId}`">Project details</RouterLink>
-              <RouterLink :to="`/publications#${highlight.publicationId}`">Publication record</RouterLink>
+              <RouterLink :to="`/projects#${highlight.projectId}`">Project</RouterLink>
+              <RouterLink :to="`/publications/${highlight.publicationId}`">Publication</RouterLink>
             </div>
           </div>
         </article>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" aria-labelledby="research-directions-title">
+      <div class="section-heading"><h2 id="research-directions-title">Research Directions</h2></div>
       <div class="research-grid">
         <ResearchAreaCard
           v-for="(area, index) in researchAreas"
@@ -62,5 +60,6 @@
 import { RouterLink } from 'vue-router'
 import ResearchAreaCard from '../components/ResearchAreaCard.vue'
 import VisionDiagram from '../components/VisionDiagram.vue'
-import { researchAreas, researchHighlights } from '../data/researchAreas'
+import researchVisionImage from '../assets/figures/csma-home-research-vision.png'
+import { coreResearchAreas as researchAreas, researchHighlights } from '../data/researchAreas'
 </script>

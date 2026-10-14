@@ -1,27 +1,27 @@
 export const researchAreaPresentation = Object.freeze({
   'artificial-intelligence': {
-    title: 'Cognitive Intelligence',
-    role: 'Core intelligence',
+    title: 'Cognitive and Collaborative Intelligence',
+    role: 'Core Intelligence',
   },
   'intelligent-software-engineering': {
     title: 'Intelligent Software Engineering',
-    role: 'Primary carrier',
+    role: 'Primary Carrier',
   },
   'intelligent-robotics': {
     title: 'Intelligent Robotics',
-    role: 'Primary carrier',
+    role: 'Primary Carrier',
   },
   'application-scenarios': {
     title: 'Application Scenarios',
-    role: 'Grounding and validation',
+    role: 'Grounding and Validation',
   },
   'multi-agent-cognitive-ai': {
     title: 'Multi-Agent and Collaborative Intelligence',
-    role: 'Collaborative mechanism',
+    role: 'Collaborative Mechanism',
   },
   'knowledge-human-loop-ai': {
     title: 'Knowledge and Human Feedback',
-    role: 'Cross-cutting support',
+    role: 'Cross-cutting Support',
   },
 })
 
@@ -53,5 +53,5 @@ export const getResearchAreaDisplayTitle = (area) => (
 )
 
 export const getResearchAreaRole = (areaId) => (
-  researchAreaPresentation[areaId]?.role || 'Research direction'
+  researchAreaPresentation[areaId]?.role || 'Research Direction'
 )

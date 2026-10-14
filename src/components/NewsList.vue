@@ -1,29 +1,16 @@
 <template>
-  <div class="news-list">
-    <article v-for="item in items" :key="item.id" class="news-item">
-      <div>
-        <time :datetime="item.date">{{ item.date }}</time>
-        <span>{{ item.tag }}</span>
-        <p v-if="item.type" class="news-type">{{ item.type }}</p>
+  <div class="news-directory">
+    <article v-for="item in items" :id="item.id" :key="item.id" class="news-entry">
+      <div class="news-dateline"><time :datetime="item.date">{{ item.date }}</time><span>{{ item.tag }}</span></div>
+      <div class="news-copy">
+        <p v-if="item.venue" class="content-kicker">{{ item.venue }}</p>
+        <h2><RouterLink v-if="item.publicationId" :to="`/publications/${item.publicationId}`">{{ item.title }}</RouterLink><template v-else>{{ item.title }}</template></h2>
+        <p>{{ item.summary || item.description }}</p>
       </div>
-      <section>
-        <div class="news-meta">
-          <span v-if="item.venue">{{ item.venue }}</span>
-          <span v-if="item.location">{{ item.location }}</span>
-        </div>
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.description }}</p>
-        <p v-if="item.paperTitle" class="paper-title">Paper: {{ item.paperTitle }}</p>
-      </section>
     </article>
   </div>
 </template>
-
 <script setup>
-defineProps({
-  items: {
-    type: Array,
-    required: true,
-  },
-})
+import { RouterLink } from 'vue-router'
+defineProps({ items: { type: Array, required: true } })
 </script>

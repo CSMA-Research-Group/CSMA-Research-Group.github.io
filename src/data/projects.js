@@ -28,11 +28,11 @@ export const projects = [
     ],
     links: [
       {
-        label: 'Code',
+        label: 'GitHub',
         url: 'https://github.com/CSMA-Research-Group/TraceCoder',
       },
       {
-        label: 'DOI',
+        label: 'Paper',
         url: 'https://doi.org/10.1145/3744916.3773187',
       },
     ],
@@ -52,9 +52,9 @@ export const projects = [
   },
   {
     id: 'kgmaf',
-    title: 'KGMAF / ChatREQ',
+    title: 'KGMAF',
     subtitle: 'Knowledge-Guided Multi-Agent Requirements Engineering',
-    type: 'Research Framework / System Prototype',
+    type: 'Research Framework',
     status: 'Published / Prototype',
     description:
       'KGMAF is a knowledge-guided multi-agent framework for intelligent requirements development. It supports software requirements specification generation through role-specialized agents, shared artifacts, injected requirements knowledge, and human-in-the-loop review.',
@@ -77,11 +77,14 @@ export const projects = [
     ],
     links: [
       {
-        label: 'DOI',
+        label: 'GitHub',
+        url: 'https://github.com/CSMA-Research-Group/ChatREQ',
+      },
+      {
+        label: 'Paper',
         url: 'https://doi.org/10.1109/ASE63991.2025.00334',
       },
     ],
-    linkPlaceholders: ['Project code link requires group confirmation before publication.'],
     figure: {
       src: kgmafFigure,
       alt: 'KGMAF knowledge-guided multi-agent requirements engineering framework',
@@ -124,7 +127,7 @@ export const projects = [
     id: 'embodied-intelligence',
     title: 'Embodied and Robotic Intelligence',
     subtitle: 'Planning, Control, and Human-Robot Collaboration',
-    type: 'Ongoing Research Direction',
+    type: 'Current Research Direction',
     status: 'Ongoing Direction',
     description:
       'This project theme explores how cognitive and collaborative AI mechanisms can support robotic perception, decision-making, task planning, control, and continuous evolution in complex environments.',

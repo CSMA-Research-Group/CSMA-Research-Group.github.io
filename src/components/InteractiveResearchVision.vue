@@ -3,7 +3,7 @@
     ref="wrapRef"
     class="vision-wrap"
     :class="[
-      { 'has-active': activeArea, 'is-reduced-motion': reducedMotion },
+      { 'has-active': activeArea, 'is-reduced-motion': reducedMotion, 'is-static': !animated },
       orbitDirectionClass,
     ]"
     aria-label="Interactive CSMA research vision"
@@ -17,13 +17,15 @@
     >
       <img
         class="vision-image"
-        :src="visionImage"
+        :src="imageSrc || visionImage"
         alt="CSMA research vision connecting cognitive intelligence, intelligent software engineering, intelligent robotics, and application scenarios"
         decoding="async"
         draggable="false"
       />
 
-      <div v-if="!reducedMotion" class="particles" aria-hidden="true">
+      <ResearchVisionMotion v-if="ambientMotion" />
+
+      <div v-if="motionEnabled" class="particles" aria-hidden="true">
         <span
           v-for="particle in particles"
           :key="particle.id"
@@ -39,7 +41,7 @@
         />
       </div>
 
-      <svg class="vision-overlay" viewBox="0 0 1774 887" preserveAspectRatio="none" aria-hidden="true">
+      <svg v-if="motionEnabled" class="vision-overlay" viewBox="0 0 1774 887" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <filter id="visionSoftGlow" x="-45%" y="-45%" width="190%" height="190%">
             <feGaussianBlur stdDeviation="7" result="blur" />
@@ -72,7 +74,7 @@
         </g>
       </svg>
 
-      <div class="module-effects" aria-hidden="true">
+      <div v-if="motionEnabled" class="module-effects" aria-hidden="true">
         <div
           v-for="area in areas"
           :key="`effect-${area.id}`"
@@ -109,7 +111,7 @@
         </div>
       </div>
 
-      <div class="feedback-orbit-layer" aria-hidden="true">
+      <div v-if="motionEnabled" class="feedback-orbit-layer" aria-hidden="true">
         <svg viewBox="0 0 500 180" focusable="false">
           <ellipse class="orbit-ring ring-1" cx="250" cy="92" rx="210" ry="48" />
           <ellipse class="orbit-ring ring-2" cx="250" cy="92" rx="160" ry="34" />
@@ -176,8 +178,21 @@
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import ResearchVisionMotion from './ResearchVisionMotion.vue'
 
-defineProps({
+const props = defineProps({
+  ambientMotion: {
+    type: Boolean,
+    default: false,
+  },
+  imageSrc: {
+    type: String,
+    default: '',
+  },
+  animated: {
+    type: Boolean,
+    default: true,
+  },
   showMobileLinks: {
     type: Boolean,
     default: true,
@@ -189,6 +204,7 @@ const router = useRouter()
 const wrapRef = ref(null)
 const activeArea = ref(null)
 const reducedMotion = ref(false)
+const motionEnabled = computed(() => props.animated && !reducedMotion.value)
 const pointer = reactive({
   x: 0,
   y: 0,
@@ -317,11 +333,12 @@ const cityStars = Array.from({ length: 16 }, (_, index) => ({
 const activeAreaData = computed(() => areas.find((area) => area.id === activeArea.value))
 
 const orbitDirectionClass = computed(() => {
-  if (reducedMotion.value || pointer.orbitIntensity < 0.14) return 'is-center'
+  if (!motionEnabled.value || pointer.orbitIntensity < 0.14) return 'is-center'
   return pointer.x < 0 ? 'is-left' : 'is-right'
 })
 
 const stageStyle = computed(() => {
+  if (!motionEnabled.value) return { '--active-color': activeAreaData.value?.color || '#55ddff' }
   const orbitSpeed = reducedMotion.value ? 14 : 12 - pointer.orbitIntensity * 5
 
   return {
@@ -375,7 +392,7 @@ const clearActiveArea = () => {
 
 const updateFromPointer = () => {
   frameId = 0
-  if (!lastPointerEvent || !wrapRef.value || reducedMotion.value) return
+  if (!lastPointerEvent || !wrapRef.value || !motionEnabled.value) return
 
   const rect = wrapRef.value.getBoundingClientRect()
   const xRatio = Math.min(1, Math.max(0, (lastPointerEvent.clientX - rect.left) / rect.width))
@@ -387,7 +404,7 @@ const updateFromPointer = () => {
 }
 
 const handlePointerMove = (event) => {
-  if (event.pointerType === 'touch' || reducedMotion.value) return
+  if (event.pointerType === 'touch' || !motionEnabled.value) return
   lastPointerEvent = event
   if (!frameId) frameId = requestAnimationFrame(updateFromPointer)
 }
@@ -463,6 +480,11 @@ onUnmounted(() => {
   box-shadow:
     0 26px 70px rgba(4, 18, 38, 0.24),
     inset 0 0 0 1px rgba(137, 211, 255, 0.1);
+}
+
+.is-static .vision-stage,
+.is-static .vision-image {
+  transform: none;
 }
 
 .vision-image,

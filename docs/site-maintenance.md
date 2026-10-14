@@ -28,7 +28,7 @@ npm run build
 npm run preview -- --host 127.0.0.1
 ```
 
-The package has a dependency-free Node test suite for the visitor Worker. It does not currently have a lint script; inspect `package.json` before running additional project commands.
+The package has a dependency-free Node test suite for the visitor Worker, world clocks, globe lighting and meteors, and research-vision motion. It does not currently have a lint script; inspect `package.json` before running additional project commands.
 
 ## Structured content sources
 
@@ -37,12 +37,16 @@ All public content should remain in the existing structured files:
 - `src/data/site.js`: identity, research vision, affiliation, contact information, and primary navigation.
 - `src/data/researchAreas.js`: complete research-area records and paper-driven highlights.
 - `src/data/researchPresentation.js`: display-only research titles, roles, and homepage ordering.
-- `src/data/projects.js`: projects and ongoing research directions.
+- `src/data/projects.js`: retained system prototype records.
+- `src/data/proposalProjects.js`: ongoing research projects shown on the homepage and Projects page.
+- `src/data/systems.js`: supporting system introductions and optional resource previews.
 - `src/data/publications.js`: publication metadata and links.
-- `src/data/people.js`: members, students, collaborators, and alumni placeholders.
+- `src/data/people.js`: confirmed profiles and retained collaborator/alumni records.
+- `src/data/peopleHierarchy.js`: one Members directory, default avatars, and homepage selection.
 - `src/data/news.js`: dated verified news.
-- `src/data/resources.js`: code, data, tools, courses/documents, demos, and repositories.
-- `src/data/visitorStats.js`: canonical public founding timestamp used by the Globe and About page.
+- `src/data/resources.js`: supplementary repository links and retained resource records.
+- `src/data/researchInsights.js`: Research Insights articles, group perspectives, and primary sources.
+- `src/data/visitorStats.js`: canonical public founding date used by the Globe and About page.
 
 Never rename or reuse an existing ID. Before changing an ID-like value, search every reference with `rg`. Keep empty arrays and blank optional link fields; they communicate that data is not yet confirmed.
 
@@ -50,30 +54,34 @@ Never rename or reuse an existing ID. Before changing an ID-like value, search e
 
 Edit `src/data/researchAreas.js` for canonical content. Keep each direction distinct:
 
-- Cognitive Intelligence: reasoning, planning, memory, reflection, metacognition, and adaptation.
-- Multi-Agent and Collaborative Intelligence: role specialization, shared artifacts/evidence, coordination, communication, recovery, and control.
+- Cognitive and Collaborative Intelligence: reasoning, planning, memory, and coordination among agents, supported by knowledge and human feedback.
 - Intelligent Software Engineering: requirements → code → tests → runtime traces → debugging/repair and repository-level agents.
 - Intelligent Robotics: perception, task grounding, planning, control, execution feedback, and human-robot collaboration.
 - Application Scenarios: prototypes, practical workflows, validation, deployment, reproducibility, and transfer.
-- Knowledge and Human Feedback: domain knowledge, standards, review, quality checks, accountability, and traceable evidence.
+
+Knowledge and human feedback support these four directions rather than forming a separate homepage direction.
 
 Use `src/data/researchPresentation.js` when a shorter public label or a homepage ordering change is needed. This avoids changing canonical IDs or component interfaces.
 
 ## Updating Projects
 
-Edit `src/data/projects.js`. Preserve each `id`, `relatedPublicationIds`, and existing fields. Verify status and every Project, Paper, Code, DOI, or Demo link before publishing. If a link is not public, leave the link blank and keep a clear `linkPlaceholders` entry instead of inventing a URL.
+Edit `src/data/proposalProjects.js` for ongoing projects and `src/data/systems.js` for supporting systems. Some systems reuse confirmed records from `src/data/projects.js`. Preserve each `id` and paper relation. Verify every public link; leave unconfirmed URLs blank.
 
-The homepage derives featured projects from the same file; set `featured` only for a confirmed project that should be summarized there.
+The homepage presents ongoing projects beside selected publications. Their information row contains More, and their title opens the same project entry. Resources presents the paper-supporting systems separately.
 
 ## Updating Publications
 
 Edit `src/data/publications.js`. Confirm the title, author order, venue, year, dates, status, DOI, code, project relation, and public PDF rights. Do not turn a submission or internal draft into an accepted/published record. The homepage derives selected papers from the existing `featured` flag; the Publications page renders the complete category archive once.
 
+Each `systemId` must match a supporting system, whose `relatedPublicationIds` must point back to the paper. Titles and More open the individual paper page; DOI, code, and system links belong in the detail content, not below homepage summaries.
+
 ## Updating People
 
-Edit `src/data/people.js`. Preserve the separation among group members, student researchers, collaborators, and alumni. Do not infer that every coauthor is an internal member. Confirm affiliations, email addresses, homepages, and photographs before publishing. Keep placeholder records until real information is approved.
+Maintain the current six confirmed names and directions in `src/data/people.js`, with a single Members presentation in `src/data/peopleHierarchy.js`. There is no advisor/student split. All six people use `public/people/default-avatar.svg`, including Jiangping Huang. His primary displayed direction is Artificial Intelligence; Zhirui Huang is Intelligent Robotics; Shiyu Zhou, Juncheng Lu, Juntong Ou, and Yujie Jiang are Intelligent Software Engineering. Use the full English names explicitly provided by the user. Prior fictional profiles and generated portraits are archived outside the site. Preserve collaborator/alumni records without presenting them as current members; add biographies, contact details, and homepages only when confirmed.
 
-The People page owns the Join Us section. Join Us is intentionally not a primary navigation item.
+Portraits and names enter individual profiles. Show personal homepage links only inside those introductions and only when provided. The homepage presents the confirmed members in a shared grid, without displaying headcounts.
+
+The People page retains its Join Us section, and the About page provides contact details and joining instructions. Join Us is intentionally not a primary navigation item.
 
 ## Updating News
 
@@ -81,15 +89,17 @@ Edit `src/data/news.js` and keep entries sorted newest first. Each entry must de
 
 ## Updating Resources
 
-Edit `src/data/resources.js`. Use the `type` field to distinguish Code, Data, Tools, Courses, Documents, and Demos. Show a link only when it is confirmed and public; otherwise retain the item with an accurate status such as `Coming soon`. Do not add empty showcase links to make the page look fuller.
+Edit `src/data/systems.js` for the Resources system cards. Names and right-aligned More open system introductions; do not add System overview / Paper / Code link rows. A supplied `previewMedia: { src, alt, width, height }` displays a GIF or animated WebP below its description; leave it null while no media is available. Supplementary repository links come from `src/data/resources.js`. Keep availability statements factual.
+
+Research Insights uses the same heading and card styles as Research Applications. Maintain its articles in `src/data/researchInsights.js`; titles and More open `/resources/insights/:id`. Separate source-reported findings from the group's interpretation, and preserve source links and publication dates.
 
 ## Updating About and contact information
 
-Edit `src/data/site.js` so About, the footer, and other consumers stay consistent. The established time is maintained separately in `src/data/visitorStats.js` and must remain exactly `2026-05-19 05:19`. Contact stays within About and the footer; it is not a primary navigation item.
+Edit `src/data/site.js` so About, the footer, and other consumers stay consistent. The user-confirmed founding date is `2022-07-20` in `src/data/visitorStats.js`; do not append a time. The two homepage About module headers provide Home and How to join. Their bodies contain no hyperlinks; joining/contact details remain on the About page and in the footer.
 
 ## Interactive Research Vision
 
-The protected component is `src/components/InteractiveResearchVision.vue`; its base image is `public/figures/csma-research-vision.svg`.
+The component is `src/components/InteractiveResearchVision.vue`. Home and Research use `src/assets/figures/csma-home-research-vision.png`; the original `public/figures/csma-research-vision.svg` is retained. `ResearchVisionMotion.vue` supplies slow orbit rings and particles without directional flow arrows. Preserve the image frame, alignment, hotspots, tooltips, reduced-motion behavior, and visibility-based pausing.
 
 Each object in the local `areas` array contains:
 

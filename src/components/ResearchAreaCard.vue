@@ -1,16 +1,14 @@
 <template>
-  <article class="research-card">
+  <article class="research-overview">
     <p class="card-kicker">{{ indexLabel }} · {{ getResearchAreaRole(area.id) }}</p>
     <h2>{{ getResearchAreaDisplayTitle(area) }}</h2>
     <p>{{ area.summary }}</p>
 
-    <div v-if="area.keyTopics?.length" class="card-section">
-      <h3>Focus</h3>
-      <div class="tag-row">
-        <span v-for="topic in area.keyTopics" :key="topic">{{ topic }}</span>
-      </div>
-    </div>
+    <p v-if="area.keyTopics?.length" class="content-keywords">{{ area.keyTopics.join(' · ') }}</p>
 
+    <details class="content-details">
+      <summary :aria-label="`More about ${getResearchAreaDisplayTitle(area)}`">More <span aria-hidden="true">+</span></summary>
+      <div class="details-copy">
     <div class="card-section">
       <h3>Motivation</h3>
       <p>{{ area.motivation }}</p>
@@ -46,7 +44,7 @@
         <RouterLink
           v-for="publicationId in area.relatedPublicationIds"
           :key="`publication-${publicationId}`"
-          :to="`/publications#${publicationId}`"
+          :to="`/publications/${publicationId}`"
         >
           Publication: {{ publicationTitleFor(publicationId) }}
         </RouterLink>
@@ -57,6 +55,8 @@
       <h3>Expected Impact</h3>
       <p class="vision-note">{{ area.expectedImpact }}</p>
     </div>
+      </div>
+    </details>
   </article>
 </template>
 

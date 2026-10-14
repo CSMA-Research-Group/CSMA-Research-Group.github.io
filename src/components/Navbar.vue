@@ -1,10 +1,9 @@
 <template>
   <header class="site-navbar" :class="{ 'menu-open': isOpen }" @keydown.esc="handleEscape">
-    <RouterLink class="brand" to="/" @click="closeMenu">
+    <RouterLink class="brand" to="/" aria-label="CSMA · Home" @click="closeMenu">
       <span class="brand-mark" aria-hidden="true">{{ siteInfo.shortName }}</span>
       <span>
         <strong>{{ siteInfo.name }}</strong>
-        <small>{{ siteInfo.slogan }}</small>
       </span>
     </RouterLink>
 
@@ -27,7 +26,7 @@
         v-for="item in navigationItems"
         :key="item.path"
         :to="item.path"
-        :class="{ active: route.path === item.path }"
+        :class="{ active: route.path === item.path || route.path.startsWith(`${item.path}/`) }"
         @click="closeMenu"
       >
         {{ item.label }}

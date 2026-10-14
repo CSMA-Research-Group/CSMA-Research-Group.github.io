@@ -26,7 +26,7 @@ export const researchAreas = [
       'Memory-augmented reasoning',
       'Trace- and artifact-driven evaluation',
     ],
-    representativeSystems: ['TraceCoder', 'KGMAF / ChatREQ'],
+    representativeSystems: ['TraceCoder', 'KGMAF'],
     relatedPublicationIds: ['tracecoder-icse-2026', 'kgmaf-ase-2025'],
     relatedProjectIds: ['tracecoder', 'kgmaf'],
     expectedImpact:
@@ -58,7 +58,7 @@ export const researchAreas = [
       'Rollback and historical lesson learning',
       'Lifecycle traceability modeling',
     ],
-    representativeSystems: ['KGMAF / ChatREQ', 'TraceCoder', 'Repository-Level Software Agents'],
+    representativeSystems: ['KGMAF', 'TraceCoder', 'Repository-Level Software Agents'],
     relatedPublicationIds: ['kgmaf-ase-2025', 'tracecoder-icse-2026'],
     relatedProjectIds: ['kgmaf', 'tracecoder', 'repo-level-agents'],
     expectedImpact:
@@ -121,7 +121,7 @@ export const researchAreas = [
       'Human-in-the-loop assessment',
       'Open artifacts and documentation',
     ],
-    representativeSystems: ['TraceCoder', 'KGMAF / ChatREQ'],
+    representativeSystems: ['TraceCoder', 'KGMAF'],
     relatedPublicationIds: ['tracecoder-icse-2026', 'kgmaf-ase-2025'],
     relatedProjectIds: ['tracecoder', 'kgmaf'],
     expectedImpact:
@@ -153,7 +153,7 @@ export const researchAreas = [
       'Failure memory and reflective planning',
       'Structured schemas and validation checks',
     ],
-    representativeSystems: ['TraceCoder', 'KGMAF / ChatREQ'],
+    representativeSystems: ['TraceCoder', 'KGMAF'],
     relatedPublicationIds: ['tracecoder-icse-2026', 'kgmaf-ase-2025'],
     relatedProjectIds: ['tracecoder', 'kgmaf'],
     expectedImpact:
@@ -185,7 +185,7 @@ export const researchAreas = [
       'Human review and revision loops',
       'Artifact consistency checking',
     ],
-    representativeSystems: ['KGMAF / ChatREQ', 'TraceCoder'],
+    representativeSystems: ['KGMAF', 'TraceCoder'],
     relatedPublicationIds: ['kgmaf-ase-2025', 'tracecoder-icse-2026'],
     relatedProjectIds: ['kgmaf', 'tracecoder'],
     expectedImpact:
@@ -223,3 +223,14 @@ export const researchHighlights = [
     tags: ['ASE 2025', 'Requirements Engineering', 'Human-in-the-Loop'],
   },
 ]
+
+// Four public directions; knowledge, human feedback, and agent coordination
+// are mechanisms within cognitive and collaborative intelligence.
+export const coreResearchAreas = researchAreas.slice(0, 4).map(area => area.id === 'artificial-intelligence' ? {
+  ...area,
+  title: 'Cognitive and Collaborative Intelligence',
+  summary: 'We study reasoning, planning, memory, and coordination among intelligent agents, supported by knowledge and human feedback.',
+  keyTopics: [...area.keyTopics, 'Multi-agent collaboration', 'Knowledge and human feedback'],
+  methods: [...area.methods, 'Artifact-mediated collaboration', 'Knowledge injection and human review'],
+  relatedPublicationIds: ['cross-model-collaboration-tosem-2026', 'semfaith-pricai-2026', ...area.relatedPublicationIds],
+} : area)

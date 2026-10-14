@@ -10,18 +10,18 @@ export const siteInfo = {
   repository: 'https://github.com/CSMA-Research-Group/CSMA-Research-Group.github.io',
   contactEmail: 'hjpwhu@gmail.com',
   affiliation: 'Chongqing University of Posts and Telecommunications',
-  address:
-    'School of Computer Science and Technology, Chongqing University of Posts and Telecommunications, Chongqing, China',
+  address: 'Chongqing, China',
   contactNote:
     'Students and collaborators are welcome to contact the group with a concise research interest statement and relevant background materials.',
 }
 
 export const navigationItems = [
+  { label: 'Home', path: '/' },
+  { label: 'News', path: '/news' },
   { label: 'Research', path: '/research' },
   { label: 'Projects', path: '/projects' },
   { label: 'Publications', path: '/publications' },
   { label: 'People', path: '/people' },
-  { label: 'News', path: '/news' },
   { label: 'Resources', path: '/resources' },
   { label: 'About', path: '/about' },
 ]

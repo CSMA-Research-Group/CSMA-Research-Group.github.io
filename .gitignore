@@ -4,3 +4,5 @@ node_modules/
 workers/visitor-stats/wrangler.toml
 .DS_Store
 **/.DS_Store
+/temp/
+/tmp/

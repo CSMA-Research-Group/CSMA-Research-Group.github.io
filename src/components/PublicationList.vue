@@ -1,72 +1,15 @@
 <template>
-  <div class="publication-list">
-    <section v-for="category in categories" :key="category" class="publication-section">
-      <div class="section-heading compact publication-category-heading">
-        <p class="eyebrow">Publication Archive</p>
-        <h2>{{ category }}</h2>
-        <p>{{ categoryEntries(category).length }} verified entr{{ categoryEntries(category).length === 1 ? 'y' : 'ies' }}</p>
-      </div>
-
-      <article
-        v-for="paper in categoryEntries(category)"
-        :id="paper.id"
-        :key="paper.id"
-        class="publication-item"
-        :class="{ featured: paper.featured }"
-      >
-        <div class="publication-year">
-          <strong>{{ paper.year }}</strong>
-          <span>{{ paper.venue }}</span>
-        </div>
-        <div class="publication-content">
-          <div class="publication-topline">
-            <span v-if="paper.featured">Featured</span>
-            <span>{{ paper.type }}</span>
-            <span v-if="formatDateRange(paper.conferenceDate)">{{ formatDateRange(paper.conferenceDate) }}</span>
-            <span v-if="paper.location">{{ paper.location }}</span>
-          </div>
-          <h3>{{ paper.title }}</h3>
-          <p class="authors">{{ formatAuthors(paper.authors) }}</p>
-          <p class="venue">{{ paper.venueFullName }}</p>
-          <p class="abstract-summary">{{ paper.abstractSummary }}</p>
-
-          <div v-if="paper.contributionHighlights?.length" class="card-section compact-list">
-            <h4>Contribution Highlights</h4>
-            <ul>
-              <li v-for="highlight in paper.contributionHighlights" :key="highlight">{{ highlight }}</li>
-            </ul>
-          </div>
-
-          <div class="tag-row">
-            <span v-for="tag in paper.tags" :key="tag">{{ tag }}</span>
-          </div>
-
-          <div class="paper-links">
-            <a
-              v-if="paper.doi"
-              :href="`https://doi.org/${paper.doi}`"
-              target="_blank"
-              rel="noopener noreferrer"
-              :aria-label="`Open DOI for ${paper.title}`"
-            >DOI</a>
-            <a
-              v-if="paper.pdf"
-              :href="paper.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              :aria-label="`Open PDF for ${paper.title}`"
-            >PDF</a>
-            <a
-              v-if="paper.code"
-              :href="paper.code"
-              target="_blank"
-              rel="noopener noreferrer"
-              :aria-label="`Open code for ${paper.title}`"
-            >Code</a>
-            <RouterLink v-if="paper.relatedProjectId" :to="`/projects#${paper.relatedProjectId}`">
-              {{ paper.relatedProjectTitle || 'Related Project' }}
-            </RouterLink>
-          </div>
+  <div class="publication-directory">
+    <section v-for="category in visibleCategories" :key="category" class="publication-category">
+      <div class="directory-heading"><h2>{{ category }}</h2></div>
+      <article v-for="paper in categoryEntries(category)" :id="paper.id" :key="paper.id" class="paper-entry">
+        <div class="paper-dateline"><strong>{{ paper.year }}</strong><span>{{ paper.venue }}</span><span v-if="paper.rating">{{ paper.rating }}</span></div>
+        <div class="paper-copy">
+          <h3><RouterLink :to="`/publications/${paper.id}`">{{ paper.title }}</RouterLink></h3>
+          <p v-if="paper.authors?.length" class="paper-authors">{{ formatPublicationAuthors(paper.authors) }}</p>
+          <p class="paper-venue">{{ paper.venueFullName }}</p>
+          <p v-if="paper.status" class="paper-status">{{ paper.status }}<template v-if="paper.acceptedMonth || paper.publicationDate"> · {{ formatMonth(paper.acceptedMonth || paper.publicationDate) }}</template></p>
+          <PublicationLinks :paper="paper" />
         </div>
       </article>
     </section>
@@ -76,31 +19,12 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-
-const props = defineProps({
-  publications: {
-    type: Array,
-    required: true,
-  },
-  categories: {
-    type: Array,
-    required: true,
-  },
-})
-
-const getSortDate = (paper) => paper.publicationDate || paper.conferenceDate?.start || `${paper.year}-01-01`
-
-const sortedEntries = computed(() =>
-  [...props.publications].sort((a, b) => new Date(getSortDate(b)) - new Date(getSortDate(a)))
-)
-
+import PublicationLinks from './PublicationLinks.vue'
+import { formatPublicationAuthors } from '../utils/publicationDisplay'
+const props = defineProps({ publications: { type: Array, required: true }, categories: { type: Array, required: true } })
+const sortDate = (paper) => paper.acceptedMonth || paper.publicationDate || paper.conferenceDate?.start || String(paper.year)
+const sortedEntries = computed(() => [...props.publications].sort((a, b) => sortDate(b).localeCompare(sortDate(a))))
 const categoryEntries = (category) => sortedEntries.value.filter((paper) => paper.category === category)
-
-const formatAuthors = (authors) => (Array.isArray(authors) ? authors.join(', ') : authors)
-
-const formatDateRange = (conferenceDate) => {
-  if (!conferenceDate?.start) return ''
-  if (!conferenceDate.end || conferenceDate.end === conferenceDate.start) return conferenceDate.start
-  return `${conferenceDate.start} to ${conferenceDate.end}`
-}
+const visibleCategories = computed(() => props.categories.filter((category) => categoryEntries(category).length))
+const formatMonth = (date) => new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(date.length === 7 ? `${date}-01T00:00:00Z` : `${date}T00:00:00Z`))
 </script>

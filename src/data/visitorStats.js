@@ -1,5 +1,6 @@
 export const visitorGlobeInfo = {
-  foundedAt: '2026-05-19 05:19',
+  // User-confirmed group founding date. Date only.
+  foundedAt: '2022-07-20',
   totalVisitors: null,
 }
 

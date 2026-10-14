@@ -1,54 +1,24 @@
 <template>
-  <article class="people-card" :class="{ placeholder: person.placeholder }">
-    <div class="avatar" aria-hidden="true">{{ initials }}</div>
-    <div>
-      <p class="card-kicker">{{ person.role }}</p>
+  <article class="person-entry" :class="{ 'person-entry--lead': person.portrait }">
+    <img v-if="person.portrait" class="person-portrait" :src="person.portrait"
+      :alt="person.defaultPortrait ? 'Default avatar for ' + person.name : person.name"
+      :width="person.portraitWidth || 1214" :height="person.portraitHeight || 1295" decoding="async" />
+    <div class="person-copy">
+      <p v-if="person.credentials" class="person-role">{{ person.credentials }}</p>
       <h3>{{ person.name }}</h3>
-      <p v-if="person.affiliation" class="affiliation">{{ person.affiliation }}</p>
-
-      <div class="tag-row">
-        <span v-for="interest in person.interests" :key="interest">{{ interest }}</span>
+      <p v-if="person.affiliation" class="person-affiliation">{{ person.affiliation }}</p>
+      <p v-if="person.summary || person.interests?.length" class="person-focus">
+        {{ person.summary || person.interests.join(' · ') }}
+      </p>
+      <div v-if="person.email || person.homepage" class="person-links">
+        <a v-if="person.homepage" :href="person.homepage" target="_blank" rel="noopener noreferrer"
+          :aria-label="`${person.name} homepage`">Homepage <span aria-hidden="true">↗</span></a>
+        <a v-if="person.email" :href="`mailto:${person.email}`" :aria-label="`Email ${person.name}`">Email</a>
       </div>
-
-      <div v-if="person.relatedPublications?.length" class="related-pubs">
-        <h4>Related Publications</h4>
-        <span v-for="publication in person.relatedPublications" :key="publication">{{ publication }}</span>
-      </div>
-
-      <div class="profile-links">
-        <a v-if="person.email" :href="`mailto:${person.email}`">Email</a>
-        <a
-          v-if="person.homepage"
-          :href="person.homepage"
-          target="_blank"
-          rel="noopener noreferrer"
-          :aria-label="`${person.name} homepage`"
-        >Homepage</a>
-      </div>
-
-      <p v-if="person.source && !person.placeholder" class="source-note">{{ person.source }}</p>
-      <p v-if="person.note" class="placeholder-note">{{ person.note }}</p>
     </div>
   </article>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-
-const props = defineProps({
-  person: {
-    type: Object,
-    required: true,
-  },
-})
-
-const initials = computed(() => {
-  if (props.person.placeholder) return 'TBU'
-  return props.person.name
-    .split(' ')
-    .map((part) => part[0])
-    .join('')
-    .slice(0, 3)
-    .toUpperCase()
-})
+defineProps({ person: { type: Object, required: true } })
 </script>

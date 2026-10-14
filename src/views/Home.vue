@@ -1,179 +1,90 @@
 <template>
   <div class="home-page">
-    <HeroSection
-      :eyebrow="siteInfo.affiliation"
-      title="CSMA Research Group"
-      :subtitle="researchNarrative.description"
-      :actions="heroActions"
-    >
-      <VisionDiagram :show-mobile-links="false" />
+    <HeroSection eyebrow="" title="CSMA Research Group"
+      :subtitle="heroIntroduction" :actions="heroActions">
+      <VisionDiagram :image-src="homeVisionImage" :show-mobile-links="false" :animated="false" ambient-motion />
     </HeroSection>
 
-    <section class="section home-research" aria-labelledby="home-research-title">
-      <div class="home-research-intro">
-        <p class="eyebrow">Research</p>
-        <h2 id="home-research-title">Cognitive intelligence, grounded in software and embodied systems.</h2>
-        <p>{{ researchNarrative.homepageVision }}</p>
-        <RouterLink class="text-link" to="/research">Explore our research framework</RouterLink>
+    <section class="section home-community" aria-labelledby="home-news-title">
+      <div class="section-heading split compact"><h2 id="home-news-title">News</h2><RouterLink class="text-link" to="/news">All news</RouterLink></div>
+      <div class="home-news-list">
+        <article v-for="item in newsItems.slice(0, 3)" :key="item.id" class="home-news-row">
+          <time :datetime="item.date">{{ item.date }}</time>
+          <div>
+            <p class="home-news-meta">{{ item.venue }}</p>
+            <h3><RouterLink :to="'/publications/' + item.publicationId">{{ item.title }}</RouterLink></h3>
+            <p>{{ item.summary || item.description }}</p>
+          </div>
+        </article>
       </div>
+    </section>
 
+    <section class="section muted home-selected" aria-labelledby="home-selected-title">
+      <div class="section-heading compact"><h2 id="home-selected-title">Publications and Projects</h2></div>
+      <div class="home-selected-grid">
+        <div class="home-work-column">
+          <div class="home-column-heading"><p class="home-column-label">Selected Publications</p><RouterLink class="text-link" to="/publications">All publications</RouterLink></div>
+          <article v-for="paper in featuredPublications" :key="paper.id" class="home-paper-row">
+            <div class="home-work-meta home-work-meta--linked"><span>{{ publicationVenueLabel(paper) }}</span><RouterLink class="text-link home-card-more" :to="'/publications/' + paper.id" :aria-label="'More about ' + paper.title">More</RouterLink></div>
+            <h3><RouterLink :to="'/publications/' + paper.id">{{ paper.title }}</RouterLink></h3>
+            <p class="authors">{{ formatPublicationAuthors(paper.authors) }}</p>
+          </article>
+        </div>
+        <div class="home-work-column">
+          <div class="home-column-heading"><p class="home-column-label">Research Projects</p><RouterLink class="text-link" to="/projects#research-projects">All projects</RouterLink></div>
+          <article v-for="project in proposalProjects" :key="project.id" class="home-project-row">
+            <div class="home-work-meta home-work-meta--linked"><span>{{ project.period }} · Ongoing</span><RouterLink class="text-link home-card-more" :to="'/projects#' + project.id" :aria-label="'More about ' + project.displayTitle">More</RouterLink></div>
+            <h3><RouterLink :to="'/projects#' + project.id">{{ project.displayTitle }}</RouterLink></h3>
+            <p>{{ project.homeSummary }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section home-research" aria-labelledby="home-research-title">
+      <div class="section-heading split compact">
+        <h2 id="home-research-title">Research</h2>
+        <RouterLink class="text-link" to="/research">Explore our research</RouterLink>
+      </div>
+      <div class="home-research-intro"><p>{{ researchNarrative.homepageVision }}</p></div>
       <nav class="home-area-grid" aria-label="Research directions">
-        <RouterLink
-          v-for="area in researchAreas"
-          :key="area.id"
-          class="home-area-item"
-          :to="`/research#${area.id}`"
-        >
-          <span>{{ getResearchAreaRole(area.id) }}</span>
+        <RouterLink v-for="area in coreResearchAreas" :key="area.id" class="home-area-item" :to="'/research#' + area.id">
+          <div class="home-area-heading"><span class="home-column-label">{{ getResearchAreaRole(area.id) }}</span><span class="home-card-more">More</span></div>
           <h3>{{ getResearchAreaDisplayTitle(area) }}</h3>
           <p>{{ area.summary }}</p>
-          <b aria-hidden="true">↗</b>
         </RouterLink>
       </nav>
     </section>
 
-    <section class="section muted home-selected" aria-labelledby="home-selected-title">
-      <div class="section-heading split compact">
-        <div>
-          <p class="eyebrow">Selected Work</p>
-          <h2 id="home-selected-title">Systems and publications</h2>
-        </div>
-        <RouterLink class="text-link" to="/projects">View all projects</RouterLink>
+    <section class="section home-community" aria-labelledby="home-people-title">
+      <div class="section-heading split compact"><h2 id="home-people-title">People</h2><RouterLink class="text-link" to="/people">All members →</RouterLink></div>
+      <HomePeoplePreview />
+    </section>
+
+    <section class="section home-resources" aria-labelledby="home-resources-title">
+      <div class="section-heading split compact"><h2 id="home-resources-title">Resources</h2><RouterLink class="text-link" to="/resources">All resources</RouterLink></div>
+      <div class="home-resource-group" aria-labelledby="home-applications-title">
+        <div class="home-resource-heading"><h3 id="home-applications-title">Research Applications</h3></div>
+        <SystemResources />
       </div>
-
-      <div class="home-selected-grid">
-        <div class="home-work-column">
-          <p class="home-column-label">Research systems</p>
-          <article v-for="project in featuredProjects" :key="project.id" class="home-project-row">
-            <div class="home-work-meta">
-              <span>{{ project.type }}</span>
-              <span>{{ project.status }}</span>
-            </div>
-            <h3>
-              <RouterLink :to="`/projects#${project.id}`">{{ project.title }}</RouterLink>
-            </h3>
-            <p class="home-work-subtitle">{{ project.subtitle }}</p>
-            <p>{{ project.homeSummary || project.description }}</p>
-            <div class="home-inline-links">
-              <a
-                v-for="link in project.links"
-                :key="link.url"
-                :href="link.url"
-                :aria-label="`${link.label} for ${project.title}`"
-                target="_blank"
-                rel="noopener noreferrer"
-              >{{ link.label }}</a>
-              <RouterLink
-                :to="`/projects#${project.id}`"
-                :aria-label="`Project details for ${project.title}`"
-              >Project details</RouterLink>
-            </div>
-          </article>
-        </div>
-
-        <div class="home-work-column">
-          <div class="home-column-heading">
-            <p class="home-column-label">Selected publications</p>
-            <RouterLink class="text-link" to="/publications">All publications</RouterLink>
-          </div>
-          <article v-for="paper in featuredPublications" :key="paper.id" class="home-paper-row">
-            <div class="home-work-meta">
-              <span>{{ paper.venue }}</span>
-              <span>{{ paper.year }}</span>
-            </div>
-            <h3>
-              <RouterLink :to="`/publications#${paper.id}`">{{ paper.title }}</RouterLink>
-            </h3>
-            <p class="authors">{{ formatAuthors(paper.authors) }}</p>
-            <div class="home-inline-links">
-              <a
-                v-if="paper.doi"
-                :href="`https://doi.org/${paper.doi}`"
-                :aria-label="`DOI for ${paper.title}`"
-                target="_blank"
-                rel="noopener noreferrer"
-              >DOI</a>
-              <a
-                v-if="paper.code"
-                :href="paper.code"
-                :aria-label="`Code for ${paper.title}`"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Code</a>
-              <RouterLink
-                v-if="paper.relatedProjectId"
-                :to="`/projects#${paper.relatedProjectId}`"
-                :aria-label="`Related project for ${paper.title}`"
-              >
-                Related project
-              </RouterLink>
-            </div>
-          </article>
-        </div>
+      <div class="home-resource-group" aria-labelledby="home-insights-title">
+        <div class="home-resource-heading"><h3 id="home-insights-title">{{ researchInsights.title }}</h3></div>
+        <ResearchInsights :items="researchInsights.items.slice(0, 2)" />
       </div>
     </section>
 
-    <section class="section home-community" aria-labelledby="home-community-title">
-      <div class="section-heading split compact">
-        <div>
-          <p class="eyebrow">Group</p>
-          <h2 id="home-community-title">People and recent activity</h2>
-        </div>
-        <RouterLink class="text-link" to="/people">Meet the group</RouterLink>
+    <section class="section home-about" aria-labelledby="home-about-title">
+      <div class="section-heading compact"><h2 id="home-about-title">About</h2></div>
+      <div class="home-selected-grid home-about-grid">
+        <div class="home-work-column"><div class="home-column-heading"><p class="home-column-label">CSMA Research Group</p><RouterLink class="text-link" to="/">Home</RouterLink></div><article class="home-project-row">
+          <p>We study cognitive and collaborative intelligence, intelligent software engineering, intelligent robotics, and application scenarios.</p>
+          <p>Our work connects research methods with inspectable systems and reusable artifacts.</p>
+        </article></div>
+        <div class="home-work-column"><div class="home-column-heading"><p class="home-column-label">Join Us</p><RouterLink class="text-link" to="/about#contact">How to join</RouterLink></div><article class="home-project-row">
+          <p>We welcome undergraduate and graduate students interested in sustained research, and collaborators working across our research areas.</p>
+          <p>Please email a brief introduction, your research interests, and relevant work.</p>
+        </article></div>
       </div>
-
-      <div class="home-community-grid">
-        <div class="home-people-list">
-          <article v-for="person in previewPeople" :key="person.id" class="home-person-row">
-            <div class="home-person-initials" aria-hidden="true">{{ initialsFor(person.name) }}</div>
-            <div>
-              <p class="card-kicker">{{ person.role }}</p>
-              <h3>{{ person.name }}</h3>
-              <p>{{ person.affiliation }}</p>
-              <div class="home-inline-links">
-                <a
-                  v-if="person.email"
-                  :href="`mailto:${person.email}`"
-                  :aria-label="`Email ${person.name}`"
-                >Email</a>
-                <a
-                  v-if="person.homepage"
-                  :href="person.homepage"
-                  :aria-label="`${person.name} homepage`"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >Homepage</a>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="home-news-list">
-          <article v-for="item in newsItems.slice(0, 2)" :key="item.id" class="home-news-row">
-            <time :datetime="item.date">{{ item.date }}</time>
-            <div>
-              <p class="home-news-meta">{{ item.venue }} · {{ item.location }}</p>
-              <h3>{{ item.title }}</h3>
-              <p>{{ conciseNews(item) }}</p>
-            </div>
-          </article>
-          <RouterLink class="text-link home-news-link" to="/news">View all news</RouterLink>
-        </div>
-      </div>
-    </section>
-
-    <section class="section home-collaborate" aria-labelledby="home-collaborate-title">
-      <div>
-        <p class="eyebrow">Collaborate</p>
-        <h2 id="home-collaborate-title">Work with CSMA</h2>
-        <p>{{ siteInfo.contactNote }}</p>
-      </div>
-      <nav class="home-action-links" aria-label="Group links">
-        <RouterLink to="/join-us">Join the group</RouterLink>
-        <RouterLink to="/resources">Research resources</RouterLink>
-        <RouterLink to="/about">About &amp; contact</RouterLink>
-        <a :href="siteInfo.githubOrg" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-      </nav>
     </section>
   </div>
 </template>
@@ -182,37 +93,21 @@
 import { RouterLink } from 'vue-router'
 import HeroSection from '../components/HeroSection.vue'
 import VisionDiagram from '../components/VisionDiagram.vue'
+import homeVisionImage from '../assets/figures/csma-home-research-vision.png'
+import HomePeoplePreview from '../components/HomePeoplePreview.vue'
+import SystemResources from '../components/SystemResources.vue'
+import ResearchInsights from '../components/ResearchInsights.vue'
 import { newsItems } from '../data/news'
-import { peopleSections } from '../data/people'
-import { featuredProjects } from '../data/projects'
+import { researchInsights } from '../data/resources'
+import { proposalProjects } from '../data/proposalProjects'
 import { featuredPublications } from '../data/publications'
-import { researchAreas } from '../data/researchAreas'
-import {
-  getResearchAreaDisplayTitle,
-  getResearchAreaRole,
-  researchNarrative,
-} from '../data/researchPresentation'
-import { siteInfo } from '../data/site'
-
+import { formatPublicationAuthors } from '../utils/publicationDisplay'
+import { coreResearchAreas } from '../data/researchAreas'
+import { getResearchAreaDisplayTitle, getResearchAreaRole, researchNarrative } from '../data/researchPresentation'
+const publicationVenueLabel = paper => paper.venue.includes(String(paper.year)) ? paper.venue : `${paper.venue} ${paper.year}`
+const heroIntroduction = 'Welcome to the CSMA Research Group. ' + researchNarrative.description
 const heroActions = [
   { label: 'Explore Research', to: '/research' },
   { label: 'View Publications', to: '/publications', variant: 'secondary' },
 ]
-
-const previewPeople = peopleSections
-  .filter((section) => ['group-members', 'student-researchers'].includes(section.id))
-  .flatMap((section) => section.people)
-
-const formatAuthors = (authors) => (Array.isArray(authors) ? authors.join(', ') : authors)
-
-const initialsFor = (name) => name
-  .split(' ')
-  .map((part) => part[0])
-  .join('')
-  .slice(0, 3)
-  .toUpperCase()
-
-const conciseNews = (item) => (
-  item.paperTitle ? `Presented: ${item.paperTitle}` : item.description
-)
 </script>

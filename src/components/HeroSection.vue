@@ -1,8 +1,9 @@
 <template>
   <section class="hero-section" :class="{ 'hero-section-copy-only': !$slots.default }">
+    <div v-if="wideTitle" class="hero-copy hero-title-row"><h1>{{ title }}</h1></div>
     <div class="hero-copy">
-      <p class="eyebrow">{{ eyebrow }}</p>
-      <h1>{{ title }}</h1>
+      <p v-if="eyebrow" class="eyebrow">{{ eyebrow }}</p>
+      <h1 v-if="!wideTitle">{{ title }}</h1>
       <p class="hero-lede">{{ subtitle }}</p>
       <div v-if="actions.length" class="hero-actions">
         <RouterLink
@@ -27,6 +28,7 @@
 import { RouterLink } from 'vue-router'
 
 defineProps({
+  wideTitle: { type: Boolean, default: false },
   eyebrow: {
     type: String,
     default: 'CSMA Research Group',

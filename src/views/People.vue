@@ -1,46 +1,33 @@
 <template>
-  <div>
-    <section class="page-hero narrow">
-      <div>
-        <p class="eyebrow">People</p>
-        <h1>Group members, student researchers, collaborators, and alumni.</h1>
-        <p>
-          People records separate internal group members from collaborators. Affiliations and emails are taken from publication materials; homepage links are included only when a reliable matching source was verified.
-        </p>
-      </div>
-    </section>
-
-    <section class="section people-sections">
-      <section v-for="section in peopleSections" :key="section.id" class="people-section">
-        <div class="section-heading compact">
-          <p class="eyebrow">{{ section.people.length }} Profile{{ section.people.length === 1 ? '' : 's' }}</p>
-          <h2>{{ section.title }}</h2>
-        </div>
-        <div class="people-grid">
-          <PeopleCard v-for="person in section.people" :key="person.id" :person="person" />
-        </div>
-      </section>
-    </section>
-
-    <section id="join-us" class="section people-join-section">
-      <article class="join-card">
+  <div class="content-page people-page">
+    <header class="page-hero narrow">
+      <h1>People</h1>
+      <p>Our members work across artificial intelligence, intelligent software engineering, and intelligent robotics.</p>
+      <nav class="section-index" aria-label="People sections">
+        <RouterLink v-for="level in peopleHierarchy" :key="level.id" :to="'/people#' + level.id">{{ level.title }}</RouterLink>
+        <RouterLink to="/people/alumni">Alumni</RouterLink>
+        <RouterLink to="/people#join-us">Join Us</RouterLink>
+      </nav>
+    </header>
+    <div class="section people-directory">
+      <PeoplePyramid />
+      <section id="join-us" class="people-invitation" aria-labelledby="people-join-heading">
         <div>
-          <p class="eyebrow">Join Us</p>
-          <h2>Students and collaborators are welcome.</h2>
-          <p>
-            We welcome motivated students and collaborators interested in cognitive intelligence,
-            multi-agent systems, intelligent software engineering, intelligent robotics, and
-            real-world AI applications.
-          </p>
+          <p class="eyebrow">Join Us</p><h2 id="people-join-heading">Grow with the group.</h2>
+          <p>We welcome motivated undergraduate and graduate students interested in sustained research,
+            and collaborators working on cognitive intelligence, multi-agent systems, intelligent software, and robotics.</p>
         </div>
-        <RouterLink class="button button-primary" to="/about#contact">Contact Us</RouterLink>
-      </article>
-    </section>
+        <RouterLink class="text-link" to="/about#contact">Get in touch <span aria-hidden="true">→</span></RouterLink>
+      </section>
+      <ArchiveNote description="Former members and their next steps are collected in the alumni archive."
+        to="/people/alumni" label="Alumni" link-label="Browse the Alumni Archive" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { RouterLink } from 'vue-router'
-import PeopleCard from '../components/PeopleCard.vue'
-import { peopleSections } from '../data/people'
+import PeoplePyramid from '../components/PeoplePyramid.vue'
+import ArchiveNote from '../components/ArchiveNote.vue'
+import { peopleHierarchy } from '../data/peopleHierarchy'
 </script>

@@ -1,3 +1,5 @@
+export { researchInsights } from './researchInsights'
+
 export const resourceGroups = [
   {
     id: 'software',
@@ -15,9 +17,9 @@ export const resourceGroups = [
       {
         name: 'ChatREQ',
         type: 'Tool / Demo',
-        status: 'Coming soon',
+        status: 'Available',
         description: 'Knowledge-driven requirements engineering prototype.',
-        link: '',
+        link: 'https://github.com/CSMA-Research-Group/ChatREQ',
       },
     ],
   },
@@ -53,15 +55,14 @@ export const resourceGroups = [
   },
   {
     id: 'repositories',
-    title: 'Open-Source Repositories',
+    title: 'GitHub',
     description:
-      'Public repositories maintained by the group. Links are included only after confirmation.',
+      'Public repositories maintained by the group.',
     items: [
       {
-        name: 'CSMA GitHub organization',
-        type: 'Code',
+        name: 'CSMA Research Group',
         status: 'Available',
-        description: 'Official GitHub organization for the group website and future releases.',
+        description: 'Browse the group’s repositories for implementation code, reproduction materials, and usage instructions.',
         link: 'https://github.com/CSMA-Research-Group',
       },
     ],

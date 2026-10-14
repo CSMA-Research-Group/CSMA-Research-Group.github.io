@@ -1,30 +1,51 @@
 const items = [
   {
-    id: 'icse-2026-rio',
-    date: '2026-04-12',
-    title: 'CSMA members attended ICSE 2026 in Rio de Janeiro, Brazil',
-    description:
-      'Our group attended the 48th IEEE/ACM International Conference on Software Engineering (ICSE 2026) in Rio de Janeiro, Brazil, from April 12 to 18, 2026. We presented our paper, "TraceCoder: A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code." TraceCoder introduces a collaborative multi-agent debugging framework that emulates the observe-analyze-repair workflow of human experts by combining runtime tracing, causal analysis, historical lesson learning, and rollback-based iterative repair.',
-    tag: 'Conference',
-    type: 'International Conference',
-    location: 'Rio de Janeiro, Brazil',
-    venue: 'ICSE 2026',
-    paperTitle:
-      'TraceCoder: A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code',
+    "id": "semfaith-pricai-2026-accepted",
+    "date": "2026-08",
+    "order": 2,
+    "title": "SemFaith: Evaluating Semantic Faithfulness of LLM-Generated Classical-to-Modern Chinese Restatements",
+    "description": "Our paper introduces claim-level diagnosis of semantic faithfulness in LLM-generated classical-to-modern Chinese restatements. The reported measurements are checker-conditioned and await human calibration.",
+    "tag": "Accepted",
+    "venue": "PRICAI 2026 · CCF C",
+    "paperTitle": "SemFaith: Evaluating Semantic Faithfulness of LLM-Generated Classical-to-Modern Chinese Restatements",
+    "publicationId": "semfaith-pricai-2026"
   },
   {
-    id: 'ase-2025-seoul',
-    date: '2025-11-16',
-    title: 'CSMA members attended ASE 2025 in Seoul, South Korea',
-    description:
-      'Our group attended the 40th IEEE/ACM International Conference on Automated Software Engineering (ASE 2025) in Seoul, South Korea, from November 16 to 20, 2025. We presented our paper, "Envisioning Intelligent Requirements Engineering via Knowledge-Guided Multi-Agent Collaboration," which proposes KGMAF, a knowledge-guided multi-agent framework for intelligent requirements development. The work explores how role-specialized agents, shared artifact pools, knowledge injection, and human-in-the-loop mechanisms can support the generation and validation of high-quality software requirements specifications.',
-    tag: 'Conference',
-    type: 'International Conference',
-    location: 'Seoul, South Korea',
-    venue: 'ASE 2025',
-    paperTitle:
-      'Envisioning Intelligent Requirements Engineering via Knowledge-Guided Multi-Agent Collaboration',
+    "id": "cross-model-collaboration-tosem-2026",
+    "date": "2026-08",
+    "order": 1,
+    "title": "Cross-Model Collaboration for Enhancing LLM-Based Code Generation",
+    "description": "This work studies how collaboration across large language models can enhance code generation.",
+    "tag": "Journal",
+    "type": "Journal Article",
+    "venue": "TOSEM · CCF A",
+    "paperTitle": "Cross-Model Collaboration for Enhancing LLM-Based Code Generation",
+    "publicationId": "cross-model-collaboration-tosem-2026"
   },
+  {
+    "id": "icse-2026-rio",
+    "date": "2026-04",
+    "title": "TraceCoder: A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code",
+    "description": "We presented TraceCoder at ICSE 2026. The framework combines runtime traces and multi-agent collaboration to debug and repair LLM-generated code.",
+    "tag": "Conference",
+    "type": "International Conference",
+    "venue": "ICSE 2026 · CCF A",
+    "paperTitle": "TraceCoder: A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code",
+    "publicationId": "tracecoder-icse-2026",
+    "summary": "We presented TraceCoder at ICSE 2026. The framework combines runtime traces and multi-agent collaboration to debug and repair LLM-generated code."
+  },
+  {
+    "id": "ase-2025-seoul",
+    "date": "2025-11",
+    "title": "Envisioning Intelligent Requirements Engineering via Knowledge-Guided Multi-Agent Collaboration",
+    "description": "We presented KGMAF at ASE 2025. The work explores knowledge-guided multi-agent collaboration for intelligent requirements engineering.",
+    "tag": "Conference",
+    "type": "International Conference",
+    "venue": "ASE 2025 · CCF A",
+    "paperTitle": "Envisioning Intelligent Requirements Engineering via Knowledge-Guided Multi-Agent Collaboration",
+    "publicationId": "kgmaf-ase-2025",
+    "summary": "We presented KGMAF at ASE 2025. The work explores knowledge-guided multi-agent collaboration for intelligent requirements engineering."
+  }
 ]
 
-export const newsItems = items.sort((a, b) => new Date(b.date) - new Date(a.date))
+export const newsItems = items.sort((a, b) => b.date.localeCompare(a.date) || (b.order || 0) - (a.order || 0))

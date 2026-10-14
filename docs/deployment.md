@@ -59,7 +59,7 @@ Confirm:
 - `dist/robots.txt` and `dist/sitemap.xml` exist;
 - no `work/homepage-audit/` file appears under `dist/`;
 - the client bundle contains the intended public visitor API base and no secret;
-- all seven primary navigation routes work in a local preview, with the brand link returning home;
+- all eight primary navigation routes work in a local preview, with the brand link returning home;
 - all four Interactive Research Vision targets resolve;
 - the footer and Globe do not cover content at laptop/tablet/mobile widths.
 
@@ -75,7 +75,7 @@ In repository settings, confirm that Pages uses **GitHub Actions** as its source
 
 ## Post-deployment checks
 
-After a human pushes an approved commit and the Actions run succeeds:
+After an explicitly approved commit is pushed and the Actions run succeeds:
 
 1. open the organization site in a fresh/private browser session;
 2. check the browser console and Network panel for asset or CORS errors;
@@ -83,7 +83,7 @@ After a human pushes an approved commit and the Actions run succeeds:
 4. verify all primary navigation items and compatibility redirects;
 5. verify that Globe markers and counts originate from the Worker response;
 6. verify that the current visitor has a positive number, an orange approximate-region marker, and a clock in the returned timezone;
-7. confirm the displayed established time remains `2026-05-19 05:19`;
+7. confirm the displayed founding date remains `2022-07-20`, without a time;
 8. verify the production bundle does not contain internal audit reports or secrets.
 
 Changing the Worker or applying a D1 schema is a separate external-state operation. Review and authorize it independently; the Pages workflow does not deploy the Worker.

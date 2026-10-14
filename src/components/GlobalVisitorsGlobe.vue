@@ -22,11 +22,18 @@
           :aria-label="globeAriaLabel"
           aria-describedby="visitor-globe-description visitor-marker-summary"
         >Global visitor visualization</canvas>
-        <span class="local-time-chip">
+        <TransitionGroup name="city-clock-swap" tag="div" class="world-clocks" role="group" aria-label="World clocks: four cities rotate every minute">
+          <div v-for="clock in worldClocks" :key="clock.id" class="city-clock" :class="`city-clock--${clock.corner}`">
+            <span class="city-clock-name">{{ clock.city }}</span>
+            <time :datetime="clock.instant" :aria-label="`${clock.city}: ${clock.time}, ${clock.date}, ${clock.offset}`">{{ clock.time }}</time>
+            <span class="city-clock-date">{{ clock.date }} <span aria-hidden="true">·</span> {{ clock.offset }}</span>
+          </div>
+        </TransitionGroup>
+        <span ref="localClockRef" class="local-time-chip">
           <small>Your local time</small>
           <strong>{{ visitorTimeLabel }}</strong>
-          <span>{{ visitorTimeZoneLabel }}</span>
         </span>
+        <MeteorNotice v-if="meteorNoticeVisible" @dismiss="meteorNoticeVisible = false" />
         <div
           v-if="tooltip.visible"
           class="globe-tooltip"
@@ -83,9 +90,13 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
+import MeteorNotice from './MeteorNotice.vue'
 import { trackVisitor } from '../services/visitorStats'
 import { visitorGlobeInfo } from '../data/visitorStats'
+import { worldClockCities, worldClockCorners } from '../data/worldClocks'
+import { createCityClockFormatter, createWorldClockRotation, localClockBounds, clampClockPosition, nextClockPosition } from '../utils/globeClocks'
+import { getSunPosition, vectorFromLatLng, rotateSunVector, daylightBrightness, createMeteor, meteorFrame, isMeteorVisible } from '../utils/globeSky'
 import {
   formatStatCount,
   formatVisitorNumber,
@@ -103,12 +114,16 @@ const EARTH_TEXTURE_URL = `${import.meta.env.BASE_URL}textures/earth-blue-marble
 
 const canvasRef = ref(null)
 const wrapRef = ref(null)
+const localClockRef = ref(null)
+const rotateWorldClocks = createWorldClockRotation(worldClockCities, worldClockCorners)
+const worldClocks = ref(worldClockCities.slice(0, 4).map((city, index) => ({ ...city, corner: worldClockCorners[index], time: '--:--', date: '', offset: '', instant: undefined })))
 const visitorStats = ref(null)
 const visitorSources = ref([])
 const currentVisitor = ref(null)
 const statsStatus = ref('loading')
 const visitorTimeLabel = ref('--:--')
-const visitorTimeZoneLabel = ref('Detecting timezone')
+const visitorTimeZoneLabel = ref('Local time zone')
+const meteorNoticeVisible = ref(false)
 const tooltip = reactive({
   visible: false,
   x: 0,
@@ -147,9 +162,66 @@ let earthTextureHeight = 0
 let earthFrameCanvas = null
 let earthFrameCtx = null
 let earthFrameImageData = null
+let nightShadeCanvas = null
+let nightShadeContext = null
+let nightShadeImageData = null
+let meteor = null
+let nextMeteorAt = 0
 let pointerIsActive = false
 let pointerX = 0
 let pointerY = 0
+let clockBounds = null
+let clockPosition = null
+let clockFlight = null
+
+// Stable decorative stars: no astronomical position or visitor data is implied.
+const starField = Array.from({ length: 58 }, (_, index) => ({
+  x: (index * 0.61803398875 + 0.17) % 1,
+  y: (index * index * 0.07123 + index * 0.131 + 0.23) % 1,
+  radius: index % 13 === 0 ? 1.15 : 0.45 + (index % 4) * 0.15,
+  phase: index * 2.37,
+}))
+
+const placeLocalClock = () => {
+  if (!localClockRef.value || !clockPosition) return
+  localClockRef.value.style.transform = `translate3d(${clockPosition.x.toFixed(2)}px, ${clockPosition.y.toFixed(2)}px, 0)`
+  localClockRef.value.style.visibility = 'visible'
+}
+
+const resizeLocalClock = () => {
+  const wrap = wrapRef.value
+  const chip = localClockRef.value
+  if (!wrap || !chip) return
+  const corners = [...wrap.querySelectorAll('.city-clock')]
+  const cornerHeight = Math.max(0, ...corners.map(clock => clock.offsetHeight))
+  clockBounds = localClockBounds(wrap.clientWidth, wrap.clientHeight, chip.offsetWidth, chip.offsetHeight, cornerHeight)
+  clockPosition = clampClockPosition(clockPosition || {
+    x: (clockBounds.minX + clockBounds.maxX) / 2,
+    y: (clockBounds.minY + clockBounds.maxY) / 2,
+  }, clockBounds)
+  clockFlight = null
+  placeLocalClock()
+}
+
+const moveLocalClock = (time) => {
+  if (!clockBounds || !clockPosition || reducedMotion) return
+  if (!clockFlight) {
+    clockFlight = {
+      from: { ...clockPosition },
+      to: nextClockPosition(clockBounds, clockPosition),
+      start: time,
+      duration: 9000 + Math.random() * 6000,
+    }
+  }
+  const progress = Math.min(1, (time - clockFlight.start) / clockFlight.duration)
+  const eased = (1 - Math.cos(Math.PI * progress)) / 2
+  clockPosition = {
+    x: clockFlight.from.x + (clockFlight.to.x - clockFlight.from.x) * eased,
+    y: clockFlight.from.y + (clockFlight.to.y - clockFlight.from.y) * eased,
+  }
+  placeLocalClock()
+  if (progress === 1) clockFlight = null
+}
 
 const continents = [
   [
@@ -373,24 +445,21 @@ const scheduleStatsRetry = () => {
 }
 
 const updateVisitorTime = () => {
+  const now = new Date()
+  worldClocks.value = rotateWorldClocks(now)
+  void nextTick(resizeLocalClock)
   const apiTimeZone = currentVisitor.value?.timezone
   const usesVisitorTimeZone = isValidTimeZone(apiTimeZone)
   const timeZone = usesVisitorTimeZone ? apiTimeZone : deviceTimeZone()
 
   if (timeZone !== activeTimeZone || !localTimeFormatter) {
     activeTimeZone = timeZone
-    localTimeFormatter = new Intl.DateTimeFormat('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hourCycle: 'h23',
-      timeZone,
-    })
+    localTimeFormatter = createCityClockFormatter(timeZone)
   }
 
-  visitorTimeLabel.value = localTimeFormatter.format(new Date())
-  visitorTimeZoneLabel.value = usesVisitorTimeZone
-    ? timeZone.replaceAll('_', ' ')
-    : `${timeZone.replaceAll('_', ' ')} · device timezone`
+  const localClock = localTimeFormatter(now)
+  visitorTimeLabel.value = localClock.time
+  visitorTimeZoneLabel.value = localClock.offset
 }
 
 const loadVisitorStats = async () => {
@@ -439,31 +508,6 @@ const loadVisitorStats = async () => {
   requestRender()
 }
 
-const vectorFromLatLng = (latitude, longitude) => {
-  const lat = latitude * DEG
-  const lng = longitude * DEG
-  return {
-    x: Math.cos(lat) * Math.sin(lng),
-    y: Math.sin(lat),
-    z: Math.cos(lat) * Math.cos(lng),
-  }
-}
-
-const getSunPosition = () => {
-  const now = new Date()
-  const start = Date.UTC(now.getUTCFullYear(), 0, 0)
-  const dayOfYear = (now.getTime() - start) / 86400000
-  const utcHours = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600
-  const latitude = 23.44 * Math.sin((2 * Math.PI * (dayOfYear - 80)) / 365.25)
-  const longitude = 180 - utcHours * 15
-
-  return {
-    latitude,
-    longitude,
-    vector: vectorFromLatLng(latitude, longitude),
-  }
-}
-
 const project = (latitude, longitude, rotation) => {
   const lat = latitude * DEG
   const lng = (longitude + rotation) * DEG
@@ -485,7 +529,7 @@ const illuminationAt = (latitude, longitude, sunVector) => {
 }
 
 const clampColor = (value) => Math.max(0, Math.min(255, value))
-const enhanceContrast = (value) => (value - 128) * 1.08 + 128
+const enhanceContrast = (value) => (value - 96) * 1.04 + 108
 
 const loadEarthTexture = () => {
   if (earthTextureState !== 'idle') return
@@ -535,7 +579,7 @@ const resizeCanvas = () => {
   height = nextHeight
   centerX = width / 2
   centerY = height / 2 + 4
-  radius = Math.min(width, height) * 0.42
+  radius = Math.min(width * 0.36, height * 0.4)
 
   // CSS owns the canvas layout size. Writing that measured size back as an
   // inline height created a ResizeObserver feedback loop that repeatedly grew
@@ -599,8 +643,8 @@ const drawContinents = (rotation) => {
       else ctx.lineTo(point.x, point.y)
     })
     ctx.closePath()
-    ctx.fillStyle = 'rgba(28, 126, 153, 0.22)'
-    ctx.strokeStyle = 'rgba(112, 228, 255, 0.22)'
+    ctx.fillStyle = 'rgba(61, 171, 158, 0.5)'
+    ctx.strokeStyle = 'rgba(156, 235, 219, 0.42)'
     ctx.lineWidth = 1
     ctx.fill()
     ctx.stroke()
@@ -651,12 +695,7 @@ const drawTexturedEarth = (rotation, sun) => {
   const output = earthFrameImageData.data
   const texture = earthTextureData
   const textureStride = earthTextureWidth * 4
-  const rotationRadians = rotation * DEG
-  const rotationCosine = Math.cos(rotationRadians)
-  const rotationSine = Math.sin(rotationRadians)
-  const sunCameraX = sun.vector.x * rotationCosine + sun.vector.z * rotationSine
-  const sunCameraY = sun.vector.y
-  const sunCameraZ = sun.vector.z * rotationCosine - sun.vector.x * rotationSine
+  const cameraSun = rotateSunVector(sun.vector, rotation)
 
   for (let y = 0; y < diameter; y += 1) {
     const sphereY = 1 - (y + 0.5) / sphereRadius
@@ -711,17 +750,17 @@ const drawTexturedEarth = (rotation, sun) => {
         + texture[bottomRightIndex + 2] * rightWeight * bottomWeight
       )
       const light = (
-        sphereX * sunCameraX
-        + sphereY * sunCameraY
-        + sphereZ * sunCameraZ
+        sphereX * cameraSun.x
+        + sphereY * cameraSun.y
+        + sphereZ * cameraSun.z
       )
-      const limbShade = 0.48 + sphereZ * 0.58
-      const sunShade = 0.8 + Math.max(-0.2, Math.min(0.7, light)) * 0.16
+      const limbShade = 0.66 + sphereZ * 0.38
+      const sunShade = daylightBrightness(light)
       const shade = limbShade * sunShade
 
-      output[outputIndex] = clampColor(enhanceContrast(red) * 0.82 * shade + 8)
-      output[outputIndex + 1] = clampColor(enhanceContrast(green) * 0.95 * shade + 8)
-      output[outputIndex + 2] = clampColor(enhanceContrast(blue) * 1.06 * shade + 12)
+      output[outputIndex] = clampColor(enhanceContrast(red) * 0.96 * shade + 12)
+      output[outputIndex + 1] = clampColor(enhanceContrast(green) * 1.08 * shade + 18)
+      output[outputIndex + 2] = clampColor(enhanceContrast(blue) * 1.18 * shade + 28)
       output[outputIndex + 3] = Math.round(255 * Math.min(1, (1 - Math.sqrt(distanceSquared)) * sphereRadius * 2.2))
     }
   }
@@ -729,6 +768,38 @@ const drawTexturedEarth = (rotation, sun) => {
   earthFrameCtx.putImageData(earthFrameImageData, 0, 0)
   ctx.drawImage(earthFrameCanvas, centerX - radius, centerY - radius, radius * 2, radius * 2)
   return true
+}
+
+const drawFallbackNight = (rotation, sun) => {
+  const diameter = Math.max(1, Math.ceil(radius * 2 * renderPixelRatio))
+  if (!nightShadeCanvas) {
+    nightShadeCanvas = document.createElement('canvas')
+    nightShadeContext = nightShadeCanvas.getContext('2d')
+  }
+  if (nightShadeCanvas.width !== diameter || nightShadeCanvas.height !== diameter) {
+    nightShadeCanvas.width = diameter
+    nightShadeCanvas.height = diameter
+    nightShadeImageData = null
+  }
+  if (!nightShadeImageData) nightShadeImageData = nightShadeContext.createImageData(diameter, diameter)
+  const output = nightShadeImageData.data
+  const cameraSun = rotateSunVector(sun.vector, rotation)
+  for (let y = 0; y < diameter; y += 1) {
+    const sy = 1 - (y + 0.5) / (diameter / 2)
+    for (let x = 0; x < diameter; x += 1) {
+      const sx = (x + 0.5) / (diameter / 2) - 1
+      const distance = sx * sx + sy * sy
+      const index = (y * diameter + x) * 4
+      if (distance > 1) { output[index + 3] = 0; continue }
+      const light = sx * cameraSun.x + sy * cameraSun.y + Math.sqrt(1 - distance) * cameraSun.z
+      output[index] = 3
+      output[index + 1] = 12
+      output[index + 2] = 30
+      output[index + 3] = Math.round(Math.max(0, 1 - daylightBrightness(light)) * 255)
+    }
+  }
+  nightShadeContext.putImageData(nightShadeImageData, 0, 0)
+  ctx.drawImage(nightShadeCanvas, centerX - radius, centerY - radius, radius * 2, radius * 2)
 }
 
 const drawVisitorMarkers = (rotation, time) => {
@@ -813,19 +884,92 @@ const drawCurrentVisitorMarker = (rotation, time) => {
   })
 }
 
+const showMeteorNoticeIfVisible = (frame) => {
+  if (!isMounted || !isGlobeVisible || document.hidden || frame.opacity < 0.3 || !wrapRef.value) return false
+  const rect = wrapRef.value.getBoundingClientRect()
+  const obstacles = [...wrapRef.value.querySelectorAll('.city-clock, .local-time-chip, .globe-tooltip')].map(element => {
+    const bounds = element.getBoundingClientRect()
+    return { left: bounds.left - rect.left, right: bounds.right - rect.left, top: bounds.top - rect.top, bottom: bounds.bottom - rect.top }
+  })
+  const visible = isMeteorVisible(frame, {
+    viewport: { left: Math.max(0, -rect.left), top: Math.max(0, -rect.top), right: Math.min(width, window.innerWidth - rect.left), bottom: Math.min(height, window.innerHeight - rect.top) },
+    sphere: { x: centerX, y: centerY, radius },
+    obstacles,
+  })
+  if (visible) meteorNoticeVisible.value = true
+  return visible
+}
+
+const drawMeteor = (time) => {
+  if (reducedMotion) return
+  if (!nextMeteorAt) nextMeteorAt = time + 6000 + Math.random() * 6000
+  if (!meteor && time >= nextMeteorAt) {
+    meteor = createMeteor(time, width, height)
+    nextMeteorAt = time + 18000 + Math.random() * 18000
+  }
+  const frame = meteorFrame(meteor, time)
+  if (!frame) { meteor = null; return }
+  const trail = ctx.createLinearGradient(frame.tailX, frame.tailY, frame.x, frame.y)
+  trail.addColorStop(0, 'rgba(140, 206, 255, 0)')
+  trail.addColorStop(0.7, `rgba(176, 222, 255, ${frame.opacity * 0.35})`)
+  trail.addColorStop(1, `rgba(240, 250, 255, ${frame.opacity})`)
+  ctx.save()
+  ctx.strokeStyle = trail
+  ctx.lineWidth = 1.2
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(frame.tailX, frame.tailY)
+  ctx.lineTo(frame.x, frame.y)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.arc(frame.x, frame.y, 1.3, 0, Math.PI * 2)
+  ctx.fillStyle = `rgba(244, 251, 255, ${frame.opacity})`
+  ctx.shadowColor = 'rgba(159, 218, 255, 0.7)'
+  ctx.shadowBlur = 6
+  ctx.fill()
+  ctx.restore()
+  if (!meteor.notified) meteor.notified = showMeteorNoticeIfVisible(frame)
+}
+
+const drawSpace = (time) => {
+  ctx.save()
+  starField.forEach(star => {
+    const shimmer = reducedMotion ? 0.65 : 0.65 + Math.sin(time / 2400 + star.phase) * 0.18
+    ctx.beginPath()
+    ctx.arc(star.x * width, star.y * height, star.radius, 0, Math.PI * 2)
+    ctx.fillStyle = `rgba(208, 232, 255, ${shimmer})`
+    ctx.fill()
+  })
+
+  // A decorative guiding star, inspired by the visual appearance of Polaris.
+  const x = width * 0.86
+  const y = height * 0.27
+  const glow = ctx.createRadialGradient(x, y, 0, x, y, 19)
+  glow.addColorStop(0, 'rgba(237, 249, 255, 0.9)')
+  glow.addColorStop(0.12, 'rgba(174, 221, 255, 0.5)')
+  glow.addColorStop(1, 'rgba(128, 197, 255, 0)')
+  ctx.fillStyle = glow
+  ctx.fillRect(x - 19, y - 19, 38, 38)
+  ctx.fillStyle = 'rgba(239, 249, 255, 0.95)'
+  ctx.beginPath()
+  ctx.arc(x, y, 1.7, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.restore()
+  drawMeteor(time)
+}
+
 const drawGlobe = (time = 0) => {
   if (!ctx || !width || !height) return
 
   const rotation = rotationDegrees
   const sun = getSunPosition()
-  const sunPoint = project(sun.latitude, sun.longitude, rotation)
-  const antiSunPoint = project(-sun.latitude, sun.longitude + 180, rotation)
 
   ctx.clearRect(0, 0, width, height)
+  drawSpace(time)
 
   const outerGlow = ctx.createRadialGradient(centerX, centerY, radius * 0.7, centerX, centerY, radius * 1.5)
-  outerGlow.addColorStop(0, 'rgba(37, 185, 255, 0.08)')
-  outerGlow.addColorStop(0.55, 'rgba(37, 185, 255, 0.05)')
+  outerGlow.addColorStop(0, 'rgba(64, 172, 255, 0.2)')
+  outerGlow.addColorStop(0.55, 'rgba(77, 170, 255, 0.12)')
   outerGlow.addColorStop(1, 'rgba(37, 185, 255, 0)')
   ctx.fillStyle = outerGlow
   ctx.fillRect(0, 0, width, height)
@@ -839,44 +983,25 @@ const drawGlobe = (time = 0) => {
 
   if (!renderedTexture) {
     const base = ctx.createRadialGradient(centerX - radius * 0.32, centerY - radius * 0.4, radius * 0.1, centerX, centerY, radius)
-    base.addColorStop(0, '#123f68')
-    base.addColorStop(0.46, '#06274a')
-    base.addColorStop(1, '#020a1b')
+    base.addColorStop(0, '#347fae')
+    base.addColorStop(0.46, '#195780')
+    base.addColorStop(1, '#102e50')
     ctx.fillStyle = base
-    ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
-
-    const dayGlow = ctx.createRadialGradient(
-      sunPoint.visible ? sunPoint.x : centerX + radius * 0.25,
-      sunPoint.visible ? sunPoint.y : centerY - radius * 0.15,
-      0,
-      sunPoint.visible ? sunPoint.x : centerX,
-      sunPoint.visible ? sunPoint.y : centerY,
-      radius * 1.28
-    )
-    dayGlow.addColorStop(0, 'rgba(88, 214, 255, 0.34)')
-    dayGlow.addColorStop(0.42, 'rgba(37, 122, 202, 0.16)')
-    dayGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
-    ctx.fillStyle = dayGlow
-    ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
-
-    const nightShade = ctx.createRadialGradient(
-      antiSunPoint.visible ? antiSunPoint.x : centerX - radius * 0.35,
-      antiSunPoint.visible ? antiSunPoint.y : centerY + radius * 0.1,
-      radius * 0.12,
-      antiSunPoint.visible ? antiSunPoint.x : centerX,
-      antiSunPoint.visible ? antiSunPoint.y : centerY,
-      radius * 1.18
-    )
-    nightShade.addColorStop(0, 'rgba(0, 8, 25, 0.56)')
-    nightShade.addColorStop(0.58, 'rgba(0, 8, 25, 0.24)')
-    nightShade.addColorStop(1, 'rgba(0, 8, 25, 0)')
-    ctx.fillStyle = nightShade
     ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
 
     drawContinents(rotation)
     drawGrid(rotation)
-    drawCityLights(rotation, sun, time)
+    drawFallbackNight(rotation, sun)
   }
+
+  drawCityLights(rotation, sun, time)
+
+  const atmosphere = ctx.createRadialGradient(centerX, centerY, radius * 0.76, centerX, centerY, radius)
+  atmosphere.addColorStop(0, 'rgba(104, 195, 255, 0)')
+  atmosphere.addColorStop(0.7, 'rgba(104, 195, 255, 0.04)')
+  atmosphere.addColorStop(1, 'rgba(145, 220, 255, 0.28)')
+  ctx.fillStyle = atmosphere
+  ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2)
 
   drawVisitorMarkers(rotation, time)
 
@@ -884,9 +1009,9 @@ const drawGlobe = (time = 0) => {
 
   ctx.beginPath()
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
-  ctx.strokeStyle = 'rgba(126, 236, 255, 0.45)'
+  ctx.strokeStyle = 'rgba(163, 228, 255, 0.68)'
   ctx.lineWidth = 1.2
-  ctx.shadowColor = 'rgba(88, 232, 255, 0.3)'
+  ctx.shadowColor = 'rgba(88, 192, 255, 0.46)'
   ctx.shadowBlur = 18
   ctx.stroke()
   ctx.shadowBlur = 0
@@ -900,6 +1025,10 @@ const stopAnimation = () => {
   if (animationFrame) cancelAnimationFrame(animationFrame)
   animationFrame = 0
   lastAnimationTime = 0
+  clockFlight = null
+  meteor = null
+  nextMeteorAt = 0
+  meteorNoticeVisible.value = false
 }
 
 const runAnimation = (time) => {
@@ -914,6 +1043,7 @@ const runAnimation = (time) => {
 
   if (!lastRenderTime || time - lastRenderTime >= FRAME_INTERVAL) {
     lastRenderTime = time
+    moveLocalClock(time)
     drawGlobe(time)
   }
 
@@ -986,6 +1116,7 @@ const scheduleLocalTimeUpdate = () => {
 
   updateVisitorTime()
   updateTooltipAtPointer()
+  requestRender()
   if (localTimeTimer) window.clearTimeout(localTimeTimer)
   const nextMinuteDelay = 60000 - (Date.now() % 60000) + 50
   localTimeTimer = window.setTimeout(scheduleLocalTimeUpdate, nextMinuteDelay)
@@ -1023,12 +1154,15 @@ onMounted(() => {
   motionQuery.addEventListener?.('change', handleMotionChange)
 
   resizeCanvas()
+  resizeLocalClock()
   resizeObserver = new ResizeObserver(() => {
     const sizeChanged = resizeCanvas()
+    resizeLocalClock()
     if (sizeChanged) drawGlobe(performance.now())
     requestRender()
   })
   if (wrapRef.value) resizeObserver.observe(wrapRef.value)
+  if (localClockRef.value) resizeObserver.observe(localClockRef.value)
 
   drawGlobe(performance.now())
 
@@ -1127,15 +1261,15 @@ onUnmounted(() => {
 
 .globe-canvas-wrap {
   position: relative;
-  height: 230px;
-  min-height: 230px;
+  height: 320px;
+  min-height: 320px;
   overflow: hidden;
   border: 1px solid rgba(126, 236, 255, 0.1);
   border-radius: 8px;
   background:
-    radial-gradient(circle at 50% 42%, rgba(67, 130, 255, 0.18), transparent 55%),
-    radial-gradient(circle at 18% 22%, rgba(126, 236, 255, 0.08), transparent 32%),
-    #030b1d;
+    radial-gradient(ellipse at 52% 45%, rgba(55, 116, 185, 0.26), transparent 64%),
+    radial-gradient(ellipse at 18% 24%, rgba(109, 124, 204, 0.13), transparent 42%),
+    #07172f;
 }
 
 .global-globe-canvas {
@@ -1144,21 +1278,62 @@ onUnmounted(() => {
   height: 100%;
 }
 
+.world-clocks {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.city-clock {
+  position: absolute;
+  display: grid;
+  gap: 2px;
+  width: min(112px, calc(50% - 18px));
+  padding: 6px 8px;
+  border: 1px solid rgba(170, 215, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(8, 26, 51, 0.7);
+  backdrop-filter: blur(4px);
+  text-align: left;
+}
+
+.city-clock--top-left { top: 10px; left: 10px; }
+.city-clock--top-right { top: 10px; right: 10px; }
+.city-clock--bottom-left { bottom: 10px; left: 10px; }
+.city-clock--bottom-right { bottom: 10px; right: 10px; }
+.city-clock-name { color: #cce8ff; font-size: 10px; font-weight: 700; line-height: 1.2; }
+.city-clock time { color: #fff; font-size: 18px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.city-clock-date { color: #b5cce0; font-size: 9px; line-height: 1.3; white-space: nowrap; }
+.city-clock-swap-enter-active, .city-clock-swap-leave-active { transition: opacity 400ms ease; }
+.city-clock-swap-enter-from, .city-clock-swap-leave-to { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .city-clock-swap-enter-active, .city-clock-swap-leave-active { transition: none; }
+}
+
 .local-time-chip {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  visibility: hidden;
+  width: max-content;
+  max-width: calc(100% - 24px);
   display: grid;
   grid-template-columns: auto auto;
-  gap: 2px 7px;
+  gap: 7px;
   align-items: baseline;
-  padding: 7px 9px;
-  border: 1px solid rgba(126, 236, 255, 0.16);
+  padding: 6px 8px;
+  border: 1px solid rgba(126, 236, 255, 0.1);
   border-radius: 7px;
-  background: rgba(3, 11, 29, 0.72);
+  background: rgba(5, 22, 45, 0.24);
   color: rgba(216, 235, 255, 0.72);
   line-height: 1.1;
-  backdrop-filter: blur(8px);
+  white-space: nowrap;
+  backdrop-filter: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  will-change: transform;
 }
 
 .local-time-chip small {
@@ -1173,16 +1348,7 @@ onUnmounted(() => {
   color: #ffffff;
   font-size: 13px;
   font-weight: 800;
-}
-
-.local-time-chip > span {
-  grid-column: 1 / -1;
-  max-width: 190px;
-  overflow: hidden;
-  color: rgba(216, 235, 255, 0.66);
-  font-size: 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .globe-tooltip {
@@ -1347,8 +1513,8 @@ onUnmounted(() => {
   }
 
   .globe-canvas-wrap {
-    height: 260px;
-    min-height: 260px;
+    height: 340px;
+    min-height: 340px;
   }
 }
 
@@ -1359,8 +1525,12 @@ onUnmounted(() => {
   }
 
   .globe-canvas-wrap {
-    height: 220px;
-    min-height: 220px;
+    height: 340px;
+    min-height: 340px;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .local-time-chip { will-change: auto; }
 }
 </style>

@@ -1,23 +1,15 @@
 <template>
-  <div>
-    <section class="page-hero narrow">
-      <div>
-        <p class="eyebrow">News</p>
-        <h1>Conference updates, releases, seminars, and publication news.</h1>
-        <p>
-          News entries are structured by date, venue, location, and related paper so the homepage can show the latest verified updates while the full archive remains maintainable.
-        </p>
-      </div>
-    </section>
-
+  <div class="content-page news-page">
+    <header class="page-hero narrow"><h1>News</h1><p>Publication updates, conference activities, and progress from our research.</p></header>
     <section class="section">
-      <h2 class="sr-only">All news</h2>
       <NewsList :items="newsItems" />
+      <ArchiveNote description="For a chronological view of our research activities, browse the news archive by year."
+        to="/news/archive" link-label="Browse the News Archive" />
     </section>
   </div>
 </template>
-
 <script setup>
 import NewsList from '../components/NewsList.vue'
+import ArchiveNote from '../components/ArchiveNote.vue'
 import { newsItems } from '../data/news'
 </script>
