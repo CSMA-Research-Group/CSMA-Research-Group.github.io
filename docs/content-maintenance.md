@@ -19,7 +19,7 @@
 - Projects 的 Current Directions / Current Research Direction 表示当前研究方向；仅替换对外文案中的 Ongoing，旧锚点 `ongoing-directions` 和内部筛选状态保持兼容。
 - News、People、Projects、Publications、Resources、About 页头去掉 From the Group、The Group、Ideas into Systems、Research Output、Explore and Reuse、重复 About 等装饰性标签，保留正式标题和简介。
 - About 介绍按完整内容宽度自然换行，不加硬换行；页头与其它内容页共用左边界；Address 仅显示 Chongqing, China；Research Interests 各研究方向使用首字母大写形式，保留 AI 缩写；Research Vision 与 Contact + Join Us 上下排列，正文两端对齐，四个研究方向用等宽标签分列。
-- People 使用统一的 Members 分组，不区分导师和学生，不显示人数；首页显示当前六位成员，每人均为默认头像、姓名、Member 和一个主要研究方向。
+- People 使用统一的 Members 分组，不区分导师和学生，不显示人数；首页显示当前成员的头像、姓名、Member 和一个主要研究方向。Hao Chen 使用本次提供的照片，其他成员保留默认头像。
 - People 顶部与底部均有 Alumni 入口，进入 `/people/alumni`，只读取 `peopleSections` 中既有 alumni 记录；不把当前成员视为离组成员，不补造姓名、年份或去向。
 - 头像和姓名进入 `/people/:id` 独立介绍；本人提供的个人主页链接只在介绍页显示。
 - 首页 About 两个模块正文无超链接；标题右侧分别提供 Home 和 How to join，后者进入 About 的联系部分。
@@ -35,7 +35,7 @@
 | --- | --- | --- |
 | 新闻 | `src/data/news.js` | 时间倒序；同月先后使用 `order`；`publicationId` 关联论文。所有新闻日期统一使用 YYYY-MM。 |
 | 人员资料 | `src/data/people.js` | 保存已确认资料；合作研究者和校友原始记录保留，不转为在组成员。 |
-| 人员展示 | `src/data/peopleHierarchy.js` | 统一 Members 列表、默认头像和首页选择；`alumniProfiles` 读取原始 alumni 分类并按毕业年份倒序；补资料时保留现有 ID。 |
+| 人员展示 | `src/data/peopleHierarchy.js` | 统一 Members 列表、已确认照片与默认头像回退、首页选择；`alumniProfiles` 读取原始 alumni 分类并按毕业年份倒序；补资料时保留现有 ID。 |
 | 论文 | `src/data/publications.js`、`src/utils/publicationDisplay.js` | 作者按确认顺序保留全名，统一以英文逗号和 and 连接；`rating` 在论文列表的会议名称下显示；`featured` 控制精选；`systemId` 指向论文框架，`applicationId` 指向项目应用；KGMAF 的应用为 ChatREQ。 |
 | 在研项目 | `src/data/proposalProjects.js` | 保留周期、公开题名中的 `[MASK]` 与已确认简介。 |
 | 系统 | `src/data/systems.js` | `researchSystems` 用于框架目录；`projectApplications` 用于 Resources；`systemProfiles` 提供全部详情路由。KGMAF 与 ChatREQ 分开命名，详情说明关系；可选动图维护在对应介绍中。 |
@@ -71,13 +71,15 @@ SemFaith 作者已确认，依次为 Jiangping Huang、Weidong Yuan、Junchen Xi
 
 ## 人员资料与姓名
 
-当前仅展示用户提供的六位成员，姓名按本次明确给出的英文全名显示：
+当前仅展示用户确认的成员，姓名按明确给出的英文全名显示：
 
 - Jiangping Huang：Artificial Intelligence。
-- Shiyu Zhou、Juncheng Lu、Juntong Ou、Yujie Jiang：Intelligent Software Engineering。
+- Shiyu Zhou、Juncheng Lu、Juntong Ou、Yujie Jiang、Hao Chen：Intelligent Software Engineering。
 - Zhirui Huang：Intelligent Robotics。
 
-所有成员（包括 Jiangping Huang）统一使用 `public/people/default-avatar.svg`，不显示真实或生成照片。此前虚构姓名、资料及生成头像已归档到本地更新记录目录，不再导入网站或出现在生产资源目录。
+2026-10-15：新增 Hao Chen（名 Hao、姓 Chen），使用用户提供照片的原样副本 `public/people/hao-chen.jpg`，个人介绍入口为 `/people/hao-chen`。简介介绍其正在研究的显式修复历史增量价值、历史内容的作用与适用条件，不提拟投稿期刊，不把先导材料写成已确立结论，也不将阅读过的论文列为个人成果。
+
+其他成员（包括 Jiangping Huang）继续使用 `public/people/default-avatar.svg`。此前虚构姓名、资料及生成头像已归档到本地更新记录目录，不再导入网站或出现在生产资源目录。
 
 已确认资料维护在 `src/data/people.js`，展示规则在 `src/data/peopleHierarchy.js`。头像和姓名均进入独立个人介绍，个人主页仅在本人提供后填写；不推测邮箱、单位、学位或论文贡献。合作研究者和校友的原始记录保留，不加入当前名单。补充资料时保留各成员 ID。
 
@@ -101,7 +103,7 @@ git diff --check
 
 ## 待补真实资料
 
-- 当前成员的进一步个人介绍，以及本人决定提供的主页地址；头像暂按本次要求统一使用默认图。
+- 当前成员的进一步个人介绍，以及本人决定提供的主页地址；Hao Chen 的照片与研究简介已补充，邮箱和主页暂留空，其他成员保留默认头像。
 - SemFaith DOI 与后续出版信息；正式作者和 GitHub 已确认，其 GitHub 和 ChatREQ GitHub 地址已按用户提供的信息加入。
 - 各系统的演示动图。
 

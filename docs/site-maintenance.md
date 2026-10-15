@@ -42,7 +42,7 @@ All public content should remain in the existing structured files:
 - `src/data/systems.js`: supporting system introductions and optional resource previews.
 - `src/data/publications.js`: publication metadata and links.
 - `src/data/people.js`: confirmed profiles and retained collaborator/alumni records.
-- `src/data/peopleHierarchy.js`: one Members directory, default avatars, and homepage selection.
+- `src/data/peopleHierarchy.js`: one Members directory, confirmed portraits with a default fallback, and homepage selection.
 - `src/data/news.js`: dated verified news.
 - `src/data/resources.js`: supplementary repository links and retained resource records.
 - `src/data/researchInsights.js`: Research Insights articles, group perspectives, and primary sources.
@@ -77,7 +77,7 @@ Each `systemId` must match a supporting system, whose `relatedPublicationIds` mu
 
 ## Updating People
 
-Maintain the current six confirmed names and directions in `src/data/people.js`, with a single Members presentation in `src/data/peopleHierarchy.js`. There is no advisor/student split. All six people use `public/people/default-avatar.svg`, including Jiangping Huang. His primary displayed direction is Artificial Intelligence; Zhirui Huang is Intelligent Robotics; Shiyu Zhou, Juncheng Lu, Juntong Ou, and Yujie Jiang are Intelligent Software Engineering. Use the full English names explicitly provided by the user. Prior fictional profiles and generated portraits are archived outside the site. Preserve collaborator/alumni records without presenting them as current members; add biographies, contact details, and homepages only when confirmed.
+Maintain confirmed names and directions in `src/data/people.js`, with a single Members presentation in `src/data/peopleHierarchy.js`. There is no advisor/student split. Hao Chen uses the supplied portrait at `public/people/hao-chen.jpg`; other members, including Jiangping Huang, retain `public/people/default-avatar.svg`. Jiangping Huang's primary displayed direction is Artificial Intelligence; Zhirui Huang is Intelligent Robotics; Shiyu Zhou, Juncheng Lu, Juntong Ou, Yujie Jiang, and Hao Chen are Intelligent Software Engineering. Hao Chen's introduction describes ongoing work on explicit repair history in LLM-based program repair, without a submission venue or claims of established results. Use the full English names explicitly provided by the user. Prior fictional profiles and generated portraits are archived outside the site. Preserve collaborator/alumni records without presenting them as current members; add biographies, contact details, and homepages only when confirmed.
 
 Portraits and names enter individual profiles. Show personal homepage links only inside those introductions and only when provided. The homepage presents the confirmed members in a shared grid, without displaying headcounts.
 

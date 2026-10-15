@@ -58,6 +58,19 @@ export const peopleSections = [
         "summary": "Research in intelligent software engineering."
       },
       {
+        "id": "hao-chen",
+        "name": "Hao Chen",
+        "interests": [
+          "Intelligent Software Engineering",
+          "LLM-Based Program Repair",
+          "Code Repair Agents"
+        ],
+        "portrait": "/people/hao-chen.jpg",
+        "portraitWidth": 1206,
+        "portraitHeight": 1642,
+        "summary": "Research in intelligent software engineering, focusing on LLM-based program repair. His current work studies whether explicit repair history adds value beyond the complete current repair state, how past actions, feedback, diagnoses, and plans affect repair success and cost, and under what conditions such history is useful."
+      },
+      {
         "id": "zhirui-huang",
         "name": "Zhirui Huang",
         "interests": ["Intelligent Robotics"],

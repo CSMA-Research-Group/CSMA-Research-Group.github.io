@@ -104,7 +104,7 @@ Most public website content is stored in `src/data/`:
 - `src/data/systems.js`: paper-supporting systems, detail-page content, public links, and optional preview animations
 - `src/data/publications.js`: publication metadata, tags, DOI/code/PDF links, summaries, and contribution highlights
 - `src/data/people.js`: confirmed profiles and retained collaborator/alumni records
-- `src/data/peopleHierarchy.js`: one public Members directory, shared default avatars, and homepage selection
+- `src/data/peopleHierarchy.js`: one public Members directory, confirmed portraits with a shared default fallback, and homepage selection
 - `src/data/news.js`: dated news entries with venue, location, type, and paper title
 - `src/data/resources.js`: supplementary repository links and retained resource records
 - `src/data/researchInsights.js`: Research Insights articles, group perspectives, and primary sources
@@ -113,7 +113,7 @@ Most public website content is stored in `src/data/`:
 
 The English homepage presents the welcome and vision, News, side-by-side Publications and projects, four Research directions, People, Resources, About, and the visitor globe. Resources contains Research Applications and Research Insights, with individual system and article pages. The brand and the first navigation item, Home, both return Home. The founding date is `2022-07-20`, without a time.
 
-Paper titles and More open `/publications/:id`; each paper links to its supporting system at `/projects/:id`. Resource names and More open the same system introductions. Portraits and names open `/people/:id`, where a personal homepage appears only when supplied. People uses one Members directory without advisor/student categories or headcount badges. All current members use the same default avatar.
+Paper titles and More open `/publications/:id`; each paper links to its supporting system at `/projects/:id`. Resource names and More open the same system introductions. Portraits and names open `/people/:id`, where a personal homepage appears only when supplied. People uses one Members directory without advisor/student categories or headcount badges. Members use supplied, confirmed portraits where available and the shared default avatar otherwise.
 
 `src/proposal-layout.css` contains the approved layout refinements. Keep the original font, color, card, vision, and globe styles. On desktop, the visible title top and button bottoms align with the image frame; below 1180px, the hero stacks vertically. See [`docs/content-maintenance.md`](docs/content-maintenance.md) for the current content and link rules.
 
@@ -151,7 +151,7 @@ Use confirmed code, artifact, DOI, and demo links only. If a project link is not
 
 ## Updating People
 
-Maintain the six user-confirmed profiles in the group-members section of `src/data/people.js`: Jiangping Huang, Shiyu Zhou, Juncheng Lu, Juntong Ou, Yujie Jiang, and Zhirui Huang. `src/data/peopleHierarchy.js` presents them in one Members group and applies `public/people/default-avatar.svg` to everyone, including Jiangping Huang. His displayed primary area is Artificial Intelligence; Zhirui Huang works on Intelligent Robotics; the remaining members work on Intelligent Software Engineering. Preserve collaborator and alumni records separately. Previous fictional identities and portraits have been archived outside the website and are no longer displayed.
+Maintain the user-confirmed profiles in the group-members section of `src/data/people.js`: Jiangping Huang, Shiyu Zhou, Juncheng Lu, Juntong Ou, Yujie Jiang, Hao Chen, and Zhirui Huang. `src/data/peopleHierarchy.js` presents them in one Members group. Hao Chen uses the supplied portrait at `public/people/hao-chen.jpg`; other members, including Jiangping Huang, retain `public/people/default-avatar.svg`. Jiangping Huang's displayed primary area is Artificial Intelligence; Zhirui Huang works on Intelligent Robotics; the remaining members work on Intelligent Software Engineering. Hao Chen's introduction describes ongoing research on the incremental value and applicability of explicit history in LLM-based program repair, without submission venues or unverified results. Preserve collaborator and alumni records separately. Previous fictional identities and portraits have been archived outside the website and are no longer displayed.
 
 Use publication metadata for names, affiliations, and emails. Add homepage links only when the source reliably matches the same person by name, affiliation, email, and research area. Do not assume that every paper author is an internal CSMA member.
 
@@ -190,7 +190,7 @@ Use placeholders or blank fields for unconfirmed information. In particular, con
 - contact emails and office addresses
 - school, college, and institutional profile details
 
-The current directory contains only the user-confirmed names and research areas. Additional member biographies and optional personal homepages remain to be supplied. All members currently use default avatars. SemFaith's authors and GitHub link are confirmed; its DOI and final publication details remain pending, with Paper showing Coming soon. Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
+The current directory contains user-confirmed names, research areas, and any supplied biographies or portraits. Hao Chen's portrait and research introduction are supplied; optional contact details and a personal homepage remain blank. Other members retain their existing profiles and default avatars, with further biographies and optional personal homepages still to be supplied. SemFaith's authors and GitHub link are confirmed; its DOI and final publication details remain pending, with Paper showing Coming soon. Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
 
 ## Verification Policy
 

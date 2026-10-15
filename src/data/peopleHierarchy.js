@@ -6,19 +6,24 @@ export const alumniProfiles = [...(peopleSections.find(section => section.id ===
 const members = peopleSections.find(section => section.id === 'group-members')?.people || []
 const defaultPortrait = `${import.meta.env.BASE_URL}people/default-avatar.svg`
 
-// All current members use the same presentation and a neutral default avatar.
-// Original confirmed photo/profile records remain in people.js for future use.
-export const peopleProfiles = members.map(person => ({
-  ...person,
-  displayRole: 'Member',
-  profilePath: '/people/' + person.id,
-  portrait: defaultPortrait,
-  portraitWidth: 80,
-  portraitHeight: 80,
-  defaultPortrait: true,
-  interests: person.primaryResearchArea ? [person.primaryResearchArea] : person.interests,
-  previewInterests: [person.primaryResearchArea || person.interests?.[0]].filter(Boolean),
-}))
+// Use confirmed portraits when supplied, with a neutral default for other members.
+export const peopleProfiles = members.map(person => {
+  const portrait = person.portrait
+    ? `${import.meta.env.BASE_URL}${person.portrait.replace(/^\//, '')}`
+    : defaultPortrait
+
+  return {
+    ...person,
+    displayRole: 'Member',
+    profilePath: '/people/' + person.id,
+    portrait,
+    portraitWidth: person.portraitWidth || 80,
+    portraitHeight: person.portraitHeight || 80,
+    defaultPortrait: portrait === defaultPortrait,
+    interests: person.primaryResearchArea ? [person.primaryResearchArea] : person.interests,
+    previewInterests: [person.primaryResearchArea || person.interests?.[0]].filter(Boolean),
+  }
+})
 
 export const peopleHierarchy = [
   { id: 'members', title: 'Members', people: peopleProfiles },
