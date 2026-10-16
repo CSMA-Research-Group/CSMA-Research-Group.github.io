@@ -35,13 +35,13 @@ body { min-width: min(320px, 100%); }
 .people-tier-members { display: grid; gap: 12px; padding: 18px; }
 .people-tier-1 .people-tier-members { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .people-tier-2 .people-tier-members { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.people-tier--members .people-tier-members { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.people-tier--members .people-tier-members { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 .people-slot .home-project-row { padding: 16px 12px; }
 .home-people-preview { display: grid; gap: 22px; }
 .home-people-intro p { margin: 0; }
 .home-people-row { display: grid; gap: 16px; width: 100%; }
 .home-people-row--advisor { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.home-people-row--member { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.home-people-row--member { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 .home-member-card .home-project-row { padding: 18px 12px; text-align: center; }
 .home-member-copy { min-width: 0; }
 .home-member-copy > .paper-status { margin: 6px 0 0; color: var(--color-muted); font-size: 16px; line-height: 1.55; text-align: center; text-align-last: center; }

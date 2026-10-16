@@ -42,7 +42,7 @@ All public content should remain in the existing structured files:
 - `src/data/systems.js`: supporting system introductions and optional resource previews.
 - `src/data/publications.js`: publication metadata and links.
 - `src/data/people.js`: confirmed profiles and retained collaborator/alumni records.
-- `src/data/peopleHierarchy.js`: one Members directory, confirmed portraits with a default fallback, and homepage selection.
+- `src/data/peopleHierarchy.js`: one Members directory filtered to profiles with photos, full research interests, and homepage selection.
 - `src/data/news.js`: dated verified news.
 - `src/data/resources.js`: supplementary repository links and retained resource records.
 - `src/data/researchInsights.js`: Research Insights articles, group perspectives, and primary sources.
@@ -77,9 +77,13 @@ Each `systemId` must match a supporting system, whose `relatedPublicationIds` mu
 
 ## Updating People
 
-Maintain confirmed names and directions in `src/data/people.js`, with a single Members presentation in `src/data/peopleHierarchy.js`. There is no advisor/student split. Hao Chen uses the supplied portrait at `public/people/hao-chen.jpg`; other members, including Jiangping Huang, retain `public/people/default-avatar.svg`. Jiangping Huang's primary displayed direction is Artificial Intelligence; Zhirui Huang is Intelligent Robotics; Shiyu Zhou, Juncheng Lu, Juntong Ou, Yujie Jiang, and Hao Chen are Intelligent Software Engineering. Hao Chen's introduction describes ongoing work on explicit repair history in LLM-based program repair, without a submission venue or claims of established results. Use the full English names explicitly provided by the user. Prior fictional profiles and generated portraits are archived outside the site. Preserve collaborator/alumni records without presenting them as current members; add biographies, contact details, and homepages only when confirmed.
+Maintain confirmed names and directions in `src/data/people.js`, with a single Members presentation in `src/data/peopleHierarchy.js`. Only profiles with photos currently appear on the homepage, in Members, and at individual profile routes: Jiangping Huang, Hao Chen, Zhirui Huang, Yihang Wang, and Jiateng Guo. Keep the four records awaiting photos in the source data; do not delete them or show default-avatar cards. Jiangping Huang uses a scholar portrait edited from his supplied photo with the built-in image-generation tool; source and output hashes and the exact prompt are recorded in `docs/content-maintenance.md`. Other visible members use unchanged supplied photos.
+
+Jiangping Huang's full research interests are Artificial Intelligence, Intelligent Software Engineering, and Embodied Intelligence; his preview card retains Artificial Intelligence as the primary area. Hao Chen works on Intelligent Software Engineering. Zhirui Huang, Yihang Wang, and Jiateng Guo work on Intelligent Robotics and Embodied Intelligence. Keep their introductions distinct: task understanding and clarification for Zhirui Huang, finite-domain candidate completeness and execution authorization for Yihang Wang, and perception, reasoning, and action for Jiateng Guo. Do not infer publication status or transfer experimental results between people. Preserve collaborator/alumni records separately; only add confirmed biographies, contact details, and homepages.
 
 Portraits and names enter individual profiles. Show personal homepage links only inside those introductions and only when provided. The homepage presents the confirmed members in a shared grid, without displaying headcounts.
+
+All member email links use the visible label `Email`. Keep the supplied address in the `mailto:` destination only; do not display it as body text, link text, or a tooltip. The shared `PeopleCard.vue` component already applies this convention.
 
 The People page retains its Join Us section, and the About page provides contact details and joining instructions. Join Us is intentionally not a primary navigation item.
 

@@ -5,9 +5,10 @@ export const alumniProfiles = [...(peopleSections.find(section => section.id ===
 
 const members = peopleSections.find(section => section.id === 'group-members')?.people || []
 const defaultPortrait = `${import.meta.env.BASE_URL}people/default-avatar.svg`
+const visibleMembers = members.filter(person => person.portrait && person.portrait !== '/people/default-avatar.svg')
 
-// Use confirmed portraits when supplied, with a neutral default for other members.
-export const peopleProfiles = members.map(person => {
+// Keep records without photos in people.js, but hide them from all current-member views and routes.
+export const peopleProfiles = visibleMembers.map(person => {
   const portrait = person.portrait
     ? `${import.meta.env.BASE_URL}${person.portrait.replace(/^\//, '')}`
     : defaultPortrait
@@ -20,7 +21,7 @@ export const peopleProfiles = members.map(person => {
     portraitWidth: person.portraitWidth || 80,
     portraitHeight: person.portraitHeight || 80,
     defaultPortrait: portrait === defaultPortrait,
-    interests: person.primaryResearchArea ? [person.primaryResearchArea] : person.interests,
+    interests: person.interests?.length ? person.interests : [person.primaryResearchArea].filter(Boolean),
     previewInterests: [person.primaryResearchArea || person.interests?.[0]].filter(Boolean),
   }
 })

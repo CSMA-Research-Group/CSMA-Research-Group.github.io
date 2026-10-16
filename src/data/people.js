@@ -15,11 +15,7 @@ export const peopleSections = [
         "interests": [
           "Artificial Intelligence",
           "Intelligent Software Engineering",
-          "Multi-Agent Systems",
-          "Intelligent Requirements Engineering",
-          "Code Generation",
-          "Automated Debugging",
-          "Intelligent Robotics"
+          "Embodied Intelligence"
         ],
         "relatedPublicationIds": [
           "tracecoder-icse-2026",
@@ -29,8 +25,10 @@ export const peopleSections = [
           "TraceCoder (ICSE 2026)",
           "KGMAF (ASE 2025)"
         ],
-        "portrait": "/people/default-avatar.svg",
-        "summary": "Research in artificial intelligence, intelligent software engineering, and intelligent robotics, connecting foundational questions with real-world applications.",
+        "portrait": "/people/jiangping-huang.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "Research in artificial intelligence, intelligent software engineering, and embodied intelligence, connecting reasoning and planning with reliable software and embodied systems.",
         "credentials": "Ph.D. · Master's Supervisor"
       },
       {
@@ -60,6 +58,7 @@ export const peopleSections = [
       {
         "id": "hao-chen",
         "name": "Hao Chen",
+        "email": "3483859131@qq.com",
         "interests": [
           "Intelligent Software Engineering",
           "LLM-Based Program Repair",
@@ -73,8 +72,45 @@ export const peopleSections = [
       {
         "id": "zhirui-huang",
         "name": "Zhirui Huang",
-        "interests": ["Intelligent Robotics"],
-        "summary": "Research in intelligent robotics."
+        "email": "s261703010@stu.cqupt.edu.cn",
+        "interests": [
+          "Intelligent Robotics",
+          "Embodied Intelligence",
+          "Task Understanding",
+          "Reliable Robot Planning"
+        ],
+        "portrait": "/people/zhirui-huang.jpg",
+        "portraitWidth": 2438,
+        "portraitHeight": 3493,
+        "summary": "Research in embodied intelligence and intelligent robotics, with a focus on connecting language-based task understanding, planning, and action. His interests include clarifying ambiguous instructions and aligning autonomous behavior with task requirements to support reliable robotic systems."
+      },
+      {
+        "id": "yihang-wang",
+        "name": "Yihang Wang",
+        "email": "wangyiuhang@gmail.com",
+        "interests": [
+          "Intelligent Robotics",
+          "Embodied Intelligence",
+          "Language-Guided Task Planning",
+          "Reliable Autonomous Execution"
+        ],
+        "portrait": "/people/yihang-wang.jpg",
+        "portraitWidth": 1086,
+        "portraitHeight": 1448,
+        "summary": "Research in intelligent robotics and embodied intelligence, focusing on language-guided task planning and reliable autonomous execution. His recent work examines how omitted feasible alternatives can create false uniqueness and trigger execution without the clarification required by a task contract. Studies in finite object-carrying and resource-workflow domains assess candidate coverage, semantic completeness, unauthorized execution, correct autonomy, and checking cost."
+      },
+      {
+        "id": "jiateng-guo",
+        "name": "Jiateng Guo",
+        "email": "zjy200gjt@gmail.com",
+        "interests": [
+          "Intelligent Robotics",
+          "Embodied Intelligence"
+        ],
+        "portrait": "/people/jiateng-guo.jpg",
+        "portraitWidth": 1086,
+        "portraitHeight": 1448,
+        "summary": "His research interests lie in intelligent robotics and embodied intelligence, including the connection between perception, reasoning, and action in embodied agents."
       }
     ]
   },

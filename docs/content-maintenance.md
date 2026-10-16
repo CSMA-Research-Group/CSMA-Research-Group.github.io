@@ -19,9 +19,10 @@
 - Projects 的 Current Directions / Current Research Direction 表示当前研究方向；仅替换对外文案中的 Ongoing，旧锚点 `ongoing-directions` 和内部筛选状态保持兼容。
 - News、People、Projects、Publications、Resources、About 页头去掉 From the Group、The Group、Ideas into Systems、Research Output、Explore and Reuse、重复 About 等装饰性标签，保留正式标题和简介。
 - About 介绍按完整内容宽度自然换行，不加硬换行；页头与其它内容页共用左边界；Address 仅显示 Chongqing, China；Research Interests 各研究方向使用首字母大写形式，保留 AI 缩写；Research Vision 与 Contact + Join Us 上下排列，正文两端对齐，四个研究方向用等宽标签分列。
-- People 使用统一的 Members 分组，不区分导师和学生，不显示人数；首页显示当前成员的头像、姓名、Member 和一个主要研究方向。Hao Chen 使用本次提供的照片，其他成员保留默认头像。
+- People 使用统一的 Members 分组，不区分导师和学生，不显示人数；首页显示有照片成员的头像、姓名、Member 和一个主要研究方向。目前展示 Jiangping Huang、Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo；没有照片的成员暂时隐藏，原始资料保留。桌面网格随实际人数分配列宽，窄屏保留原有断点。
 - People 顶部与底部均有 Alumni 入口，进入 `/people/alumni`，只读取 `peopleSections` 中既有 alumni 记录；不把当前成员视为离组成员，不补造姓名、年份或去向。
 - 头像和姓名进入 `/people/:id` 独立介绍；本人提供的个人主页链接只在介绍页显示。
+- 所有成员的邮箱链接仅显示 `Email`，具体地址保存在 `mailto:` 目标中，不作为页面正文、链接文字或提示文字展示。
 - 首页 About 两个模块正文无超链接；标题右侧分别提供 Home 和 How to join，后者进入 About 的联系部分。
 - 地球保留原旋转、访客标记和统计逻辑，背景为程序绘制的深蓝星空和圆形光点配柔和光晕。偶尔有细小流星在背景划过：首次可见约 6–12 秒后出现，后续每隔约 18–36 秒一颗，持续约 1.4–2.1 秒，地球会遮挡经过其背后的轨迹。隐藏页面或离开视口时暂停，减少动态效果时不显示流星。成立日期为已确认的 `2022-07-20`，不显示时分。
 - 地球昼夜范围由当前 UTC 时刻计算太阳直射点，采用 [NOAA 近似太阳位置公式](https://gml.noaa.gov/grad/solcalc/solareqns.PDF)，包含季节和均时差；光照跟随地理位置，与观看角度及所选城市无关。夜面保留环境亮度，晨昏处平滑过渡；纹理未加载时也使用同一光照模型。减少动态效果时仍每分钟更新光照。
@@ -35,7 +36,7 @@
 | --- | --- | --- |
 | 新闻 | `src/data/news.js` | 时间倒序；同月先后使用 `order`；`publicationId` 关联论文。所有新闻日期统一使用 YYYY-MM。 |
 | 人员资料 | `src/data/people.js` | 保存已确认资料；合作研究者和校友原始记录保留，不转为在组成员。 |
-| 人员展示 | `src/data/peopleHierarchy.js` | 统一 Members 列表、已确认照片与默认头像回退、首页选择；`alumniProfiles` 读取原始 alumni 分类并按毕业年份倒序；补资料时保留现有 ID。 |
+| 人员展示 | `src/data/peopleHierarchy.js` | 当前成员仅展示有照片的记录；同一筛选用于首页、Members 和个人页路由；详情保留完整研究方向，预览只显示主要方向；`alumniProfiles` 读取原始 alumni 分类；补资料时保留现有 ID。 |
 | 论文 | `src/data/publications.js`、`src/utils/publicationDisplay.js` | 作者按确认顺序保留全名，统一以英文逗号和 and 连接；`rating` 在论文列表的会议名称下显示；`featured` 控制精选；`systemId` 指向论文框架，`applicationId` 指向项目应用；KGMAF 的应用为 ChatREQ。 |
 | 在研项目 | `src/data/proposalProjects.js` | 保留周期、公开题名中的 `[MASK]` 与已确认简介。 |
 | 系统 | `src/data/systems.js` | `researchSystems` 用于框架目录；`projectApplications` 用于 Resources；`systemProfiles` 提供全部详情路由。KGMAF 与 ChatREQ 分开命名，详情说明关系；可选动图维护在对应介绍中。 |
@@ -71,17 +72,35 @@ SemFaith 作者已确认，依次为 Jiangping Huang、Weidong Yuan、Junchen Xi
 
 ## 人员资料与姓名
 
-当前仅展示用户确认的成员，姓名按明确给出的英文全名显示：
+当前仅展示用户确认且已提供照片的五位成员，姓名按英文全名显示：
 
-- Jiangping Huang：Artificial Intelligence。
-- Shiyu Zhou、Juncheng Lu、Juntong Ou、Yujie Jiang、Hao Chen：Intelligent Software Engineering。
-- Zhirui Huang：Intelligent Robotics。
+- Jiangping Huang：Artificial Intelligence、Intelligent Software Engineering、Embodied Intelligence；成员卡片的主要方向显示 Artificial Intelligence。
+- Hao Chen：Intelligent Software Engineering，个人页保留程序修复相关研究兴趣。
+- Zhirui Huang、Yihang Wang、Jiateng Guo：Intelligent Robotics、Embodied Intelligence；成员卡片的主要方向显示 Intelligent Robotics。
 
 2026-10-15：新增 Hao Chen（名 Hao、姓 Chen），使用用户提供照片的原样副本 `public/people/hao-chen.jpg`，个人介绍入口为 `/people/hao-chen`。简介介绍其正在研究的显式修复历史增量价值、历史内容的作用与适用条件，不提拟投稿期刊，不把先导材料写成已确立结论，也不将阅读过的论文列为个人成果。
 
-其他成员（包括 Jiangping Huang）继续使用 `public/people/default-avatar.svg`。此前虚构姓名、资料及生成头像已归档到本地更新记录目录，不再导入网站或出现在生产资源目录。
+2026-10-16：新增 Yihang Wang，更新 Zhirui Huang，使用用户提供照片的原样副本 `public/people/yihang-wang.jpg`、`public/people/zhirui-huang.jpg`，补充邮箱链接。Yihang Wang 的介绍依据用户提供的摘要，概括有限物体搬运与资源工作流任务中的候选覆盖、必要澄清和执行授权问题；不扩展为真实机器人部署结果，不添加未经确认的论文题名、投稿期刊或发表状态。Zhirui Huang 的简介侧重任务理解、歧义澄清和可靠行动，不将上述论文结果归到其名下。两人的个人页分别为 `/people/yihang-wang` 和 `/people/zhirui-huang`。
+
+2026-10-16：新增 Jiateng Guo 及其原样照片 `public/people/jiateng-guo.jpg`、邮箱链接和已确认研究方向；补充 Hao Chen 的邮箱。Jiangping Huang 改用根据本人原照处理的学者肖像 `public/people/jiangping-huang.png`，研究方向完整显示上述三项。五位成员的邮箱入口均只显示 Email。
+
+Shiyu Zhou、Juncheng Lu、Juntong Ou、Yujie Jiang 暂无照片，当前不出现在首页、Members 或个人页路由中，原始数据仍保留在 `src/data/people.js`；提供照片后可恢复。此前虚构人物及其生成头像继续留在网站外的历史归档中。
 
 已确认资料维护在 `src/data/people.js`，展示规则在 `src/data/peopleHierarchy.js`。头像和姓名均进入独立个人介绍，个人主页仅在本人提供后填写；不推测邮箱、单位、学位或论文贡献。合作研究者和校友的原始记录保留，不加入当前名单。补充资料时保留各成员 ID。
+
+## Jiangping Huang 肖像处理记录
+
+使用内置 image_gen 工具，以用户提供的 `Jiangping_HUANG.jpg` 为编辑目标，约束保留人脸特征、眼镜、发型和原有神态，调整西装、衬衫、背景及光线。原始照片未修改。最终图保存为 `public/people/jiangping-huang.png`，1254 × 1254；经目视对照检查后接入网站。
+
+- 原照 SHA-256：`8a791031fa77381e761f5c71f7fc3060eb324d65e1dc6783d6513b57b1b74751`。
+- 生成图 SHA-256：`9dcb4eb946b84db03d1b2f788093b0c1992c3f47a9738f120644a376c5d7192c`。
+- 工具模式：内置 image_gen，identity-preserve 编辑，非 CLI。
+
+实际使用的完整提示词：
+
+```text
+Use case: identity-preserve. Asset type: professional academic profile portrait for a research-group website. Edit target: the supplied photograph of Jiangping Huang; this is the same person, not a new generated identity. Create a restrained, credible scholar portrait by changing only the clothing and background and gently balancing the lighting. Preserve the original face as closely as possible: the exact facial proportions, head shape, eye shape and spacing, eyebrows, nose, mouth, teeth, friendly natural smile, age, skin tone and texture, ears, short hairstyle, and rectangular dark glasses. Keep the same slight head angle, gaze and expression. Do not reshape, beautify, slim, age, or de-age the face; do not replace or redesign the glasses. Dress him in a well-fitted dark navy blazer over a light blue open-collar shirt, without a tie. Use a clean softly lit light gray studio background and natural, even portrait light without harsh glare on the glasses. Photorealistic upper-chest-and-head composition, square image, with the entire hairstyle and both shoulders comfortably inside the frame; the face should remain recognizable even at small website-avatar size. Preserve realistic body proportions. No academic regalia, lab coat, badges, university logos, books, invented awards, writing, watermark, props or additional people. Prioritize preserving the original face over making the image more formal.
+```
 
 ## 本地运行和构建
 
@@ -103,7 +122,7 @@ git diff --check
 
 ## 待补真实资料
 
-- 当前成员的进一步个人介绍，以及本人决定提供的主页地址；Hao Chen 的照片与研究简介已补充，邮箱和主页暂留空，其他成员保留默认头像。
+- 当前五位可见成员的照片、研究简介和邮箱均已提供；Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo 的外部主页地址仍待本人提供。暂时隐藏的成员仍待补照片；不生成占位人物。
 - SemFaith DOI 与后续出版信息；正式作者和 GitHub 已确认，其 GitHub 和 ChatREQ GitHub 地址已按用户提供的信息加入。
 - 各系统的演示动图。
 
