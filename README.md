@@ -157,7 +157,7 @@ Jiangping Huang's interests are Artificial Intelligence, Intelligent Software En
 
 Use publication metadata for names, affiliations, and emails. Add homepage links only when the source reliably matches the same person by name, affiliation, email, and research area. Do not assume that every paper author is an internal CSMA member.
 
-Weidong Yuan's profile at `/people/weidong-yuan` links to SemFaith through `relatedPublicationIds`. His introduction and research interests summarize that paper's work on semantic faithfulness in LLM-generated classical-to-modern Chinese restatements. His portrait is an unchanged copy of the supplied `Weidong_YUAN.jpg`; no degree, enrollment year, affiliation, or personal homepage is inferred.
+Weidong Yuan's profile at `/people/weidong-yuan` links to SemFaith through `relatedPublicationIds`. His introduction and research interests summarize that paper's work on semantic faithfulness in LLM-generated classical-to-modern Chinese restatements. The profile also records his user-confirmed project award under the Undergraduate Research Training Program; the project title, year, level, and his role have not been provided. His portrait is an unchanged copy of the supplied `Weidong_YUAN.jpg`; no degree, enrollment year, affiliation, or personal homepage is inferred.
 
 ## Updating News
 

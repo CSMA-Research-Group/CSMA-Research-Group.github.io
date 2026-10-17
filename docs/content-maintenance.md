@@ -87,6 +87,8 @@ SemFaith 作者已确认，依次为 Jiangping Huang、Weidong Yuan、Junchen Xi
 
 2026-10-17：新增学生成员 Weidong Yuan，使用用户提供的 `Weidong_YUAN.jpg` 原样副本 `public/people/weidong-yuan.jpg`（1079 × 1108）及邮箱链接，个人页为 `/people/weidong-yuan`。个人页通过 `relatedPublicationIds` 关联已有 `semfaith-pricai-2026` 论文；简介概括其论文中的语义忠实性与声明级诊断工作，沿用已有论文元数据，不新增投稿或录用状态。未提供的学位、入学年份、单位和个人主页不作推断。
 
+2026-10-17 补充：用户确认 Weidong Yuan 获得大学生科研训练计划项目，个人简介加入英文概括表述：He has also been awarded a project under the Undergraduate Research Training Program. 项目名称、年份、级别及承担角色尚未提供；该条信息不与 SemFaith 自动绑定为同一项目。
+
 Shiyu Zhou、Juncheng Lu、Juntong Ou、Yujie Jiang 暂无照片，当前不出现在首页、Members 或个人页路由中，原始数据仍保留在 `src/data/people.js`；提供照片后可恢复。此前虚构人物及其生成头像继续留在网站外的历史归档中。
 
 已确认资料维护在 `src/data/people.js`，展示规则在 `src/data/peopleHierarchy.js`。头像和姓名均进入独立个人介绍，个人主页仅在本人提供后填写；不推测邮箱、单位、学位或论文贡献。合作研究者和校友的原始记录保留，不加入当前名单。补充资料时保留各成员 ID。
