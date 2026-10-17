@@ -151,11 +151,13 @@ Use confirmed code, artifact, DOI, and demo links only. If a project link is not
 
 ## Updating People
 
-Maintain confirmed profiles in the group-members section of `src/data/people.js`. The visible directory contains Jiangping Huang, Hao Chen, Zhirui Huang, Yihang Wang, and Jiateng Guo. All five have photos and supplied email addresses. Jiangping Huang uses a scholar portrait edited from his supplied photo with the built-in image-generation tool; the other portraits are unchanged copies of the supplied photos. Shiyu Zhou, Juncheng Lu, Juntong Ou, and Yujie Jiang remain in the source data but are hidden until photos are supplied. The shared filter in `src/data/peopleHierarchy.js` controls homepage cards, the Members directory, and profile routes together. Keep full research interests on detail pages and only the primary direction on preview cards.
+Maintain confirmed profiles in the group-members section of `src/data/people.js`. The visible directory contains Jiangping Huang, Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, and Weidong Yuan. All six have photos and supplied email addresses. Jiangping Huang uses a scholar portrait edited from his supplied photo with the built-in image-generation tool; the other portraits are unchanged copies of the supplied photos. Shiyu Zhou, Juncheng Lu, Juntong Ou, and Yujie Jiang remain in the source data but are hidden until photos are supplied. The shared filter in `src/data/peopleHierarchy.js` controls homepage cards, the Members directory, and profile routes together. Keep full research interests on detail pages and only the primary direction on preview cards.
 
 Jiangping Huang's interests are Artificial Intelligence, Intelligent Software Engineering, and Embodied Intelligence. Hao Chen studies explicit history in LLM-based program repair. Yihang Wang, Zhirui Huang, and Jiateng Guo work on Intelligent Robotics and Embodied Intelligence: Yihang Wang's introduction summarizes candidate coverage, clarification, and execution authorization in finite domains; Zhirui Huang's emphasizes task understanding and reliable action; Jiateng Guo's introduces perception, reasoning, and action in embodied agents. Keep introductions distinct without inventing publication status or transferring experimental results between people. All member email links display only `Email`; the supplied address belongs in the `mailto:` destination. Preserve collaborator and alumni records separately.
 
 Use publication metadata for names, affiliations, and emails. Add homepage links only when the source reliably matches the same person by name, affiliation, email, and research area. Do not assume that every paper author is an internal CSMA member.
+
+Weidong Yuan's profile at `/people/weidong-yuan` links to SemFaith through `relatedPublicationIds`. His introduction and research interests summarize that paper's work on semantic faithfulness in LLM-generated classical-to-modern Chinese restatements. His portrait is an unchanged copy of the supplied `Weidong_YUAN.jpg`; no degree, enrollment year, affiliation, or personal homepage is inferred.
 
 ## Updating News
 
@@ -192,7 +194,7 @@ Use placeholders or blank fields for unconfirmed information. In particular, con
 - contact emails and office addresses
 - school, college, and institutional profile details
 
-The five visible members have confirmed photos, research introductions, and email links. External personal homepages for Hao Chen, Zhirui Huang, Yihang Wang, and Jiateng Guo remain unprovided. Profiles without photos stay hidden, with their source records retained for future updates. SemFaith's authors and GitHub link are confirmed; its DOI and final publication details remain pending, with Paper showing Coming soon. Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
+The six visible members have supplied photos and email links, with research introductions based on provided material. External personal homepages for Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, and Weidong Yuan remain unprovided. Profiles without photos stay hidden, with their source records retained for future updates. SemFaith's authors and GitHub link are confirmed; its DOI and final publication details remain pending, with Paper showing Coming soon. Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
 
 ## Verification Policy
 

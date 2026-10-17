@@ -19,7 +19,7 @@
 - Projects 的 Current Directions / Current Research Direction 表示当前研究方向；仅替换对外文案中的 Ongoing，旧锚点 `ongoing-directions` 和内部筛选状态保持兼容。
 - News、People、Projects、Publications、Resources、About 页头去掉 From the Group、The Group、Ideas into Systems、Research Output、Explore and Reuse、重复 About 等装饰性标签，保留正式标题和简介。
 - About 介绍按完整内容宽度自然换行，不加硬换行；页头与其它内容页共用左边界；Address 仅显示 Chongqing, China；Research Interests 各研究方向使用首字母大写形式，保留 AI 缩写；Research Vision 与 Contact + Join Us 上下排列，正文两端对齐，四个研究方向用等宽标签分列。
-- People 使用统一的 Members 分组，不区分导师和学生，不显示人数；首页显示有照片成员的头像、姓名、Member 和一个主要研究方向。目前展示 Jiangping Huang、Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo；没有照片的成员暂时隐藏，原始资料保留。桌面网格随实际人数分配列宽，窄屏保留原有断点。
+- People 使用统一的 Members 分组，不区分导师和学生，不显示人数；首页显示有照片成员的头像、姓名、Member 和一个主要研究方向。目前展示 Jiangping Huang、Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo、Weidong Yuan；没有照片的成员暂时隐藏，原始资料保留。桌面网格随实际人数分配列宽，窄屏保留原有断点。
 - People 顶部与底部均有 Alumni 入口，进入 `/people/alumni`，只读取 `peopleSections` 中既有 alumni 记录；不把当前成员视为离组成员，不补造姓名、年份或去向。
 - 头像和姓名进入 `/people/:id` 独立介绍；本人提供的个人主页链接只在介绍页显示。
 - 所有成员的邮箱链接仅显示 `Email`，具体地址保存在 `mailto:` 目标中，不作为页面正文、链接文字或提示文字展示。
@@ -72,17 +72,20 @@ SemFaith 作者已确认，依次为 Jiangping Huang、Weidong Yuan、Junchen Xi
 
 ## 人员资料与姓名
 
-当前仅展示用户确认且已提供照片的五位成员，姓名按英文全名显示：
+当前仅展示用户确认且已提供照片的六位成员，姓名按英文全名显示：
 
 - Jiangping Huang：Artificial Intelligence、Intelligent Software Engineering、Embodied Intelligence；成员卡片的主要方向显示 Artificial Intelligence。
 - Hao Chen：Intelligent Software Engineering，个人页保留程序修复相关研究兴趣。
 - Zhirui Huang、Yihang Wang、Jiateng Guo：Intelligent Robotics、Embodied Intelligence；成员卡片的主要方向显示 Intelligent Robotics。
+- Weidong Yuan：Artificial Intelligence、Large Language Models、Semantic Faithfulness Evaluation、Classical-to-Modern Chinese Restatement；研究介绍依据已关联的 SemFaith 论文，成员卡片的主要方向显示 Artificial Intelligence。
 
 2026-10-15：新增 Hao Chen（名 Hao、姓 Chen），使用用户提供照片的原样副本 `public/people/hao-chen.jpg`，个人介绍入口为 `/people/hao-chen`。简介介绍其正在研究的显式修复历史增量价值、历史内容的作用与适用条件，不提拟投稿期刊，不把先导材料写成已确立结论，也不将阅读过的论文列为个人成果。
 
 2026-10-16：新增 Yihang Wang，更新 Zhirui Huang，使用用户提供照片的原样副本 `public/people/yihang-wang.jpg`、`public/people/zhirui-huang.jpg`，补充邮箱链接。Yihang Wang 的介绍依据用户提供的摘要，概括有限物体搬运与资源工作流任务中的候选覆盖、必要澄清和执行授权问题；不扩展为真实机器人部署结果，不添加未经确认的论文题名、投稿期刊或发表状态。Zhirui Huang 的简介侧重任务理解、歧义澄清和可靠行动，不将上述论文结果归到其名下。两人的个人页分别为 `/people/yihang-wang` 和 `/people/zhirui-huang`。
 
 2026-10-16：新增 Jiateng Guo 及其原样照片 `public/people/jiateng-guo.jpg`、邮箱链接和已确认研究方向；补充 Hao Chen 的邮箱。Jiangping Huang 改用根据本人原照处理的学者肖像 `public/people/jiangping-huang.png`，研究方向完整显示上述三项。五位成员的邮箱入口均只显示 Email。
+
+2026-10-17：新增学生成员 Weidong Yuan，使用用户提供的 `Weidong_YUAN.jpg` 原样副本 `public/people/weidong-yuan.jpg`（1079 × 1108）及邮箱链接，个人页为 `/people/weidong-yuan`。个人页通过 `relatedPublicationIds` 关联已有 `semfaith-pricai-2026` 论文；简介概括其论文中的语义忠实性与声明级诊断工作，沿用已有论文元数据，不新增投稿或录用状态。未提供的学位、入学年份、单位和个人主页不作推断。
 
 Shiyu Zhou、Juncheng Lu、Juntong Ou、Yujie Jiang 暂无照片，当前不出现在首页、Members 或个人页路由中，原始数据仍保留在 `src/data/people.js`；提供照片后可恢复。此前虚构人物及其生成头像继续留在网站外的历史归档中。
 
@@ -122,7 +125,7 @@ git diff --check
 
 ## 待补真实资料
 
-- 当前五位可见成员的照片、研究简介和邮箱均已提供；Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo 的外部主页地址仍待本人提供。暂时隐藏的成员仍待补照片；不生成占位人物。
+- 当前六位可见成员的照片和邮箱均已提供，研究简介依据用户材料整理；Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo、Weidong Yuan 的外部主页地址仍待本人提供。暂时隐藏的成员仍待补照片；不生成占位人物。
 - SemFaith DOI 与后续出版信息；正式作者和 GitHub 已确认，其 GitHub 和 ChatREQ GitHub 地址已按用户提供的信息加入。
 - 各系统的演示动图。
 
