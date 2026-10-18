@@ -4,10 +4,10 @@
       <div class="research-hero-copy">
         <p class="eyebrow">Research</p>
         <h1 class="research-page-title">
-          Cognitive and collaborative intelligence for software, robotics, and grounded applications.
+          Cognitive and collaborative intelligence for software, robotics, and practical applications.
         </h1>
         <p class="research-hero-intro">
-          CSMA studies the cognitive, reasoning, planning, and collaborative foundations of multi-agent intelligence, then instantiates those ideas in software engineering, robotics, and application-driven research prototypes.
+          We investigate how agents reason, plan, and collaborate, then evaluate these capabilities through software engineering tasks, robotic scenarios, and research prototypes.
         </p>
       </div>
       <VisionDiagram :image-src="researchVisionImage" :animated="false" ambient-motion />

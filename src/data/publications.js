@@ -22,7 +22,12 @@ export const publications = [
     "doi": "10.1145/3840382",
     "pdf": "",
     "code": "https://github.com/CSMA-Research-Group/CMCS",
-    "abstractSummary": "This work studies cross-model collaboration for enhancing code generation with large language models.",
+    "abstractSummary": "CMCS addresses the limitations of relying on a single language model for code generation. It combines independent generation, feedback-driven self-correction, and peer-to-peer handover: when one model cannot resolve a task, another takes over diagnosis and repair.\n\nThe study evaluates CMCS on eight code-generation benchmarks spanning Python, C++, and Java. It reports gains over individual-model generation and examines how model diversity, collaboration scale, feedback availability, and inference cost affect performance.",
+    "contributionHighlights": [
+      "Introduces peer-to-peer corrective handover so models can revisit tasks that another model failed to solve.",
+      "Uses compiler, runtime, and test feedback to guide iterative diagnosis and self-repair.",
+      "Evaluates cross-model collaboration across eight benchmarks, with ablation, scalability, incomplete-feedback, and cost analyses."
+    ],
     "tags": [
       "Code Generation",
       "Cross-Model Collaboration",

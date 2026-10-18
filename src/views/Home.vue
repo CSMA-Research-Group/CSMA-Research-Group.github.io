@@ -77,8 +77,8 @@
       <div class="section-heading compact"><h2 id="home-about-title">About</h2></div>
       <div class="home-selected-grid home-about-grid">
         <div class="home-work-column"><div class="home-column-heading"><p class="home-column-label">CSMA Research Group</p><RouterLink class="text-link" to="/">Home</RouterLink></div><article class="home-project-row">
-          <p>We study cognitive and collaborative intelligence, intelligent software engineering, intelligent robotics, and application scenarios.</p>
-          <p>Our work connects research methods with inspectable systems and reusable artifacts.</p>
+          <p>We connect research questions with working prototypes, reusable artifacts, and evidence that others can examine.</p>
+          <p>Current work spans requirements engineering, code generation and repair, semantic faithfulness, and embodied task planning.</p>
         </article></div>
         <div class="home-work-column"><div class="home-column-heading"><p class="home-column-label">Join Us</p><RouterLink class="text-link" to="/about#contact">How to join</RouterLink></div><article class="home-project-row">
           <p>We welcome undergraduate and graduate students interested in sustained research, and collaborators working across our research areas.</p>

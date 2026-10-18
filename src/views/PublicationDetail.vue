@@ -1,11 +1,11 @@
 <template>
   <div class="content-page publication-detail-page">
     <header class="page-hero narrow">
-      <p class="eyebrow"><RouterLink to="/publications">Publications</RouterLink> · {{ paper.venue }} · {{ paper.year }}</p>
+      <p class="eyebrow"><RouterLink to="/publications">Publications</RouterLink> · {{ paper.venue }}<template v-if="!paper.venue.includes(String(paper.year))"> · {{ paper.year }}</template></p>
       <h1>{{ paper.title }}</h1>
       <p v-if="paper.authors?.length">{{ formatPublicationAuthors(paper.authors) }}</p>
-      <p>{{ paper.venueFullName }}<template v-if="paper.status"> · {{ paper.status }}</template></p>
-      <p v-if="paper.acceptedMonth || paper.publicationDate" class="paper-status">{{ paper.acceptedMonth ? 'Accepted' : 'Publication' }} · {{ formatMonth(paper.acceptedMonth || paper.publicationDate) }}</p>
+      <p>{{ paper.venueFullName }}</p>
+      <p v-if="paper.status || paper.acceptedMonth || paper.publicationDate" class="paper-status">{{ paper.status || (paper.acceptedMonth ? 'Accepted' : 'Published') }}<template v-if="paper.acceptedMonth || paper.publicationDate"> · {{ formatMonth(paper.acceptedMonth || paper.publicationDate) }}</template></p>
       <nav class="section-index" aria-label="Paper sections">
         <RouterLink :to="`${paperPath}#overview`">Overview</RouterLink>
         <RouterLink v-if="paper.contributionHighlights?.length" :to="`${paperPath}#contributions`">Contributions</RouterLink>

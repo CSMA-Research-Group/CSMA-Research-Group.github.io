@@ -12,7 +12,7 @@ export const siteInfo = {
   affiliation: 'Chongqing University of Posts and Telecommunications',
   address: 'Chongqing, China',
   contactNote:
-    'Students and collaborators are welcome to contact the group with a concise research interest statement and relevant background materials.',
+    'We welcome undergraduate and graduate students interested in sustained research, as well as collaborators working across our research areas.',
 }
 
 export const navigationItems = [

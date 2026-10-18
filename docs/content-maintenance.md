@@ -2,6 +2,8 @@
 
 2026-10-14：用户确认的第九版首页布局已应用到本地项目。网站使用 Vue 3、Vite 与 hash 路由，公开页面为英文。
 
+2026-10-18：完善成果关联与英文文案。Jiangping Huang 个人页补齐 CMCS、SemFaith；智能软件工程方向补充 CMCS；认知与协同智能方向的代表系统、项目和论文同步维护。CMCS 概述、贡献和工作流依据论文稿的摘要、引言与评估章节整理，方法全称采用 Cross-Model Collaborative Scheduling，介绍八项基准与评估维度，不添加未经逐项核对的性能数字。新闻正文明确接收或在线发表事件，保留既有日期、题名和分类；论文详情的年份与状态不重复显示。统一六位成员简介的表达，精简 Home、Research 与 About 的重复说明，About 联系按钮直接进入邮件。GitHub 地址与状态本轮保持原样。
+
 ## 页面与入口
 
 - 品牌和导航 Home 均返回首页；导航依次为 Home、News、Research、Projects、Publications、People、Resources、About，无语言切换。旧 `/zh` 地址返回首页。
@@ -129,6 +131,7 @@ git diff --check
 
 - 当前六位可见成员的照片和邮箱均已提供，研究简介依据用户材料整理；Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo、Weidong Yuan 的外部主页地址仍待本人提供。暂时隐藏的成员仍待补照片；不生成占位人物。
 - SemFaith DOI 与后续出版信息；正式作者和 GitHub 已确认，其 GitHub 和 ChatREQ GitHub 地址已按用户提供的信息加入。
+- Weidong Yuan 科研训练项目的正式名称、年份、级别及承担角色；确认后再补充，不推断其与 SemFaith 的关系。
 - 各系统的演示动图。
 
 资料缺失时保留待补状态，不重新加入虚构人物。提交、推送和部署由用户另行决定。

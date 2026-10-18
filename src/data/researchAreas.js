@@ -26,9 +26,9 @@ export const researchAreas = [
       'Memory-augmented reasoning',
       'Trace- and artifact-driven evaluation',
     ],
-    representativeSystems: ['TraceCoder', 'KGMAF'],
-    relatedPublicationIds: ['tracecoder-icse-2026', 'kgmaf-ase-2025'],
-    relatedProjectIds: ['tracecoder', 'kgmaf'],
+    representativeSystems: ['CMCS', 'SemFaith', 'TraceCoder', 'KGMAF'],
+    relatedPublicationIds: ['cross-model-collaboration-tosem-2026', 'semfaith-pricai-2026', 'tracecoder-icse-2026', 'kgmaf-ase-2025'],
+    relatedProjectIds: ['cmcs', 'semfaith', 'tracecoder', 'kgmaf'],
     expectedImpact:
       'This direction establishes the cognitive foundation for reliable, adaptive, and self-improving AI systems.',
   },
@@ -53,14 +53,15 @@ export const researchAreas = [
     ],
     methods: [
       'Knowledge-guided requirements modeling',
+      'Cross-model code generation and correction',
       'Artifact-mediated multi-agent collaboration',
       'Runtime instrumentation and causal analysis',
       'Rollback and historical lesson learning',
       'Lifecycle traceability modeling',
     ],
-    representativeSystems: ['KGMAF', 'TraceCoder', 'Repository-Level Software Agents'],
-    relatedPublicationIds: ['kgmaf-ase-2025', 'tracecoder-icse-2026'],
-    relatedProjectIds: ['kgmaf', 'tracecoder', 'repo-level-agents'],
+    representativeSystems: ['CMCS', 'TraceCoder', 'KGMAF', 'Repository-Level Software Agents'],
+    relatedPublicationIds: ['cross-model-collaboration-tosem-2026', 'tracecoder-icse-2026', 'kgmaf-ase-2025'],
+    relatedProjectIds: ['cmcs', 'tracecoder', 'kgmaf', 'repo-level-agents'],
     expectedImpact:
       'This direction advances a requirement-to-code-to-runtime intelligence stack for trustworthy software generation, debugging, repair, and evolution.',
   },
@@ -232,5 +233,4 @@ export const coreResearchAreas = researchAreas.slice(0, 4).map(area => area.id =
   summary: 'We study reasoning, planning, memory, and coordination among intelligent agents, supported by knowledge and human feedback.',
   keyTopics: [...area.keyTopics, 'Multi-agent collaboration', 'Knowledge and human feedback'],
   methods: [...area.methods, 'Artifact-mediated collaboration', 'Knowledge injection and human review'],
-  relatedPublicationIds: ['cross-model-collaboration-tosem-2026', 'semfaith-pricai-2026', ...area.relatedPublicationIds],
 } : area)

@@ -4,7 +4,7 @@ This repository contains the official website for **CSMA Research Group**, deplo
 
 The first formal release is **v1.0** (package version `1.0.0`). See the [release notes](docs/releases/v1.0.md).
 
-The site presents CSMA research on **Cognitive and Collaborative Intelligence**. Cognitive intelligence is the core; intelligent software and robotics are the primary carriers; application scenarios provide grounding; knowledge and human feedback form cross-cutting support. Content is maintained through structured data files so publications, projects, people, news, research areas, and resources can be updated without rewriting page templates.
+The site presents CSMA research on **Cognitive and Collaborative Intelligence**, with intelligent software engineering and robotics as its main research domains. Practical scenarios support evaluation, while multi-agent collaboration, knowledge, and human feedback connect the work across these areas. Content is maintained through structured data files so publications, projects, people, news, research areas, and resources can be updated without rewriting page templates.
 
 ## Tech Stack
 

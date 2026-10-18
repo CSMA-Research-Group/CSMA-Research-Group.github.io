@@ -63,10 +63,12 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { projects } from '../data/projects'
+import { researchSystems } from '../data/systems'
 import { publications } from '../data/publications'
 import { getResearchAreaDisplayTitle, getResearchAreaRole } from '../data/researchPresentation'
 
 const projectTitleFor = (projectId) => (
+  researchSystems.find((system) => system.id === projectId)?.title ||
   projects.find((project) => project.id === projectId)?.title || projectId
 )
 

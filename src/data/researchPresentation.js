@@ -5,15 +5,15 @@ export const researchAreaPresentation = Object.freeze({
   },
   'intelligent-software-engineering': {
     title: 'Intelligent Software Engineering',
-    role: 'Primary Carrier',
+    role: 'Research Domain',
   },
   'intelligent-robotics': {
     title: 'Intelligent Robotics',
-    role: 'Primary Carrier',
+    role: 'Research Domain',
   },
   'application-scenarios': {
     title: 'Application Scenarios',
-    role: 'Grounding and Validation',
+    role: 'Practical Validation',
   },
   'multi-agent-cognitive-ai': {
     title: 'Multi-Agent and Collaborative Intelligence',
@@ -31,9 +31,9 @@ export const researchNarrative = Object.freeze({
   description:
     'We study cognitive and collaborative intelligence for software, robotics, and real-world intelligent systems.',
   homepageVision:
-    'Cognitive intelligence is our core, carried by intelligent software and robotics, grounded in real-world scenarios, and strengthened by multi-agent collaboration, knowledge, and human feedback.',
+    'Cognitive intelligence guides our work in intelligent software and robotics. We develop and evaluate these methods in practical scenarios, drawing on multi-agent collaboration, knowledge, and human feedback.',
   vision:
-    'Our research places cognitive intelligence at the core, with intelligent software and robotics as the primary carriers and application scenarios as the grounding for evaluation. Multi-agent collaboration, knowledge-guided reasoning, and human feedback support reliable, adaptive, and accountable intelligent systems across these areas.',
+    'We investigate how intelligent agents reason, plan, collaborate, and learn from feedback. Our work brings these capabilities into software engineering and robotics, using concrete tasks and research prototypes to evaluate reliability and adaptability.',
 })
 
 export const homepageResearchAreaIds = [

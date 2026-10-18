@@ -2,20 +2,20 @@
   <div class="content-page about-page">
     <header class="page-hero narrow">
       <h1>About</h1>
-      <p>CSMA Research Group studies cognitive and collaborative intelligence for software, robots, and grounded intelligent systems. Cognitive intelligence is the core; intelligent software and robotics are its primary carriers; application scenarios provide practical validation.</p>
+      <p>CSMA Research Group is based at {{ siteInfo.affiliation }}. We study how intelligent agents can reason, collaborate, and act reliably in software and robotic systems.</p>
     </header>
 
     <section class="section about-layout" aria-labelledby="about-vision-title">
       <article class="about-card">
         <p class="eyebrow">Research Vision</p>
-        <h2 id="about-vision-title">Cognitive and collaborative intelligence across models, software, and embodied systems.</h2>
+        <h2 id="about-vision-title">From reasoning and collaboration to reliable intelligent systems.</h2>
         <p>
           {{ researchNarrative.vision }}
         </p>
         <p>
-          The group connects multi-agent cognition, knowledge-guided reasoning, human-AI collaboration,
-          and trace-driven system feedback to build reliable intelligent systems in technical and
-          real-world settings.
+          Our projects connect requirements, code, runtime evidence, and robotic task execution.
+          Knowledge and human feedback help guide these systems and assess whether their behavior
+          meets the intended goals.
         </p>
         <div class="card-section about-research-areas">
           <h3>Research Areas</h3>
@@ -66,10 +66,10 @@
           </div>
         </dl>
         <p>{{ siteInfo.contactNote }}</p>
-        <p>Please email a brief introduction, your research interests, and relevant work. Include your current degree stage and the topics you would like to explore.</p>
+        <p>Please email a brief introduction, the research topics you would like to explore, and examples of relevant work. Students should also include their current degree stage.</p>
         <div class="about-actions">
-          <RouterLink class="button button-primary" to="/people#join-us">Join Us</RouterLink>
-          <a class="button button-secondary" :href="`mailto:${siteInfo.contactEmail}`">Contact Us</a>
+          <a class="button button-primary" :href="`mailto:${siteInfo.contactEmail}`">Email the Group</a>
+          <RouterLink class="button button-secondary" to="/people">Meet Our Members</RouterLink>
         </div>
       </aside>
     </section>

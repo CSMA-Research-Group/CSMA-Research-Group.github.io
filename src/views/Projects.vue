@@ -11,7 +11,7 @@
         <div class="project-list project-list--directions"><ProjectCard v-for="project in proposalProjects" :id="project.id" :key="project.id" :project="project" /></div>
       </section>
       <section id="research-systems" aria-labelledby="systems-title">
-        <div class="directory-heading"><h2 id="systems-title">Research Systems</h2><p>Frameworks developed through our published work.</p></div>
+        <div class="directory-heading"><h2 id="systems-title">Research Systems</h2><p>Frameworks presented in our research papers.</p></div>
         <div class="project-list"><ProjectCard v-for="project in systems" :id="project.id" :key="project.id" :project="project" /></div>
       </section>
       <section id="ongoing-directions" aria-labelledby="directions-title">
