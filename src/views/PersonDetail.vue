@@ -16,7 +16,14 @@
       </div>
       <div v-if="relatedPapers.length" class="person-profile-section">
         <div class="directory-heading"><h2>Publications</h2></div>
-        <div class="details-copy"><ul><li v-for="paper in relatedPapers" :key="paper.id"><RouterLink :to="'/publications/' + paper.id">{{ paper.title }}</RouterLink></li></ul></div>
+        <div class="details-copy">
+          <ul>
+            <li v-for="paper in relatedPapers" :key="paper.id">
+              <RouterLink :to="'/publications/' + paper.id">{{ paper.title }}</RouterLink>
+              <span v-if="paper.status" class="paper-status"> · {{ paper.status }}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
   </div>
