@@ -154,6 +154,22 @@ export const peopleSections = [
         "portraitWidth": 1254,
         "portraitHeight": 1254,
         "summary": "He studies software engineering and artificial intelligence, with a focus on LLM-based code generation, automated program repair, and software testing. He is working on FG-Router, which explores how test results and error messages can guide model selection for subsequent code repair attempts. His work includes building experimental infrastructure, collecting repair trajectories, and evaluating routing strategies under limited computational budgets. Through reproducible evaluation, he investigates when collaboration among models can improve repair correctness while balancing cost and efficiency."
+      },
+      {
+        "id": "changqing-wu",
+        "name": "Changqing Wu",
+        "role": "Student Researcher",
+        "email": "2024214663@stu.cqupt.edu.cn",
+        "interests": [
+          "Intelligent Robotics",
+          "Vision-Language Models",
+          "Embodied Intelligence",
+          "Task Completion Verification"
+        ],
+        "portrait": "/people/changqing-wu.jpg",
+        "portraitWidth": 2543,
+        "portraitHeight": 3560,
+        "summary": "He studies vision-language models (VLMs) and their applications in embodied robotic systems, focusing on reliable task completion verification. His work examines how conventional success or failure signals may misrepresent the actual outcomes of robotic actions. He explores how visual understanding and semantic reasoning can support task completion assessment, and investigates the accuracy, consistency, and reliability of VLM-based judgments."
       }
     ]
   },
