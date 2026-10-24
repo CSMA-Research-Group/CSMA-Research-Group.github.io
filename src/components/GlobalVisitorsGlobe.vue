@@ -2,9 +2,9 @@
   <section class="global-visitors" aria-labelledby="visitor-globe-title">
     <div class="globe-panel">
       <div class="globe-heading">
-        <p class="globe-kicker">{{ t("Global Visitors") }}</p>
+        <p class="globe-kicker">{{ t("Global Visitor Statistics") }}</p>
         <h2 id="visitor-globe-title">{{ t("Research reach, mapped live") }}</h2>
-        <p id="visitor-globe-description"> {{ t("Privacy-aware regional statistics from visitors to the CSMA website.") }} </p>
+        <p id="visitor-globe-description"> {{ t("Worldwide visitor counts and approximate regional distribution for the CSMA website.") }} </p>
       </div>
 
       <div
@@ -47,7 +47,7 @@
 
     <aside
       class="visitor-stat-panel"
-      :aria-label="t('Visitor statistics')"
+      :aria-label="t('Global Visitor Statistics')"
       aria-live="polite"
       :aria-busy="statsStatus === 'loading'"
     >
@@ -57,7 +57,7 @@
           <dd>{{ t(foundedAtLabel) }}</dd>
         </div>
         <div>
-          <dt>{{ t("Total Visitors") }}</dt>
+          <dt>{{ t("Total Visitors Worldwide") }}</dt>
           <dd>{{ t(totalVisitorsLabel) }}</dd>
         </div>
         <div>
@@ -327,10 +327,10 @@ const currentVisitorLabel = computed(() => {
 const analyticsNote = computed(() => {
   if (statsStatus.value === 'loading') return 'Loading visitor statistics...'
   if (visitorStats.value?.trackingMode === 'tracked') {
-    return 'Totals include a fixed adjustment; location is rounded to an approximate region.'
+    return 'Location is shown only as an approximate region.'
   }
   if (statsStatus.value === 'available') {
-    return 'Totals include a fixed adjustment; current visitor details are temporarily unavailable.'
+    return 'Current visitor details are temporarily unavailable.'
   }
   return 'Visitor statistics are temporarily unavailable.'
 })

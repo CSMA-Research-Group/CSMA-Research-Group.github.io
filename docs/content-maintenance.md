@@ -150,10 +150,11 @@ git diff --check
 
 `tests/i18n.test.js` 渲染全部 58 个页面，检查中英文覆盖、中文内部链接、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
 
+SemFaith 当前为 PRICAI 2026 Accepted（已录用），尚无 DOI 和正式出版信息。DOI 留空符合当前阶段，不列为需要补交的资料；保持已录用状态，Paper 入口继续显示 Coming soon／待公开，待正式信息公布并确认后再更新。作者和 GitHub 已确认；SemFaith 和 ChatREQ 的 GitHub 地址均使用用户提供的链接。
+
 ## 待补真实资料
 
 - 当前八位可见成员的照片和邮箱均已提供，研究简介依据用户材料整理；Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo、Weidong Yuan、Zhiwen ZHEN、Changqing Wu 的外部主页地址仍待本人提供。暂时隐藏的成员仍待补照片；不生成占位人物。
-- SemFaith DOI 与后续出版信息；正式作者和 GitHub 已确认，其 GitHub 和 ChatREQ GitHub 地址已按用户提供的信息加入。
 - Weidong Yuan 科研训练项目的正式名称、年份、级别及承担角色；确认后再补充，不推断其与 SemFaith 的关系。
 - 各系统的演示动图。
 

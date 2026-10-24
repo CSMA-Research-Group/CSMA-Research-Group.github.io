@@ -208,7 +208,9 @@ Use placeholders or blank fields for unconfirmed information. In particular, con
 - contact emails and office addresses
 - school, college, and institutional profile details
 
-The eight visible members have supplied photos and email links, with research introductions based on provided material. External personal homepages for Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, Weidong Yuan, Zhiwen ZHEN, and Changqing Wu remain unprovided. Profiles without photos stay hidden, with their source records retained for future updates. SemFaith's authors and GitHub link are confirmed; its DOI and final publication details remain pending, with Paper showing Coming soon (待公开 in Chinese). Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
+The eight visible members have supplied photos and email links, with research introductions based on provided material. External personal homepages for Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, Weidong Yuan, Zhiwen ZHEN, and Changqing Wu remain unprovided. Profiles without photos stay hidden, with their source records retained for future updates. Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
+
+SemFaith is Accepted at PRICAI 2026 (已录用 in Chinese). Its authors and GitHub link are confirmed, but no DOI or final publication details are available yet. The empty DOI is expected at this stage, not missing information to request. Keep its status as Accepted and its Paper entry as Coming soon (待公开 in Chinese); add publication details only after they are officially available and confirmed.
 
 ## Verification Policy
 
