@@ -41,7 +41,7 @@ export const publications = {
   'Multi-Agent Collaboration': '多智能体协同',
   'Human-in-the-Loop': '人类参与',
   'SRS Generation': '软件需求规格说明书生成',
-  'SemFaith was accepted at PRICAI 2026. The paper introduces claim-level diagnosis of semantic faithfulness in LLM-generated restatements of classical Chinese. Measurements depend on the checker and remain subject to human calibration.': 'SemFaith 已被 PRICAI 2026 录用。论文提出命题级诊断方法，评估大语言模型生成的古文转述的语义忠实性。测量结果依赖所用检查器，仍待人工校准。',
+  'SemFaith was accepted at PRICAI 2026. It uses multiple human translations or authoritative explanations to derive semantic claims supported by the original classical Chinese text, then compares them with claims in LLM-generated modern Chinese restatements to diagnose meaning preservation, omissions, semantic shifts, and unsupported additions.': 'SemFaith 已被 PRICAI 2026 录用。该方法以古文原文为依据，从多份人工译文或权威释义中提炼语义命题，再与大语言模型生成的现代汉语转述逐项对照，从原意保留、信息遗漏、语义偏移和无依据增补四个方面评估转述的忠实程度。',
   'The CMCS paper was published online in TOSEM. It studies how feedback-driven correction and collaboration between language models can improve code generation.': 'CMCS 论文已在 TOSEM 在线发表，研究如何通过反馈驱动的纠错与语言模型之间的协作改进代码生成。',
   'We presented TraceCoder at ICSE 2026. The framework combines runtime traces and multi-agent collaboration to debug and repair LLM-generated code.': '我们在 ICSE 2026 介绍了 TraceCoder。该框架结合运行轨迹与多智能体协同，对大语言模型生成的代码进行调试和修复。',
   'We presented KGMAF at ASE 2025. The work explores knowledge-guided multi-agent collaboration for intelligent requirements engineering.': '我们在 ASE 2025 介绍了 KGMAF，探索知识引导的多智能体协作如何支持智能需求工程。',

@@ -4,7 +4,7 @@ const items = [
     "date": "2026-08",
     "order": 2,
     "title": "SemFaith: Evaluating Semantic Faithfulness of LLM-Generated Classical-to-Modern Chinese Restatements",
-    "description": "SemFaith was accepted at PRICAI 2026. The paper introduces claim-level diagnosis of semantic faithfulness in LLM-generated restatements of classical Chinese. Measurements depend on the checker and remain subject to human calibration.",
+    "description": "SemFaith was accepted at PRICAI 2026. It uses multiple human translations or authoritative explanations to derive semantic claims supported by the original classical Chinese text, then compares them with claims in LLM-generated modern Chinese restatements to diagnose meaning preservation, omissions, semantic shifts, and unsupported additions.",
     "tag": "Accepted",
     "venue": "PRICAI 2026 · CCF C",
     "paperTitle": "SemFaith: Evaluating Semantic Faithfulness of LLM-Generated Classical-to-Modern Chinese Restatements",
