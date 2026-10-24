@@ -1,0 +1,112 @@
+/* A consistent modern sans-serif family for Chinese pages.
+   Use weight, scale and spacing for hierarchy; keep English styles unchanged. */
+html[lang="zh-CN"] {
+  --zh-font-body: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, sans-serif;
+  --zh-body: 18px;
+  --zh-support: 16px;
+  --zh-meta: 14px;
+  --zh-body-ink: #40566a;
+  font-family: var(--zh-font-body);
+  line-break: strict;
+}
+/* Titles share the body family, with a stronger weight and a compact measure. */
+html[lang="zh-CN"] :is(.academic-hero h1, .academic-section-heading h2, .academic-contact h2, .academic-insight h3, .academic-news h4, .member-directory-header h2, .content-page > .page-hero > h1, .content-page .directory-heading h2, .research-body-page .section-heading h2, .research-page-title, .resource-intro h2, .publication-heading, .research-insights .home-project-row h3, .about-card h2) {
+  font-family: var(--zh-font-body);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+html[lang="zh-CN"] .academic-home .academic-hero h1 { font-weight: 700; letter-spacing: -.02em; }
+html[lang="zh-CN"] :is(.person-detail-page, .system-detail-page, .publication-detail-page) > .page-hero > h1 {
+  font-family: var(--zh-font-body);
+  font-weight: 650;
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+html[lang="zh-CN"] .publication-detail-page > .page-hero > .translated-paper-title {
+  font-family: var(--zh-font-body);
+  font-weight: 600;
+  line-height: 1.7;
+}
+html[lang="zh-CN"] :is(.academic-news time, .academic-theme-top > span, .academic-insight-meta time, .academic-project-period, .system-card-meta > span:first-child, .member-filters button span, .vision-topic-index, .paper-dateline strong, .news-dateline time) {
+  font-family: var(--zh-font-body);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+html[lang="zh-CN"] :is(.academic-eyebrow, .content-kicker, .card-kicker, .eyebrow) { font-weight: 500; letter-spacing: .04em; }
+html[lang="zh-CN"] :is(.academic-hero-description, .academic-section-intro, .details-copy p, .member-profile-summary, .system-card-description) { text-wrap: pretty; }
+html[lang="zh-CN"] :is(.member-profile h3, .system-card-body h3, .academic-people-grid strong) { font-family: var(--zh-font-body); font-weight: 600; letter-spacing: 0; }
+html[lang="zh-CN"] .site-navbar .nav-links a { font-weight: 500; }
+html[lang="zh-CN"] .content-page .directory-heading p { font-family: var(--zh-font-body); }
+html[lang="zh-CN"] :is(.content-page .directory-heading, .research-body-page .section-heading) { padding-bottom: 18px; border-bottom: 1px solid var(--color-line); }
+html[lang="zh-CN"] :is(.insight-detail-page, .publication-detail-page) > .section > .details-copy { max-width: 46em; }
+html[lang="zh-CN"] .content-page > .page-hero h1 { max-width: 22em; }
+html[lang="zh-CN"] :is(.contact-list dd, .person-focus, .details-copy, .academic-hero-description) { text-align: left; text-align-last: auto; }
+html[lang="zh-CN"] .site-navbar .brand strong { font-size: 18px; }
+html[lang="zh-CN"] .site-navbar .nav-links a { font-size: 16px; }
+html[lang="zh-CN"] .site-navbar .language-switch { font-size: 14px; }
+html[lang="zh-CN"] :is(.image-viewer-trigger, .image-viewer-help) { font-size: var(--zh-meta); }
+html[lang="zh-CN"] .image-viewer .image-viewer-help { font-size: var(--zh-meta); }
+html[lang="zh-CN"] .image-viewer-actions :is(button, a) { font-size: var(--zh-support); }
+html[lang="zh-CN"] :is(.resource-entry > a, .news-paper-link) { font-size: var(--zh-support); }
+html[lang="zh-CN"] .resource-status { font-size: var(--zh-meta); }
+html[lang="zh-CN"] :is(.button, .text-link, .content-links a, .person-links a, .content-details > summary, .content-page .section-index a) { font-size: var(--zh-support); }
+html[lang="zh-CN"] :is(.content-page .page-hero > p:not(.eyebrow), .research-hero-intro, .details-copy, .project-description, .resource-intro p, .resource-entry p:not(.content-kicker), .research-overview > p:not(.card-kicker):not(.content-keywords), .person-focus, .about-card p, .contact-list dd, .people-invitation p:not(.eyebrow), .news-copy > p:not(.content-kicker):not(.original-publication-title)) { font-size: var(--zh-body); line-height: 1.85; color: var(--zh-body-ink); }
+html[lang="zh-CN"] .details-copy :is(h3, h4) { font-size: 20px; line-height: 1.6; margin-block: 26px 12px; }
+html[lang="zh-CN"] .details-copy p { margin-bottom: 20px; }
+html[lang="zh-CN"] :is(.content-page .directory-heading h2, .resource-intro h2) { font-size: 30px; line-height: 1.45; }
+html[lang="zh-CN"] :is(.paper-authors, .paper-venue, .project-deck, .contact-list dt, .content-page .directory-heading p) { font-size: var(--zh-support); line-height: 1.8; }
+html[lang="zh-CN"] :is(.eyebrow, .content-kicker, .card-kicker, .content-keywords, .paper-status, .paper-dateline span, .news-dateline, .project-diagram figcaption, .person-role, .tag-row span) { font-size: var(--zh-meta); line-height: 1.8; }
+html[lang="zh-CN"] .content-page > .section { padding-block: 44px 60px; }
+html[lang="zh-CN"] :is(.paper-entry, .news-entry) { padding-block: 32px; }
+html[lang="zh-CN"] .news-entry:first-child { padding-top: 0; }
+html[lang="zh-CN"] :is(.site-footer h2, .site-footer p, .footer-contact-row, .footer-home-top, .footer-brand) { font-size: var(--zh-meta); }
+/* Shared Chinese inner-page styles. The homepage layout lives in ChineseHome.vue. */
+html[lang="zh-CN"] :is(.news-copy, .paper-copy) > .original-publication-title { margin: 10px 0 16px; color: #546b7c; font-size: var(--zh-support); line-height: 1.7; font-weight: 400; text-align: left; text-align-last: left; letter-spacing: 0; }
+html[lang="zh-CN"] :is(.news-copy, .paper-copy) .publication-heading { font-size: 25px; line-height: 1.55; }
+.research-theme-mark { display: block; width: 64px; height: 57px; color: var(--theme-color, #568092); }
+html[lang="zh-CN"] .research-insights { gap: 22px; }
+html[lang="zh-CN"] .research-insights > .home-work-column { padding: 24px; border: 1px solid #d8e3e9; border-top: 3px solid #8b84aa; border-radius: 7px; background: linear-gradient(145deg, #f3f2f8, #fff 75%); }
+html[lang="zh-CN"] .research-insights .home-project-row { padding: 0; border: 0; background: transparent; }
+html[lang="zh-CN"] .research-insights .home-project-row > p:nth-of-type(2) { padding: 16px 18px; margin: 22px 0; border-left: 2px solid #9e97b8; background: #f3f2f7; color: #45566c; font-size: var(--zh-body); line-height: 1.85; }
+html[lang="zh-CN"] .research-insights .home-project-row > p:not(.paper-status) { font-size: var(--zh-body); line-height: 1.85; }
+html[lang="zh-CN"] .research-insights .home-project-row h3 { font-size: 25px; line-height: 1.55; }
+html[lang="zh-CN"] .content-page > .page-hero.narrow { padding-top: 28px; border-top: 3px solid #7b9eac; background: linear-gradient(100deg, #edf4f880, transparent 80%); }
+html[lang="zh-CN"] .content-page > .page-hero h1 { line-height: 1.4; }
+html[lang="zh-CN"] .content-page > .page-hero > p:not(.eyebrow) { line-height: 1.9; }
+html[lang="zh-CN"] .publication-detail-page > .page-hero h1 { max-width: 1040px; font-size: clamp(25px, 3vw, 36px); line-height: 1.4; letter-spacing: -.015em; }
+html[lang="zh-CN"] .publication-detail-page > .page-hero > .translated-paper-title { font-size: 20px; color: #315d72; font-weight: 600; }
+html[lang="zh-CN"] :is(.insight-detail-page, .publication-detail-page) > .section > .details-copy { font-size: var(--zh-body); line-height: 1.9; color: var(--zh-body-ink); }
+html[lang="zh-CN"] .research-page-hero { grid-template-columns: minmax(300px, .72fr) minmax(0, 1.4fr); gap: 38px; }
+html[lang="zh-CN"] .research-page-hero h1.research-page-title { font-size: 34px; line-height: 1.5; }
+html[lang="zh-CN"] .research-page-hero > .research-hero-copy > .eyebrow { font-family: var(--zh-font-body); font-size: var(--zh-meta); font-weight: 500; line-height: 1.6; letter-spacing: .04em; color: #487782; }
+html[lang="zh-CN"] .research-overview { --theme-color: #457c9c; --theme-wash: #edf5fa; display: block; position: relative; padding: 26px; border: 1px solid #dbe4e9; border-top: 3px solid var(--theme-color); border-radius: 7px; background: linear-gradient(135deg, var(--theme-wash), #fff 70%); }
+html[lang="zh-CN"] .research-overview:nth-child(2) { --theme-color: #7b71a7; --theme-wash: #f2f0f8; }
+html[lang="zh-CN"] .research-overview:nth-child(3) { --theme-color: #4b8a82; --theme-wash: #edf6f3; }
+html[lang="zh-CN"] .research-overview:nth-child(4) { --theme-color: #a38a5c; --theme-wash: #f8f4ed; }
+html[lang="zh-CN"] .research-overview > .research-theme-mark { float: right; margin: 0 0 12px 18px; }
+html[lang="zh-CN"] .research-overview > h2 { font-size: 26px; line-height: 1.5; }
+html[lang="zh-CN"] .research-overview > .content-keywords { clear: both; padding: 16px 0; border-top: 1px solid #dce5e9; font-size: var(--zh-support); }
+html[lang="zh-CN"] .research-overview .content-details { padding-top: 3px; }
+html[lang="zh-CN"] .insight-detail-page > section:nth-of-type(2) .details-copy > p:first-child { padding: 20px 24px; border-left: 3px solid #8b84aa; background: #f2f3f8; color: #354e64; line-height: 2; }
+@media (max-width: 1179.98px) {
+  html[lang="zh-CN"] .research-page-hero { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  html[lang="zh-CN"] { --zh-body: 17px; --zh-support: 15px; }
+  html[lang="zh-CN"] .research-page-hero h1.research-page-title { font-size: 30px; letter-spacing: 0; text-wrap: wrap; }
+  html[lang="zh-CN"] :is(.news-copy, .paper-copy) .publication-heading { font-size: 22px; }
+  html[lang="zh-CN"] :is(.content-page .directory-heading h2, .resource-intro h2) { font-size: 27px; }
+  html[lang="zh-CN"] .content-page > .section { padding-block: 32px 44px; }
+  html[lang="zh-CN"] .research-insights > .home-work-column { padding: 21px; }
+  html[lang="zh-CN"] .research-overview { padding: 22px; }
+  html[lang="zh-CN"] .publication-detail-page > .page-hero > .translated-paper-title { font-size: 18px; }
+}
+@media (max-width: 560px) {
+  html[lang="zh-CN"] .site-navbar .brand strong { font-size: 15px; }
+  html[lang="zh-CN"] .site-navbar .language-switch { font-size: 13px; }
+}
+@media (max-width: 360px) {
+  html[lang="zh-CN"] .site-navbar .brand strong { font-size: 14px; white-space: nowrap; }
+}

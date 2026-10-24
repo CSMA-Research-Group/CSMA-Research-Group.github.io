@@ -1,4 +1,5 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createMemoryHistory } from 'vue-router'
+import { locale, languageFromPath, localizedPath, unlocalizedPath, readPreference, t } from '../i18n'
 
 import Home from '../views/Home.vue'
 import Research from '../views/Research.vue'
@@ -22,7 +23,7 @@ import { researchInsights } from '../data/researchInsights'
 const defaultDescription =
   'CSMA Research Group studies cognitive and collaborative intelligence for intelligent software, robotics, and grounded applications.'
 
-const routes = [
+const canonicalRoutes = [
   ...researchInsights.items.map(article => ({
     path: `/resources/insights/${article.id}`,
     name: `insight-${article.id}`,
@@ -82,7 +83,7 @@ const routes = [
     path: '/people',
     name: 'people',
     component: People,
-    meta: { title: 'People | CSMA Research Group', description: 'Members working across artificial intelligence, intelligent software engineering, and intelligent robotics.' },
+    meta: { title: 'People | CSMA Research Group', description: 'Members studying artificial intelligence, intelligent software engineering, intelligent robotics, and their real-world applications.' },
   },
   {
     path: '/people/alumni',
@@ -112,39 +113,69 @@ const routes = [
     path: '/about',
     name: 'about',
     component: About,
-    meta: { title: 'About | CSMA Research Group', description: 'About CSMA Research Group, its research vision, affiliation, contact details, and joining information.' },
+    meta: { title: 'About | CSMA Research Group', description: 'About CSMA Research Group, its research focus, vision and mission, contact details, and joining information.' },
   },
   { path: '/join-us', redirect: '/people#join-us' },
-  { path: '/zh', redirect: '/' },
   { path: '/contact', redirect: '/about#contact' },
   { path: '/highlights', redirect: '/research' },
   { path: '/seminars', redirect: '/news' },
   { path: '/positions', redirect: '/people#join-us' },
   { path: '/gallery', redirect: '/resources' },
+]
+
+export const routes = [
+  ...canonicalRoutes.map(route => ({ ...route, meta: { ...route.meta, language: 'en' } })),
+  ...canonicalRoutes.map(route => ({
+    ...route,
+    path: localizedPath(route.path, 'zh'),
+    ...(route.name ? { name: `zh-${route.name}` } : {}),
+    ...(route.redirect ? { redirect: localizedPath(route.redirect, 'zh') } : {}),
+    meta: { ...route.meta, language: 'zh' },
+  })),
+  { path: '/zh/:pathMatch(.*)*', redirect: '/zh' },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) return savedPosition
-    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
-    if (to.path === '/research' && ['#multi-agent-cognitive-ai', '#knowledge-human-loop-ai'].includes(to.hash)) return { el: '#artificial-intelligence', behavior, top: 96 }
-    if (to.path === '/people') {
-      if (to.hash.startsWith('#profile-')) return { el: to.hash.replace('#profile-', '#'), behavior, top: 96 }
-      const legacySections = { '#advisors': '#members', '#faculty-advisors': '#members', '#group-members': '#members', '#graduate-students': '#members', '#undergraduate-students': '#members' }
-      if (legacySections[to.hash]) return { el: legacySections[to.hash], behavior, top: 96 }
+export function createSiteRouter(history) {
+  // Capture the original URL before hash history writes its default #/.
+  const bareEntry = typeof window !== 'undefined' && !window.location.hash
+  const router = createRouter({
+    history: history ?? (typeof window === 'undefined' ? createMemoryHistory() : createWebHashHistory()),
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+      if (savedPosition) return savedPosition
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      const path = unlocalizedPath(to.path)
+      if (path === '/research' && ['#multi-agent-cognitive-ai', '#knowledge-human-loop-ai'].includes(to.hash)) return { el: '#artificial-intelligence', behavior, top: 96 }
+      if (path === '/people') {
+        if (to.hash.startsWith('#profile-')) return { el: to.hash.replace('#profile-', '#'), behavior, top: 96 }
+        const legacySections = { '#advisors': '#members', '#faculty-advisors': '#members', '#group-members': '#members', '#graduate-students': '#members', '#undergraduate-students': '#members' }
+        if (legacySections[to.hash]) return { el: legacySections[to.hash], behavior, top: 96 }
+      }
+      if (to.hash) return { el: to.hash, behavior, top: 96 }
+      return { top: 0 }
+    },
+  })
+
+  // Only a bare site entry follows a remembered choice. Explicit shared English
+  // or Chinese URLs always win, including /#/ for the English homepage.
+  router.beforeEach((to, from) => {
+    if (bareEntry && !from.matched.length && to.path === '/' && readPreference() === 'zh') {
+      return { path: '/zh', query: to.query, hash: to.hash, replace: true }
     }
-    if (to.hash) return { el: to.hash, behavior, top: 96 }
-    return { top: 0 }
-  },
-})
+  })
 
-router.afterEach((to) => {
-  document.title = to.meta.title || 'CSMA Research Group'
-  const description = document.querySelector('meta[name="description"]')
-  description?.setAttribute('content', to.meta.description || defaultDescription)
-})
+  router.afterEach((to, from, failure) => {
+    if (failure) return
+    locale.value = languageFromPath(to.path)
+    if (typeof document === 'undefined') return
+    document.documentElement.lang = locale.value === 'zh' ? 'zh-CN' : 'en'
+    document.title = (to.meta.title || 'CSMA Research Group').split(' | ').map(part => t(part)).join(' | ')
+    const description = document.querySelector('meta[name="description"]')
+    description?.setAttribute('content', t(to.meta.description || defaultDescription))
+  })
 
-export default router
+  return router
+}
+
+export default createSiteRouter()

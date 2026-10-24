@@ -11,13 +11,14 @@
       <path d="M4 24 16.5 11.5M4 16 11 9M12 24 19 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
     </svg>
     <span>
-      <strong>Lucky you!</strong>
-      <small>You spotted a shooting star.</small>
+      <strong>{{ t("Lucky you!") }}</strong>
+      <small>{{ t("You spotted a shooting star.") }}</small>
     </span>
   </div>
 </template>
 
 <script setup>
+import { t } from '../i18n'
 import { onMounted, onUnmounted } from 'vue'
 
 const emit = defineEmits(['dismiss'])

@@ -9,7 +9,6 @@ export const peopleSections = [
         "name": "Jiangping Huang",
         "role": "Group Lead",
         "primaryResearchArea": "Artificial Intelligence",
-        "affiliation": "School of Computer Science and Technology, Chongqing University of Posts and Telecommunications",
         "email": "huangjp@cqupt.edu.cn",
         "homepage": "https://h-jp.github.io/",
         "interests": [

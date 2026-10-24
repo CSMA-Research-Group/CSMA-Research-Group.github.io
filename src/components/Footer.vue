@@ -3,53 +3,32 @@
     <div class="footer-grid">
       <section class="footer-about-contact">
         <RouterLink class="footer-brand" to="/">
-          <span class="brand-mark" aria-hidden="true">{{ siteInfo.shortName }}</span>
-          <span>{{ siteInfo.name }}</span>
+          <span class="brand-mark" aria-hidden="true">{{ t(siteInfo.shortName) }}</span>
+          <span>{{ t(siteInfo.name) }}</span>
         </RouterLink>
 
         <div class="footer-about-block">
-          <h2>About</h2>
-          <p class="footer-about-text">{{ researchNarrative.description }}</p>
+          <h2>{{ t("About") }}</h2>
+          <p class="footer-about-text">{{ t(researchNarrative.description) }}</p>
         </div>
 
         <div class="footer-contact-block">
-          <h2>Contact</h2>
+          <h2>{{ t("Contact") }}</h2>
           <div class="footer-contact-list">
-            <p class="footer-contact-row">
-              <span class="footer-social-icon" aria-hidden="true">@</span>
-              <span>
-                <strong>Email:</strong>{{ ' ' }}<a :href="`mailto:${siteInfo.contactEmail}`">{{ siteInfo.contactEmail }}</a>
-              </span>
-            </p>
-            <a
-              class="footer-contact-row"
-              href="https://weibo.com/jiangpinghuang"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span class="footer-social-icon" aria-hidden="true">W</span>
-              <span><strong>Weibo:</strong>{{ ' ' }}@jiangpinghuang</span>
-            </a>
-            <a
-              class="footer-contact-row"
-              href="https://x.com/jiangpinghuang"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span class="footer-social-icon" aria-hidden="true">X</span>
-              <span><strong>X:</strong>{{ ' ' }}@jiangpinghuang</span>
-            </a>
+            <ContactLink :href="`mailto:${siteInfo.contactEmail}`" :label="t('Email the Group')" />
+            <ContactLink kind="weibo" href="https://weibo.com/jiangpinghuang" :label="t('Weibo (opens in a new tab)')" external />
+            <ContactLink kind="x" href="https://x.com/jiangpinghuang" :label="t('X (opens in a new tab)')" external />
           </div>
         </div>
 
         <div class="footer-box-bottom">
           <RouterLink class="footer-home-top" to="/">
             <span class="footer-social-icon" aria-hidden="true">⌂</span>
-            <span>Home</span>
+            <span>{{ t("Home") }}</span>
           </RouterLink>
           <button class="footer-home-top" type="button" @click="scrollToTop">
             <span aria-hidden="true">↑</span>
-            <span>Back to top</span>
+            <span>{{ t("Back to top") }}</span>
           </button>
         </div>
       </section>
@@ -58,14 +37,16 @@
     </div>
 
     <div class="footer-bottom">
-      <span>© {{ currentYear }} {{ siteInfo.name }}.</span>
-      <span>Cognitive and Collaborative Intelligence for Software, Robotics, and Real-World Systems.</span>
+      <span>© {{ t(currentYear) }} {{ t(siteInfo.name) }}.</span>
+      <span>{{ t("Cognitive and Collaborative Intelligence for Software, Robotics, and Real-World Systems.") }}</span>
     </div>
   </footer>
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { t } from '../i18n'
+import RouterLink from './LocaleLink.vue'
+import ContactLink from './ContactLink.vue'
 import GlobalVisitorsGlobe from './GlobalVisitorsGlobe.vue'
 import { researchNarrative } from '../data/researchPresentation'
 import { siteInfo } from '../data/site'

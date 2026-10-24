@@ -1,14 +1,20 @@
 # 内容维护说明
 
+2026-10-24 当前中文布局：按大学实验室官网方向重新组织首页、成员和资源呈现。中英文保留相同核心事实，允许栏目顺序、摘要和版式不同；使用真实论文图和照片，增加方法与论文关联、主要方向筛选和当前位置导航。具体文件与双语栏目对应关系见[中文学术主页布局](chinese-academic-layout.md)。以下记录保留各轮修改背景；中文当前布局以该文档为准。
+
 2026-10-14：用户确认的第九版首页布局已应用到本地项目。网站使用 Vue 3、Vite 与 hash 路由，公开页面为英文。
 
 2026-10-18：完善成果关联与英文文案。Jiangping Huang 个人页补齐 CMCS、SemFaith；智能软件工程方向补充 CMCS；认知与协同智能方向的代表系统、项目和论文同步维护。CMCS 概述、贡献和工作流依据论文稿的摘要、引言与评估章节整理，方法全称采用 Cross-Model Collaborative Scheduling，介绍八项基准与评估维度，不添加未经逐项核对的性能数字。新闻正文明确接收或在线发表事件，保留既有日期、题名和分类；论文详情的年份与状态不重复显示。统一六位成员简介的表达，精简 Home、Research 与 About 的重复说明，About 联系按钮直接进入邮件。GitHub 地址与状态本轮保持原样。
 
+2026-10-23：新增完整对应的中文版，覆盖现有 29 个英文页面及全部详情。中英文共用事实与关联数据，中文正文独立校订；语言切换保持当前页面、查询参数和页内锚点。以下早期布局记录中的英文文案均有中文对应，具体维护规则见[中文版与双语维护](bilingual-content.md)。
+
+后续视觉与交互细化：中文列表通过 `PublicationTitle.vue` 先展示中文阅读题名、再保留完整英文正式题名，详情主标题仍使用正式题名。中文愿景图接入 `ImageViewer.vue` 页内缩放查看器，支持关闭后焦点与滚动恢复。中英文语言切换、菜单和页内导航扩大点击范围；研究洞见新增栏目导航。中文卡片间距、成员小字、长文行距与阅读宽度同步优化。未变更共享事实或页面数量。
+
 ## 页面与入口
 
-- 品牌和导航 Home 均返回首页；导航依次为 Home、News、Research、Projects、Publications、People、Resources、About，无语言切换。旧 `/zh` 地址返回首页。
+- 品牌和导航 Home / 首页均返回当前语言首页；导航依次为 Home / 首页、News / 动态、Research / 研究方向、Projects / 研究项目、Publications / 论文成果、People / 成员、Resources / 资源、About / 关于我们。右侧语言图标在手机菜单关闭时也保持可见，点击后选择 English 或简体中文。`/#/zh` 为中文首页，详情路径在英文路径前增加 `/zh`。
 - 首页依次为欢迎与愿景图、News、并列的论文与项目、Research、People、Resources、About、原页脚与地球。
-- Home 与 Research 愿景图共同使用用户提供的 `Cognitive Collaborative Intelligence Vision.png` 的原样副本，正式保存为 `src/assets/figures/csma-home-research-vision.png`，尺寸为 1774 × 887，与现有容器比例一致。原 SVG 文件仍保留在原路径，共享组件未指定图片时仍可使用原图。
+- 英文 Home 与 Research 愿景图共同使用用户提供的 `Cognitive Collaborative Intelligence Vision.png` 的原样副本，正式保存为 `src/assets/figures/csma-home-research-vision.png`，尺寸为 1774 × 887，与现有容器比例一致。原 SVG 文件仍保留在原路径，共享组件未指定图片时仍可使用原图。中文版通过 `ChineseResearchVision.vue` 使用完整中文插画 `csma-research-vision-zh-v2.png`，保留英文原图的构图与场景，配有方向热点、原有轻量动效、中文文字导航和查看大图入口；原图不覆盖。图片使用内置 imagegen 本地化，详见[中文视觉设计记录](chinese-visual-design.md)。
 - 两处新图均启用轻量动效：中央水平光环每隔约 12–22 秒随机选择转速、方向与轻微倾角，平滑变速和换向，目标转速相当于每圈约 24–40 秒；较细的第二段光弧同步绕行，外侧光环约 42 秒一周，各区域插图内有 18 个小光点轻微明暗变化，窄屏减少光点。底图保持静止，保留热点提示与方向链接。新的动效组件为 `ResearchVisionMotion.vue`，水平光环的平滑随机运动维护在 `src/utils/visionMotion.js`，通过 `ambientMotion` 单独启用；离开视口或隐藏标签页时暂停，系统减少动态效果时隐藏。原有方向流线、扫描效果和鼠标倾斜不在这两处启用。
 - 桌面首屏标题的可见顶边、按钮底边与右图对齐；宽度小于 1180px 时上下排列。四个研究方向采用通栏 2 × 2 卡片，手机单列。
 - 首页 Explore Research 使用原深蓝填充；View Publications 改用浅蓝填充，保留原字体、尺寸、边框与圆角。论文列表标题移除额外的 940px 限宽，用满所在内容列；所有论文标题均无手动断行，长标题在列宽不足时自然换行，完整显示。
@@ -49,6 +55,8 @@
 | 洞见文章 | `src/data/researchInsights.js` | 两篇英文介绍、洞见和原始来源；首页展示前两篇，Resources 展示全部，详情路由按稳定 ID 生成。 |
 | 附加资源 | `src/data/resources.js` | GitHub 入口来自 repositories 分组，其余历史记录保留；兼容导出 researchInsights。 |
 | 导航和联系 | `src/data/site.js` | 导航顺序、组名、公开联系资料。 |
+| 中文内容与语言切换 | `src/i18n/zh/`、`src/i18n/index.js`、`src/router/index.js`、`LocaleLink.vue` | 中文显示文案与共享事实分开维护；页面路径和内部链接随语言切换。英文原文改动时同步更新字典键及译文。 |
+| 中文排版与愿景图 | `src/i18n.css`、`src/chinese-design.css`、`src/components/ChineseResearchVision.vue`、`ResearchThemeMark.vue` | 中文字体回退、行距、语言入口、完整中文插画、方向图标与栏目层次；英文原图不改写。 |
 | 世界时钟与漂移 | `src/data/worldClocks.js`、`src/utils/globeClocks.js`、`src/components/GlobalVisitorsGlobe.vue` | 20 座城市池、每分钟四角轮换、当前 UTC 偏移去重，以及本地时间标签移动边界。 |
 | 地球光照与流星 | `src/utils/globeSky.js`、`src/components/GlobalVisitorsGlobe.vue` | 近似太阳位置、晨昏亮度、流星轨迹；使用现有动画循环，未增加独立动画定时器。 |
 | 流星幸运提示 | `src/components/MeteorNotice.vue`、`src/utils/globeSky.js` | 流星图标、可见性与遮挡判断，3 秒完整显示 + 2 秒淡出；组件卸载时清理关闭计时器。 |
@@ -118,6 +126,12 @@ Use case: identity-preserve. Asset type: professional academic profile portrait 
 
 ## 本地运行和构建
 
+2026-10-24：网站以 CSMA Research Group 的研究重点、愿景与使命介绍团队。移除研究组及负责人页面的院校隶属说明，并同步清理中英文翻译、About 页面描述和首页 JSON-LD 的 `parentOrganization` 字段。不要在新增简介、导航或搜索引擎元信息中重新补入这些隶属说明。
+
+全球合作邀请统一维护在 `src/data/site.js` 的 `contactNote`，由中英文首页、成员页和 About 共用，涵盖高校、科研机构、产业界的联合研究、学术交流及应用场景探索。研究愿景维护在 `src/data/researchPresentation.js`：`visionTitle`、`vision` 和 `visionApplications` 分别呈现主题、认知与协同机制、应用愿景；中文首页使用同一份机制介绍。成员页、首页成员摘要及成员页元信息均明确包含相关领域的应用研究。英文原文更新后，同步修改 `src/i18n/zh/research.js` 和 `src/i18n/zh/ui.js` 中的译文。
+
+联系方式使用 `ContactLink.vue` 统一呈现：成员邮箱、页脚的邮件／微博／X 入口，以及 About 的 GitHub 入口均用图标，首页和 About 的邮件主按钮保留明确的联系文案。页面不显示邮箱地址或社交账户名；原始地址继续用于 `mailto:` / 超链接，悬停提示和无障碍标签仅说明用途或平台。微博、X 和 GitHub 图标路径来自 [Simple Icons](https://github.com/simple-icons/simple-icons)，采用其 [CC0 许可](https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md)，不加载第三方图标脚本。
+
 在仓库根目录执行；首次安装依赖使用 `npm ci`。
 
 ```sh
@@ -133,6 +147,8 @@ git diff --check
 ```
 
 `dist/` 是本仓库跟踪的构建产物。源代码更新后运行默认生产构建，使 `dist/index.html` 与最新哈希资源一致。
+
+`tests/i18n.test.js` 渲染全部 58 个页面，检查中英文覆盖、中文内部链接、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
 
 ## 待补真实资料
 

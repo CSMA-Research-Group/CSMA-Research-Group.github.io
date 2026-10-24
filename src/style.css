@@ -1838,29 +1838,12 @@ li {
 }
 
 .footer-contact-list {
-  display: grid;
-  gap: 8px;
-}
-
-.footer-contact-row {
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 7px;
-  min-width: 0;
-  color: rgba(126, 236, 255, 0.84);
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.footer-contact-row strong {
-  color: rgba(255, 255, 255, 0.78);
-  font-weight: 800;
-}
-
-.footer-contact-row a,
-.footer-contact-row span:last-child {
-  min-width: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+  --contact-link-color: rgba(126, 236, 255, 0.92);
+  --contact-link-hover: #fff;
 }
 
 .footer-social-icon {

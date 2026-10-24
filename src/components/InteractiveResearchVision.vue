@@ -6,7 +6,7 @@
       { 'has-active': activeArea, 'is-reduced-motion': reducedMotion, 'is-static': !animated },
       orbitDirectionClass,
     ]"
-    aria-label="Interactive CSMA research vision"
+    :aria-label="t('Interactive CSMA research vision')"
     @pointermove="handlePointerMove"
     @pointerleave="handlePointerLeave"
   >
@@ -18,7 +18,7 @@
       <img
         class="vision-image"
         :src="imageSrc || visionImage"
-        alt="CSMA research vision connecting cognitive intelligence, intelligent software engineering, intelligent robotics, and application scenarios"
+        :alt="t('CSMA research vision connecting cognitive intelligence, intelligent software engineering, intelligent robotics, and application scenarios')"
         decoding="async"
         draggable="false"
       />
@@ -134,14 +134,14 @@
             height: `${area.hotspot.height}%`,
           }"
           type="button"
-          :aria-label="`${area.title}: ${area.tooltip.text} Open research direction.`"
+          :aria-label="t('{title}: {description} Open research direction.', { title: t(area.title), description: t(area.tooltip.text) })"
           @mouseenter="setActiveArea(area.id)"
           @mouseleave="clearActiveArea"
           @focus="setActiveArea(area.id)"
           @blur="clearActiveArea"
           @click="navigateToArea(area)"
         >
-          <span class="sr-only">{{ area.title }}</span>
+          <span class="sr-only">{{ t(area.title) }}</span>
         </button>
       </div>
     </div>
@@ -153,31 +153,33 @@
         :style="tooltipStyle"
         role="status"
       >
-        <strong>{{ activeAreaData.title }}</strong>
-        <span>{{ activeAreaData.tooltip.text }}</span>
+        <strong>{{ t(activeAreaData.title) }}</strong>
+        <span>{{ t(activeAreaData.tooltip.text) }}</span>
       </div>
     </div>
 
     <nav
       v-if="showMobileLinks"
       class="vision-mobile-links"
-      aria-label="Research vision directions"
+      :aria-label="t('Research vision directions')"
     >
       <RouterLink
         v-for="area in areas"
         :key="`mobile-${area.id}`"
         :to="{ path: '/research', hash: area.targetHash }"
       >
-        <strong>{{ area.title }}</strong>
-        <span>{{ area.tooltip.text }}</span>
+        <strong>{{ t(area.title) }}</strong>
+        <span>{{ t(area.tooltip.text) }}</span>
       </RouterLink>
     </nav>
   </section>
 </template>
 
 <script setup>
+import { t, localizedPath } from '../i18n'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import RouterLink from './LocaleLink.vue'
+import { useRouter } from 'vue-router'
 import ResearchVisionMotion from './ResearchVisionMotion.vue'
 
 const props = defineProps({
@@ -418,7 +420,7 @@ const handlePointerLeave = () => {
 }
 
 const navigateToArea = async (area) => {
-  await router.push({ path: '/research', hash: area.targetHash })
+  await router.push({ path: localizedPath('/research'), hash: area.targetHash })
 }
 
 const syncReducedMotion = () => {

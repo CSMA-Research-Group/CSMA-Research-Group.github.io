@@ -34,7 +34,7 @@ The package has a dependency-free Node test suite for the visitor Worker, world 
 
 All public content should remain in the existing structured files:
 
-- `src/data/site.js`: identity, research vision, affiliation, contact information, and primary navigation.
+- `src/data/site.js`: identity, research vision, global collaboration invitation, contact information, and primary navigation.
 - `src/data/researchAreas.js`: complete research-area records and paper-driven highlights.
 - `src/data/researchPresentation.js`: display-only research titles, roles, and homepage ordering.
 - `src/data/projects.js`: retained system prototype records.

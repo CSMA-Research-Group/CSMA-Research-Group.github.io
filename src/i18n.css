@@ -1,0 +1,57 @@
+/* Language navigation stays visible even when the mobile menu is closed. */
+.site-navbar .language-switch { position: relative; order: 3; flex: 0 0 auto; display: flex; align-items: center; margin: 0; padding: 0; white-space: nowrap; }
+.language-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 10px; border: 0; background: transparent; color: var(--color-ink); cursor: pointer; }
+.language-toggle:hover, .language-toggle[aria-expanded="true"] { color: var(--color-blue); }
+.language-icon { width: 21px; height: 21px; }
+.language-menu { position: absolute; top: calc(100% + 10px); right: 0; z-index: 1; width: 184px; padding: 6px; border: 1px solid var(--color-line); border-radius: 8px; background: #fff; box-shadow: var(--shadow-soft); }
+.language-menu a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 10px 12px; color: var(--color-ink); border-radius: 4px; font-size: 15px; font-weight: 500; line-height: 1.5; text-decoration: none; }
+.language-menu a:hover { color: var(--color-blue); background: #edf3f7; }
+.language-menu a[aria-current="true"] { color: var(--color-blue); background: var(--color-soft); font-weight: 600; }
+.language-check { width: 18px; height: 18px; flex-shrink: 0; }
+.site-navbar > .nav-links { order: 2; }
+.site-navbar > .nav-toggle { order: 4; flex-shrink: 0; width: 44px; height: 44px; }
+.site-navbar > .brand { flex-basis: auto; }
+.site-navbar .nav-links a { min-height: 44px; display: inline-flex; align-items: center; }
+/* Shared navigation and reading improvements for both languages. */
+html { scrollbar-gutter: stable; }
+.content-page .section-index { gap: 8px; }
+.content-page .section-index a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 14px; border: 1px solid #d9e4eb; border-radius: 5px; background: #f3f7fa; }
+.content-page .section-index a:hover { background: #e8f1f6; border-color: #a4bfcc; text-decoration: none; }
+.research-overview > .content-details > summary { min-height: 44px; }
+:is(.insight-detail-page, .publication-detail-page) > .section > .details-copy { max-width: 880px; }
+.translated-paper-title { color: var(--color-blue); line-height: 1.8; margin: 8px 0; }
+html[lang="zh-CN"] { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+html[lang="zh-CN"] :is(h1, h2, h3, h4) { letter-spacing: .015em; }
+html[lang="zh-CN"] :is(.hero-lede, .details-copy, .person-focus, .research-hero-intro, .project-description, .home-research-intro p, .about-card > p) { line-height: 1.9; }
+html[lang="zh-CN"] :is(.eyebrow, .home-column-label, .content-kicker, .card-kicker) { letter-spacing: .08em; }
+html[lang="zh-CN"] .about-page .about-card p { text-align: start; }
+html[lang="zh-CN"] .home-page .hero-section { align-items: center; }
+html[lang="zh-CN"] .home-page .hero-actions { margin-top: 28px; padding-top: 0; }
+html[lang="zh-CN"] .research-page-hero { align-items: center; }
+html[lang="zh-CN"] .research-page-hero > .research-hero-copy > .research-hero-intro { margin: 22px 0 0; padding-top: 0; }
+html[lang="zh-CN"] .research-page-hero h1.research-page-title { line-height: 1.35; }
+@media (min-width: 821px) and (max-width: 1199px) {
+  .site-navbar { gap: 12px; padding-inline: 24px; }
+  .site-navbar .brand strong { font-size: 14px; }
+  .site-navbar .nav-links { gap: 10px; }
+  .site-navbar .nav-links a { font-size: 12px; }
+}
+@media (max-width: 820px) {
+  .site-navbar { gap: 10px; }
+  .site-navbar .language-switch { margin-left: auto; }
+  .site-navbar .brand { flex: 1 1 auto; }
+}
+@media (min-width: 821px) and (max-width: 1040px) {
+  .site-navbar .nav-toggle { display: block; }
+  .site-navbar .language-switch { margin-left: auto; }
+  .site-navbar .nav-links { position: absolute; top: calc(var(--nav-height) - 1px); left: 24px; right: 24px; display: none; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 14px; border: 1px solid var(--color-line); border-radius: var(--radius); background: white; box-shadow: var(--shadow-soft); }
+  .site-navbar.menu-open .nav-links { display: grid; }
+  .site-navbar .nav-links a { padding: 12px; font-size: 14px; }
+}
+@media (max-width: 560px) {
+  .site-navbar { gap: 6px; padding-inline: 12px; }
+  .site-navbar .brand { gap: 7px; }
+  .site-navbar .brand-mark { width: 38px; height: 30px; font-size: 10px; }
+  .site-navbar .brand strong { max-width: 130px; white-space: normal; font-size: 11px; line-height: 1.4; }
+  html[lang="zh-CN"] .site-navbar .brand strong { font-size: 13px; }
+}

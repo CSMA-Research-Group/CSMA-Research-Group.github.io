@@ -2,7 +2,7 @@
 
 This repository contains the official website for **CSMA Research Group**, deployed through GitHub Pages.
 
-The first formal release is **v1.0** (package version `1.0.0`). See the [release notes](docs/releases/v1.0.md).
+The current release is **v2.0** (package version `2.0.0`), the bilingual English and Simplified Chinese edition. See the [v2.0 release notes](docs/releases/v2.0.md) and the earlier [v1.0 release notes](docs/releases/v1.0.md).
 
 The site presents CSMA research on **Cognitive and Collaborative Intelligence**, with intelligent software engineering and robotics as its main research domains. Practical scenarios support evaluation, while multi-agent collaboration, knowledge, and human feedback connect the work across these areas. Content is maintained through structured data files so publications, projects, people, news, research areas, and resources can be updated without rewriting page templates.
 
@@ -29,7 +29,7 @@ Start the development server:
 npm run dev
 ```
 
-Vite will print a local URL such as `http://localhost:5173/`.
+Vite will print a local URL such as `http://localhost:5173/`. The English homepage is `/#/`; the Chinese homepage is `/#/zh`. Both versions include the full page hierarchy and detail pages.
 
 To enable real footer visitor statistics locally, create `.env.local` from `.env.example` and point it at the deployed or local Worker:
 
@@ -96,7 +96,7 @@ The GitHub Pages workflow does not deploy the Worker. Changes under `workers/vis
 
 Most public website content is stored in `src/data/`:
 
-- `src/data/site.js`: group name, slogan, description, contact, affiliation, and navigation
+- `src/data/site.js`: group name, slogan, description, global collaboration invitation, contact, and navigation
 - `src/data/researchAreas.js`: research directions and research highlights
 - `src/data/researchPresentation.js`: presentation-only research titles, roles, and homepage ordering; canonical IDs remain in `researchAreas.js`
 - `src/data/projects.js`: project prototypes, status, key ideas, links, figures, and related publications
@@ -111,11 +111,25 @@ Most public website content is stored in `src/data/`:
 
 ## Homepage and detail pages
 
-The English homepage presents the welcome and vision, News, side-by-side Publications and projects, four Research directions, People, Resources, About, and the visitor globe. Resources contains Research Applications and Research Insights, with individual system and article pages. The brand and the first navigation item, Home, both return Home. The founding date is `2022-07-20`, without a time.
+Both language versions cover the research vision, News, Publications, projects, Research directions, People, Resources, About, and the visitor globe. The English homepage retains its established layout. The Chinese homepage organizes the shared material into research progress, research questions, illustrated systems, ongoing projects, Research Insights, members, and global collaboration. Resources contains Research Applications and Research Insights, with individual system and article pages. The brand and the first navigation item, Home, both return Home in the current language. The founding date is `2022-07-20`, without a time.
 
-Paper titles and More open `/publications/:id`; each paper links to its supporting system at `/projects/:id`. Resource names and More open the same system introductions. Portraits and names open `/people/:id`, where a personal homepage appears only when supplied. People uses one Members directory without advisor/student categories or headcount badges. Only members with photos currently appear on the homepage, in the directory, and at individual profile routes; records awaiting photos remain in the source data.
+Paper titles and More open `/publications/:id`; each paper links to its supporting system at `/projects/:id`. Resource names and More open the same system introductions. Portraits and names open `/people/:id`, where a personal homepage appears only when supplied. People uses one Members directory without advisor/student categories. The Chinese directory adds research-area filters and result counts. Only members with photos currently appear on the homepage, in the directory, and at individual profile routes; records awaiting photos remain in the source data.
 
 `src/proposal-layout.css` contains the approved layout refinements. Keep the original font, color, card, vision, and globe styles. On desktop, the visible title top and button bottoms align with the image frame; below 1180px, the hero stacks vertically. See [`docs/content-maintenance.md`](docs/content-maintenance.md) for the current content and link rules.
+
+## Chinese and English content
+
+The 29 English pages have 29 corresponding Chinese pages, using `/zh` before the same route path. An unboxed language icon opens a menu with English and 简体中文; selection switches language, closes the menu, and keeps the current detail page, query parameters, and section anchor. A bare site entry follows the last explicitly selected language when browser storage is available; explicit English or Chinese URLs always take precedence.
+
+Facts, IDs, portraits, publication status, authorship, dates, and destinations remain shared in `src/data/`. Chinese display copy lives in `src/i18n/zh/`, grouped into interface, research, projects, people, publications, and insights. Dictionary keys are the English source text with whitespace normalized; update the corresponding key and Chinese translation whenever that source copy changes. Keep internal links in `LocaleLink.vue` so navigation stays in the selected language.
+
+Formal publication titles and confirmed member names retain their original spelling. Papers also receive Chinese reading titles, abstracts, and contribution summaries. `PublicationTitle.vue` places the Chinese reading title first in Chinese lists and keeps the full official English title below; detail pages retain the official title as the main heading. Original paper figures and downloads are unchanged; their captions and alternative text are translated. Home and Research use the illustrated Chinese counterpart of the original English vision through `ChineseResearchVision.vue`, with interactive hotspots, gentle motion, and readable text links. `ImageViewer.vue` provides an in-page full-image dialog with fit/native-size views, keyboard dismissal, and focus restoration. Chinese typography and shared navigation layout are in `src/i18n.css`; the richer Chinese visual treatment is in `src/chinese-design.css`. See the [illustration record](docs/chinese-visual-design.md) for the asset, exact generation prompt, and interaction refinements.
+
+See [中文版与双语维护](docs/bilingual-content.md) for routes, editing rules, and review steps. `tests/i18n.test.js` renders both versions to check page coverage, navigation, untranslated copy, member information, and publication status.
+
+`ContactLink.vue` supplies the shared email, Weibo, X, and GitHub icons. Contact destinations remain intact, while visible copy, tooltips, and accessible labels omit raw email addresses and social account handles. Research-group identity is presented through its work, vision, mission, and global collaboration invitation; institutional affiliation is omitted from group and lead-member presentation and search metadata.
+
+The Chinese edition uses a fuller academic homepage in `ChineseHome.vue`, while the English homepage retains its established layout. Both read the same research, publication, project, member, and news records. Chinese pages add genuine method diagrams, a member directory filtered by primary research area, richer system descriptions, and breadcrumbs. Facts and destinations stay aligned; presentation and summaries can differ. See [中文学术主页布局与中英文对齐](docs/chinese-academic-layout.md) for the current section mapping and maintenance rules. The bilingual checks also verify that Chinese homepage and resource anchors have valid English counterparts.
 
 ## Updating Publications
 
@@ -151,7 +165,7 @@ Use confirmed code, artifact, DOI, and demo links only. If a project link is not
 
 ## Updating People
 
-Maintain confirmed profiles in the group-members section of `src/data/people.js`. The visible directory contains Jiangping Huang, Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, and Weidong Yuan. All six have photos and supplied email addresses. Jiangping Huang uses a scholar portrait edited from his supplied photo with the built-in image-generation tool; the other portraits are unchanged copies of the supplied photos. Shiyu Zhou, Juncheng Lu, Juntong Ou, and Yujie Jiang remain in the source data but are hidden until photos are supplied. The shared filter in `src/data/peopleHierarchy.js` controls homepage cards, the Members directory, and profile routes together. Keep full research interests on detail pages and only the primary direction on preview cards.
+Maintain confirmed profiles in the group-members section of `src/data/people.js`. The visible directory contains Jiangping Huang, Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, Weidong Yuan, Zhiwen ZHEN, and Changqing Wu. All eight have photos and supplied email addresses. Jiangping Huang uses a scholar portrait edited from his supplied photo with the built-in image-generation tool; the other portraits are unchanged copies of the supplied photos. Shiyu Zhou, Juncheng Lu, Juntong Ou, and Yujie Jiang remain in the source data but are hidden until photos are supplied. The shared filter in `src/data/peopleHierarchy.js` controls homepage cards, the Members directory, and profile routes together. Keep full research interests on detail pages and only the primary direction on preview cards, and add the Chinese introduction to `src/i18n/zh/people.js`.
 
 Jiangping Huang's interests are Artificial Intelligence, Intelligent Software Engineering, and Embodied Intelligence. Hao Chen studies explicit history in LLM-based program repair. Yihang Wang, Zhirui Huang, and Jiateng Guo work on Intelligent Robotics and Embodied Intelligence: Yihang Wang's introduction summarizes candidate coverage, clarification, and execution authorization in finite domains; Zhirui Huang's emphasizes task understanding and reliable action; Jiateng Guo's introduces perception, reasoning, and action in embodied agents. Keep introductions distinct without inventing publication status or transferring experimental results between people. All member email links display only `Email`; the supplied address belongs in the `mailto:` destination. Preserve collaborator and alumni records separately.
 
@@ -194,7 +208,7 @@ Use placeholders or blank fields for unconfirmed information. In particular, con
 - contact emails and office addresses
 - school, college, and institutional profile details
 
-The six visible members have supplied photos and email links, with research introductions based on provided material. External personal homepages for Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, and Weidong Yuan remain unprovided. Profiles without photos stay hidden, with their source records retained for future updates. SemFaith's authors and GitHub link are confirmed; its DOI and final publication details remain pending, with Paper showing Coming soon. Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
+The eight visible members have supplied photos and email links, with research introductions based on provided material. External personal homepages for Hao Chen, Zhirui Huang, Yihang Wang, Jiateng Guo, Weidong Yuan, Zhiwen ZHEN, and Changqing Wu remain unprovided. Profiles without photos stay hidden, with their source records retained for future updates. SemFaith's authors and GitHub link are confirmed; its DOI and final publication details remain pending, with Paper showing Coming soon (待公开 in Chinese). Add supplied GIF or animated WebP previews through each system's optional `previewMedia` field; no animation is displayed while it is null.
 
 ## Verification Policy
 

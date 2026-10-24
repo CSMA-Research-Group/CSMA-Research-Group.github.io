@@ -2,11 +2,9 @@
   <section class="global-visitors" aria-labelledby="visitor-globe-title">
     <div class="globe-panel">
       <div class="globe-heading">
-        <p class="globe-kicker">Global Visitors</p>
-        <h2 id="visitor-globe-title">Research reach, mapped live</h2>
-        <p id="visitor-globe-description">
-          Privacy-aware regional statistics from visitors to the CSMA website.
-        </p>
+        <p class="globe-kicker">{{ t("Global Visitors") }}</p>
+        <h2 id="visitor-globe-title">{{ t("Research reach, mapped live") }}</h2>
+        <p id="visitor-globe-description"> {{ t("Privacy-aware regional statistics from visitors to the CSMA website.") }} </p>
       </div>
 
       <div
@@ -19,19 +17,19 @@
           ref="canvasRef"
           class="global-globe-canvas"
           role="img"
-          :aria-label="globeAriaLabel"
+          :aria-label="t(globeAriaLabel)"
           aria-describedby="visitor-globe-description visitor-marker-summary"
-        >Global visitor visualization</canvas>
-        <TransitionGroup name="city-clock-swap" tag="div" class="world-clocks" role="group" aria-label="World clocks: four cities rotate every minute">
+        >{{ t("Global visitor visualization") }}</canvas>
+        <TransitionGroup name="city-clock-swap" tag="div" class="world-clocks" role="group" :aria-label="t('World clocks: four cities rotate every minute')">
           <div v-for="clock in worldClocks" :key="clock.id" class="city-clock" :class="`city-clock--${clock.corner}`">
-            <span class="city-clock-name">{{ clock.city }}</span>
-            <time :datetime="clock.instant" :aria-label="`${clock.city}: ${clock.time}, ${clock.date}, ${clock.offset}`">{{ clock.time }}</time>
-            <span class="city-clock-date">{{ clock.date }} <span aria-hidden="true">·</span> {{ clock.offset }}</span>
+            <span class="city-clock-name">{{ t(clock.city) }}</span>
+            <time :datetime="clock.instant" :aria-label="`${t(clock.city)}: ${clock.time}, ${clockDate(clock)}, ${clock.offset}`">{{ t(clock.time) }}</time>
+            <span class="city-clock-date">{{ clockDate(clock) }} <span aria-hidden="true">·</span> {{ t(clock.offset) }}</span>
           </div>
         </TransitionGroup>
         <span ref="localClockRef" class="local-time-chip">
-          <small>Your local time</small>
-          <strong>{{ visitorTimeLabel }}</strong>
+          <small>{{ t("Your local time") }}</small>
+          <strong>{{ t(visitorTimeLabel) }}</strong>
         </span>
         <MeteorNotice v-if="meteorNoticeVisible" @dismiss="meteorNoticeVisible = false" />
         <div
@@ -40,57 +38,58 @@
           :style="{ left: `${tooltip.x}px`, top: `${tooltip.y}px` }"
           role="status"
         >
-          <strong>{{ tooltip.title }}</strong>
-          <span>{{ tooltip.detail }}</span>
-          <small v-if="tooltip.meta">{{ tooltip.meta }}</small>
+          <strong>{{ t(tooltip.title) }}</strong>
+          <span>{{ t(tooltip.detail) }}</span>
+          <small v-if="tooltip.meta">{{ t(tooltip.meta) }}</small>
         </div>
       </div>
     </div>
 
     <aside
       class="visitor-stat-panel"
-      aria-label="Visitor statistics"
+      :aria-label="t('Visitor statistics')"
       aria-live="polite"
       :aria-busy="statsStatus === 'loading'"
     >
       <dl>
         <div>
-          <dt>Founded</dt>
-          <dd>{{ foundedAtLabel }}</dd>
+          <dt>{{ t("Founded") }}</dt>
+          <dd>{{ t(foundedAtLabel) }}</dd>
         </div>
         <div>
-          <dt>Total Visitors</dt>
-          <dd>{{ totalVisitorsLabel }}</dd>
+          <dt>{{ t("Total Visitors") }}</dt>
+          <dd>{{ t(totalVisitorsLabel) }}</dd>
         </div>
         <div>
-          <dt>Countries / Regions</dt>
-          <dd>{{ countriesReachedLabel }}</dd>
+          <dt>{{ t("Countries / Regions") }}</dt>
+          <dd>{{ t(countriesReachedLabel) }}</dd>
         </div>
         <div>
-          <dt>Your Visitor No.</dt>
-          <dd class="visitor-id">{{ currentVisitorLabel }}</dd>
+          <dt>{{ t("Your Visitor No.") }}</dt>
+          <dd class="visitor-id">{{ t(currentVisitorLabel) }}</dd>
         </div>
       </dl>
       <div v-if="currentLocationLabel" class="current-visitor-location">
         <span class="current-location-mark" aria-hidden="true"></span>
         <p>
-          <strong>Your approximate region</strong>
-          <span>{{ currentLocationLabel }}</span>
+          <strong>{{ t("Your approximate region") }}</strong>
+          <span>{{ t(currentLocationLabel) }}</span>
         </p>
       </div>
-      <p id="visitor-marker-summary" class="marker-summary">{{ markerSummaryLabel }}</p>
-      <ul v-if="visitorSources.length" class="sr-only" aria-label="Aggregate visitor marker details">
+      <p id="visitor-marker-summary" class="marker-summary">{{ t(markerSummaryLabel) }}</p>
+      <ul v-if="visitorSources.length" class="sr-only" :aria-label="t('Aggregate visitor marker details')">
         <li v-for="source in visitorSources" :key="source.countryCode || source.country">
-          {{ source.country }}: {{ markerVisitorLabel(source) }}, {{ markerVisitLabel(source) }}.
+          {{ regionName(source.countryCode, source.country) }}: {{ t(markerVisitorLabel(source)) }}, {{ t(markerVisitLabel(source)) }}.
         </li>
       </ul>
-      <p class="analytics-note">{{ analyticsNote }}</p>
+      <p class="analytics-note">{{ t(analyticsNote) }}</p>
     </aside>
   </section>
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { t, isChinese, locale, regionName } from '../i18n'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import MeteorNotice from './MeteorNotice.vue'
 import { trackVisitor } from '../services/visitorStats'
 import { visitorDisplayOffsets, visitorGlobeInfo } from '../data/visitorStats'
@@ -104,6 +103,10 @@ import {
   toFiniteCoordinate,
   toFiniteNumber,
 } from '../utils/visitorDisplay'
+
+const clockDate = clock => isChinese.value && clock.instant
+  ? new Intl.DateTimeFormat('zh-CN', { timeZone: clock.timeZone, month: 'numeric', day: 'numeric' }).format(new Date(clock.instant))
+  : clock.date
 
 const DEG = Math.PI / 180
 const FRAME_INTERVAL = 1000 / 20
@@ -335,14 +338,14 @@ const analyticsNote = computed(() => {
 const currentLocationLabel = computed(() => {
   if (!currentVisitor.value) return ''
 
-  const country = currentVisitor.value.country === 'Unknown' ? '' : currentVisitor.value.country
+  const country = currentVisitor.value.country === 'Unknown' ? '' : regionName(currentVisitor.value.countryCode, currentVisitor.value.country)
   return [...new Set([currentVisitor.value.region, country].filter(Boolean))].join(', ')
 })
 
 const markerSummaryLabel = computed(() => {
   if (statsStatus.value === 'loading') return 'Loading privacy-qualified country or region markers...'
   if (visitorSources.value.length) {
-    return `${visitorSources.value.length} privacy-qualified country or region markers are shown.`
+    return t('{count} privacy-qualified country or region markers are shown.', { count: visitorSources.value.length })
   }
   if (statsStatus.value === 'available') return 'No country or region markers meet the public display threshold yet.'
   return 'Country or region markers are temporarily unavailable.'
@@ -350,13 +353,13 @@ const markerSummaryLabel = computed(() => {
 
 const markerVisitorLabel = (source) => (
   source.uniqueVisitors !== null
-    ? `${Math.trunc(source.uniqueVisitors).toLocaleString()} visitors`
+    ? t('{count} visitors', { count: Math.trunc(source.uniqueVisitors).toLocaleString() })
     : 'visitor count unavailable'
 )
 
 const markerVisitLabel = (source) => (
   source.visits !== null
-    ? `${Math.trunc(source.visits).toLocaleString()} visits`
+    ? t('{count} visits', { count: Math.trunc(source.visits).toLocaleString() })
     : 'visit count unavailable'
 )
 
@@ -369,7 +372,7 @@ const hasCurrentMarker = computed(() => (
 
 const globeAriaLabel = computed(() => (
   currentLocationLabel.value && hasCurrentMarker.value
-    ? `Globe of aggregate visitor regions. Your approximate region, ${currentLocationLabel.value}, is highlighted.`
+    ? t('Globe of aggregate visitor regions. Your approximate region, {region}, is highlighted.', { region: currentLocationLabel.value })
     : 'Globe of aggregate visitor regions from live website statistics.'
 ))
 
@@ -870,7 +873,7 @@ const drawCurrentVisitorMarker = (rotation, time) => {
   ctx.fillStyle = 'rgba(255, 241, 224, 0.96)'
   const labelAbove = point.y - outerRadius - 14 >= 4
   ctx.textBaseline = labelAbove ? 'bottom' : 'top'
-  ctx.fillText('YOU', point.x, labelAbove
+  ctx.fillText(t('YOU'), point.x, labelAbove
     ? point.y - outerRadius - 3
     : point.y + outerRadius + 3)
   ctx.restore()
@@ -1088,14 +1091,20 @@ const updateTooltipAtPointer = () => {
     return
   }
 
-  tooltip.title = marker.source.country
+  tooltip.title = regionName(marker.source.countryCode, marker.source.country)
   tooltip.detail = marker.source.uniqueVisitors !== null
-    ? `${Math.trunc(marker.source.uniqueVisitors).toLocaleString()} visitors`
+    ? t('{count} visitors', { count: Math.trunc(marker.source.uniqueVisitors).toLocaleString() })
     : 'Visitor count unavailable'
   tooltip.meta = marker.source.visits !== null
-    ? `${Math.trunc(marker.source.visits).toLocaleString()} visits`
+    ? t('{count} visits', { count: Math.trunc(marker.source.visits).toLocaleString() })
     : ''
 }
+
+watch(locale, () => {
+  updateTooltipAtPointer()
+  if (ctx) drawGlobe(performance.now())
+  void nextTick(resizeLocalClock)
+})
 
 const handlePointerMove = (event) => {
   if (!wrapRef.value) return

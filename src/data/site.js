@@ -9,10 +9,9 @@ export const siteInfo = {
   githubOrg: 'https://github.com/CSMA-Research-Group',
   repository: 'https://github.com/CSMA-Research-Group/CSMA-Research-Group.github.io',
   contactEmail: 'hjpwhu@gmail.com',
-  affiliation: 'Chongqing University of Posts and Telecommunications',
   address: 'Chongqing, China',
   contactNote:
-    'We welcome undergraduate and graduate students interested in sustained research, as well as collaborators working across our research areas.',
+    'We seek collaborators worldwide from universities, research institutions, and industry for joint research, academic exchange, and exploration of real-world applications. We also welcome undergraduate and graduate students interested in sustained research across our areas.',
 }
 
 export const navigationItems = [
