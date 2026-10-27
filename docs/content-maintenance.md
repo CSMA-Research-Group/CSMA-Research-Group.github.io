@@ -130,6 +130,12 @@ Use case: identity-preserve. Asset type: professional academic profile portrait 
 
 全球合作邀请统一维护在 `src/data/site.js` 的 `contactNote`，由中英文首页、成员页和 About 共用，涵盖高校、科研机构、产业界的联合研究、学术交流及应用场景探索。研究愿景维护在 `src/data/researchPresentation.js`：`visionTitle`、`vision` 和 `visionApplications` 分别呈现主题、认知与协同机制、应用愿景；中文首页使用同一份机制介绍。成员页、首页成员摘要及成员页元信息均明确包含相关领域的应用研究。英文原文更新后，同步修改 `src/i18n/zh/research.js` 和 `src/i18n/zh/ui.js` 中的译文。
 
+2026-10-27：中英文首页首屏增加“探索合作机会 / Explore Collaboration”，进入当前语言的 `/about#contact`。首页和成员目录末尾共用 `MemberTeaser.vue`，展示“更多伙伴，陆续相见 / Meet more of the group”，不创建虚构成员或个人主页，也不计入成员人数。中文目录仅在“全部成员”筛选下显示预告；宽屏采用三列，手机自然换行。新增真实成员后预告仍保持在末尾。
+
+成员预告与页脚持续更新说明统一维护在 `src/data/site.js` 的 `communityUpdates`，中文词条在 `src/i18n/zh/ui.js`。页脚说明连接当前语言的新闻页。分享预览配置在 `index.html`；`public/social-preview.png` 是现有英文研究愿景图的原样副本，使用稳定公开路径。原图更新时同步该副本和图片尺寸。现有 hash 路由继续保留，中英文共享根 HTML 的分享预览图。
+
+本次检查覆盖 58 个中英文页面和 6 种屏宽下的 24 组首页／成员页展示，33 项自动检查及生产构建通过；成员筛选、合作入口、语言菜单和手机导航已在浏览器核对。已更新 Vue 3.5.42、Vite 7.3.7、source-map-js 1.2.2、Wrangler 4.153.0 及相应锁定依赖，npm 更新后的审计报告为 0 项已知漏洞。未修改或部署访客 Worker。当前待补真实资料仍见下方列表，成员预告本身不对应待创建的个人记录。
+
 联系方式使用 `ContactLink.vue` 统一呈现：成员邮箱、页脚的邮件／微博／X 入口，以及 About 的 GitHub 入口均用图标，首页和 About 的邮件主按钮保留明确的联系文案。页面不显示邮箱地址或社交账户名；原始地址继续用于 `mailto:` / 超链接，悬停提示和无障碍标签仅说明用途或平台。微博、X 和 GitHub 图标路径来自 [Simple Icons](https://github.com/simple-icons/simple-icons)，采用其 [CC0 许可](https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md)，不加载第三方图标脚本。
 
 在仓库根目录执行；首次安装依赖使用 `npm ci`。
@@ -148,7 +154,7 @@ git diff --check
 
 `dist/` 是本仓库跟踪的构建产物。源代码更新后运行默认生产构建，使 `dist/index.html` 与最新哈希资源一致。
 
-`tests/i18n.test.js` 渲染全部 58 个页面，检查中英文覆盖、中文内部链接、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
+`tests/i18n.test.js` 渲染全部 58 个页面，检查中英文覆盖、各中文页面内部链接与对应英文锚点、本地图片和下载文件、页面 ID 唯一性、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
 
 SemFaith 当前为 PRICAI 2026 Accepted（已录用），尚无 DOI 和正式出版信息。DOI 留空符合当前阶段，不列为需要补交的资料；保持已录用状态，Paper 入口继续显示 Coming soon／待公开，待正式信息公布并确认后再更新。作者和 GitHub 已确认；SemFaith 和 ChatREQ 的 GitHub 地址均使用用户提供的链接。
 

@@ -5,6 +5,8 @@ import { createSSRApp } from 'vue'
 import { renderToString } from '@vue/server-renderer'
 import { createMemoryHistory } from 'vue-router'
 import { parse } from '@vue/compiler-dom'
+import { existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { translate, localizedPath, readPreference, rememberLanguage, preferenceKey } from '../src/i18n/index.js'
 import { publications } from '../src/data/publications.js'
 import { peopleSections } from '../src/data/people.js'
@@ -92,9 +94,9 @@ test('all Chinese rendered copy is translated except explicit names and publicat
   }
 })
 
-test('Chinese homepage and resource links keep equivalent English destinations and sections', () => {
+test('all Chinese pages link to existing sections with equivalent English destinations', () => {
   const router = createSiteRouter(createMemoryHistory())
-  for (const path of ['/zh', '/zh/resources']) {
+  for (const path of [...rendered.keys()].filter(path => path.startsWith('/zh'))) {
     for (const { href } of rendered.get(path).links) {
       if (!href?.startsWith('/zh')) continue
       const destination = router.resolve(href)
@@ -105,6 +107,21 @@ test('Chinese homepage and resource links keep equivalent English destinations a
       const englishPage = rendered.get(englishDestination.path)
       assert.ok(englishPage, `${path}: missing English counterpart ${href}`)
       if (englishDestination.hash) assert.ok(englishPage.ids.includes(decodeURIComponent(englishDestination.hash.slice(1))), `${path}: missing English section ${href}`)
+    }
+  }
+})
+
+test('all rendered local images and downloads exist and page identifiers are unique', () => {
+  const root = new URL('../', import.meta.url)
+  for (const [path, page] of rendered) {
+    assert.equal(new Set(page.ids).size, page.ids.length, `${path}: duplicate page identifiers`)
+    for (const image of page.images) assert.notEqual(image.alt, undefined, `${path}: image without alternative text`)
+    const assets = [...page.images.map(image => image.src), ...page.links.map(link => link.href).filter(href => /\.(pdf|png|jpe?g|svg|webp)(?:\?|$)/i.test(href || ''))]
+    for (const asset of assets) {
+      if (!asset?.startsWith('/') || asset.startsWith('//')) continue
+      const localPath = decodeURIComponent(asset.split(/[?#]/)[0]).replace(/^\//, '')
+      const file = fileURLToPath(new URL(localPath.startsWith('src/') ? localPath : `public/${localPath}`, root))
+      assert.ok(existsSync(file), `${path}: missing local asset ${asset}`)
     }
   }
 })

@@ -8,6 +8,7 @@
         <div class="academic-hero-actions">
           <RouterLink class="button button-primary" to="/research">了解研究方向 <span aria-hidden="true">→</span></RouterLink>
           <RouterLink class="academic-text-link" to="/people">认识研究团队 <span aria-hidden="true">→</span></RouterLink>
+          <RouterLink class="academic-text-link" to="/about#contact">{{ t('Explore Collaboration') }} <span aria-hidden="true">→</span></RouterLink>
         </div>
       </div>
       <ChineseResearchVision compact />
@@ -82,6 +83,7 @@
       <div class="academic-section-heading"><div><p class="academic-eyebrow">研究团队</p><h2 id="team-title">成员与研究兴趣</h2></div><RouterLink class="academic-text-link" to="/people">浏览全部成员 <span aria-hidden="true">→</span></RouterLink></div>
       <ul class="academic-people-grid">
         <li v-for="person in peopleProfiles" :key="person.id"><RouterLink :to="person.profilePath"><img :src="person.portrait" :alt="person.name" width="76" height="88" loading="lazy" decoding="async" /><span><strong>{{ person.name }}</strong><span class="academic-person-area">{{ t(person.previewInterests[0]) }}</span><small>{{ t(person.interests.filter(interest => interest !== person.previewInterests[0]).slice(0, 2).join(' · ')) }}</small></span><span class="academic-person-arrow" aria-hidden="true">↗</span></RouterLink></li>
+        <li class="academic-member-teaser"><MemberTeaser variant="inline" /></li>
       </ul>
     </section>
 
@@ -95,6 +97,7 @@
 <script setup>
 import RouterLink from './LocaleLink.vue'
 import ContactLink from './ContactLink.vue'
+import MemberTeaser from './MemberTeaser.vue'
 import ChineseResearchVision from './ChineseResearchVision.vue'
 import ResearchSystemCard from './ResearchSystemCard.vue'
 import ResearchThemeMark from './ResearchThemeMark.vue'
@@ -201,7 +204,7 @@ const homeSections = [
 .academic-insight-question { border-left: 2px solid #a2a4bc; padding-left: 17px; margin-block: 20px 12px; }
 .academic-insight-question > span { font-size: var(--zh-meta); font-weight: 650; color: #6b6c87; }
 .academic-insight-question p { margin: 8px 0 0; font-size: var(--zh-body); line-height: 1.9; color: #3a526b; }
-.academic-people-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); list-style: none; margin: 0; padding: 0; gap: 0 40px; }
+.academic-people-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); list-style: none; margin: 0; padding: 0; gap: 0 28px; }
 .academic-people-grid li { min-width: 0; border-top: 1px solid #d6e3eb; }
 .academic-people-grid a { display: flex; align-items: start; gap: 14px; padding-block: 24px; text-decoration: none; }
 .academic-people-grid img { width: 80px; height: 96px; object-fit: cover; object-position: center 26%; border-radius: 4px; flex-shrink: 0; background: #e9f0f4; }

@@ -10,6 +10,7 @@
         <p class="member-profile-summary">{{ introduction(person.summary) }}</p>
         <div class="member-profile-links"><RouterLink :to="person.profilePath">完整介绍 <span aria-hidden="true">→</span></RouterLink><ContactLink v-if="person.email" :href="`mailto:${person.email}`" :label="t('Email {name}', { name: person.name })" /></div>
       </article>
+      <MemberTeaser v-if="selected === 'all'" variant="directory" />
     </div>
   </section>
 </template>
@@ -18,6 +19,7 @@
 import { computed, ref } from 'vue'
 import RouterLink from './LocaleLink.vue'
 import ContactLink from './ContactLink.vue'
+import MemberTeaser from './MemberTeaser.vue'
 import { t } from '../i18n'
 import { peopleProfiles } from '../data/peopleHierarchy'
 const selected = ref('all')
@@ -55,6 +57,12 @@ const introduction = summary => {
 .member-profile-links { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 18px; padding-top: 10px; border-top: 1px solid #e1e9ef; }
 .member-profile-links a { display: inline-flex; align-items: center; min-height: 44px; color: #2b698a; font-size: var(--zh-meta); text-decoration: none; }
 .member-profile-links a:first-child { font-weight: 650; gap: 8px; }
+@media (min-width: 1180px) {
+  .member-profile-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .member-profile { grid-template-columns: 80px minmax(0, 1fr); gap: 16px; padding: 22px; }
+  .member-photo-link img { width: 80px; height: 100px; }
+  .member-profile h3 { font-size: 21px; overflow-wrap: anywhere; }
+}
 @media (max-width: 900px) { .member-profile-grid { grid-template-columns: 1fr; } }
 @media (max-width: 500px) { .member-profile { grid-template-columns: 80px minmax(0,1fr); padding: 20px; gap: 16px; } .member-photo-link img { width: 80px; height: 100px; } .member-profile h3 { font-size: 20px; } }
 </style>

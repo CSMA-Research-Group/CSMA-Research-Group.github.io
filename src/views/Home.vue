@@ -115,5 +115,6 @@ const heroIntroduction = computed(() => t('Welcome to the CSMA Research Group.')
 const heroActions = [
   { label: 'Explore Research', to: '/research' },
   { label: 'View Publications', to: '/publications', variant: 'secondary' },
+  { label: 'Explore Collaboration', to: '/about#contact', variant: 'secondary' },
 ]
 </script>

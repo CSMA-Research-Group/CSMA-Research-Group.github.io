@@ -7,6 +7,7 @@
       :class="'home-people-row--' + row.id" role="list" :aria-label="t(row.title)">
       <PersonPreviewCard v-for="person in row.people" :key="person.id" :person="person"
         role="listitem" />
+      <MemberTeaser v-if="row.id === 'member'" role="listitem" />
     </div>
   </div>
 </template>
@@ -14,5 +15,6 @@
 <script setup>
 import { t } from '../i18n'
 import PersonPreviewCard from './PersonPreviewCard.vue'
+import MemberTeaser from './MemberTeaser.vue'
 import { homePeopleRows } from '../data/peopleHierarchy'
 </script>

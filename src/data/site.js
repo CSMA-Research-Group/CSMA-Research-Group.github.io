@@ -14,6 +14,12 @@ export const siteInfo = {
     'We seek collaborators worldwide from universities, research institutions, and industry for joint research, academic exchange, and exploration of real-world applications. We also welcome undergraduate and graduate students interested in sustained research across our areas.',
 }
 
+export const communityUpdates = {
+  memberTitle: 'Meet more of the group',
+  memberDescription: 'More member profiles are on the way. Stay tuned.',
+  websiteNote: 'We are continually updating and improving this website. Stay tuned for more research news, project details, and member profiles.',
+}
+
 export const navigationItems = [
   { label: 'Home', path: '/' },
   { label: 'News', path: '/news' },

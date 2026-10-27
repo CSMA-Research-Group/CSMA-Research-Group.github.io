@@ -8,6 +8,7 @@
       <div class="people-tier-members">
         <PersonPreviewCard v-for="person in level.people" :id="person.id" :key="person.id"
           class="people-slot" :person="person" />
+        <MemberTeaser v-if="level.id === 'members'" />
       </div>
     </section>
   </div>
@@ -16,4 +17,5 @@
 import { t } from '../i18n'
 import { peopleHierarchy } from '../data/peopleHierarchy'
 import PersonPreviewCard from './PersonPreviewCard.vue'
+import MemberTeaser from './MemberTeaser.vue'
 </script>
