@@ -51,7 +51,7 @@ after(async () => { await server?.close() })
 
 test('every English page has a Chinese counterpart with the same content record', () => {
   const english = routes.filter(route => route.component && route.meta.language === 'en')
-  assert.equal(english.length, 32)
+  assert.equal(english.length, 37)
   for (const route of english) {
     const counterpart = routes.find(item => item.path === localizedPath(route.path, 'zh'))
     assert.equal(counterpart.component, route.component, route.path)

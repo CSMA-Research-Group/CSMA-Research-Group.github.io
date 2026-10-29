@@ -83,7 +83,7 @@ SemFaith 作者已确认，依次为 Jiangping Huang、Weidong Yuan、Junchen Xi
 
 ## 人员资料与姓名
 
-当前仅展示用户确认且已提供照片的八位成员，姓名按英文全名显示：
+仅展示用户确认且已提供照片的成员，姓名沿用用户确认的英文形式。早期八位成员记录如下，后续新增情况见下文：
 
 - Jiangping Huang：Artificial Intelligence、Intelligent Software Engineering、Embodied Intelligence；成员卡片的主要方向显示 Artificial Intelligence。
 - Hao Chen：Intelligent Software Engineering，个人页保留程序修复相关研究兴趣。
@@ -110,7 +110,15 @@ SemFaith 作者已确认，依次为 Jiangping Huang、Weidong Yuan、Junchen Xi
 
 按用户要求，三张新照片使用内置 imagegen 在原照基础上调整为更自然、亲和的肖像，保留个人辨识度，柔化表情与光线，改用简洁的开领衬衫。素材目录的原照保留不变；网站使用 `public/people/shiyu-zhou.png`、`junchen-lu.png`、`juntong-ou.png`。完整提示词、原照与成图校验信息见[三位成员肖像处理记录](member-portraits-20261029.md)。
 
-Yujie Jiang 仍未提供照片，当前不出现在首页、Members 或个人页路由中，原始数据保留在 `src/data/people.js`；提供照片后可恢复。此前虚构人物及其生成头像继续留在网站外的历史归档中。
+Yujie Jiang 此前因缺少照片而隐藏；本批资料补齐后已正式加入，按本次提供顺序展示。此前虚构人物及其生成头像继续留在网站外的历史归档中。
+
+2026-10-29 排序补充：当前成员按正式加入主页的先后顺序展示，同批按用户提供顺序排列。保留原有八位成员顺序，在 Changqing Wu 后依次加入 Shiyu Zhou、Junchen LU、Juntong OU；预告卡片继续位于末尾。排序由 `src/data/people.js` 的数组顺序统一控制，中英文首页、成员目录及方向筛选沿用同一顺序。新成员应追加在已展示成员之后；早期无照片占位记录的位置不代表正式加入主页的顺序，也不据此填写实际入组日期。
+
+2026-10-29：新增 Zhirui Deng，按加入主页的先后顺序排在 Juntong OU 之后。使用用户提供的 `Zhirui_DENG.png` 原样副本 `public/people/zhirui-deng.png`（725 × 1072），不修图、不更换背景，原照与网站副本 SHA-256 均为 `ecbadf14bdd51fb942ad2a7d77a4513425e1ad9c97a2d1eed8fbca5aec1502d7`。邮箱为 `1946372457@qq.com`，入口沿用邮箱图标；个人页为 `/people/zhirui-deng`，中文版为 `/zh/people/zhirui-deng`。中英文简介围绕具身智能、运动规划与自主决策、灵巧操作与控制、智能交互整理。未提供的学位、入学年份、单位、个人主页和成果不作推断。
+
+2026-10-29 本批补充：按用户提供顺序，在 Zhirui Deng 之后追加 Laixin LU、Yujie Jiang、Gan Xiao、Shunyan WAN。邮箱依次为 `1951653010@qq.com`、`3381589383@qq.com`、`480609673@qq.com`、`2829095043@qq.com`，沿用图标入口；中英文首页、成员目录和个人页同步更新。四人的研究介绍分别突出需求理解与代码／测试生成、代码生成与修复的上下文压缩、执行证据感知的修复上下文压缩，以及智能体记忆与跨任务经验复用；以用户最新提供的方向为准，均按研究兴趣和正在探索的问题表述，不新增未经确认的成果、单位或学位信息。Yujie Jiang 沿用已有 `yujie-jiang` 标识，但展示次序以本次正式补齐资料为准。 用户确认第四位为 Shunyan WAN，原照为 `Shunyan_WAN.jpg`，邮箱为 `2829095043@qq.com`；个人页为 `/people/shunyan-wan`，中文版为 `/zh/people/shunyan-wan`。其介绍围绕工作记忆、情景记忆与长期记忆的组织、检索、更新，以及经验证修复知识的跨任务复用整理。
+
+本批照片使用内置 imagegen 在本人原照基础上改善神态、光线和着装，原照保留不变。网站成图、完整提示词及校验信息见[本批成员肖像处理记录](member-portraits-20261029-second-batch.md)。
 
 已确认资料维护在 `src/data/people.js`，展示规则在 `src/data/peopleHierarchy.js`。头像和姓名均进入独立个人介绍，个人主页仅在本人提供后填写；不推测邮箱、单位、学位或论文贡献。合作研究者和校友的原始记录保留，不加入当前名单。补充资料时保留各成员 ID。
 
@@ -158,13 +166,13 @@ git diff --check
 
 `dist/` 是本仓库跟踪的构建产物。源代码更新后运行默认生产构建，使 `dist/index.html` 与最新哈希资源一致。
 
-`tests/i18n.test.js` 渲染全部 64 个页面，检查中英文覆盖、各中文页面内部链接与对应英文锚点、本地图片和下载文件、页面 ID 唯一性、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
+`tests/i18n.test.js` 渲染全部 74 个页面，检查中英文覆盖、各中文页面内部链接与对应英文锚点、本地图片和下载文件、页面 ID 唯一性、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
 
 SemFaith 当前为 PRICAI 2026 Accepted（已录用），尚无 DOI 和正式出版信息。DOI 留空符合当前阶段，不列为需要补交的资料；保持已录用状态，Paper 入口继续显示 Coming soon／待公开，待正式信息公布并确认后再更新。作者和 GitHub 已确认；SemFaith 和 ChatREQ 的 GitHub 地址均使用用户提供的链接。
 
 ## 待补真实资料
 
-- 当前十一位可见成员的照片和邮箱均已提供，研究简介依据用户材料整理；除 Jiangping Huang 外，其他成员的外部主页地址尚未提供，页面不显示该入口。暂时隐藏的 Yujie Jiang 仍待补照片；不生成占位人物。
+- 当前十六位可见成员的照片和邮箱均已提供，研究简介依据用户材料整理；除 Jiangping Huang 外，其他成员的外部主页地址尚未提供，页面不显示该入口。不生成占位人物。
 - Weidong Yuan 科研训练项目的正式名称、年份、级别及承担角色；确认后再补充，不推断其与 SemFaith 的关系。
 - 各系统的演示动图。
 

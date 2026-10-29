@@ -1,4 +1,6 @@
 // Public profile data. Use user-confirmed member names; preserve abbreviated legacy records.
+// Current members follow the order their confirmed profiles were added to the website.
+// Append new profiles before photo-pending records; keep user-supplied order within each batch.
 export const peopleSections = [
   {
     "id": "group-members",
@@ -33,60 +35,6 @@ export const peopleSections = [
         "portraitHeight": 1254,
         "summary": "He studies artificial intelligence, intelligent software engineering, and embodied intelligence. His work connects reasoning, planning, and multi-agent collaboration with reliable software and embodied systems.",
         "credentials": "Ph.D. · Master's Supervisor"
-      },
-      {
-        "id": "shiyu-zhou",
-        "name": "Shiyu Zhou",
-        "role": "Student Researcher",
-        "email": "1471273890@qq.com",
-        "interests": [
-          "Intelligent Software Engineering",
-          "Requirements Recovery",
-          "Program Comprehension",
-          "Requirements Specification"
-        ],
-        "portrait": "/people/shiyu-zhou.png",
-        "portraitWidth": 1254,
-        "portraitHeight": 1254,
-        "summary": "He studies the relationship between source code and software requirements, focusing on recovering requirements specifications from existing implementations through reverse engineering. His work explores how software behavior expressed in code can be translated into structured, understandable requirements descriptions, with clear connections between requirements and implementation."
-      },
-      {
-        "id": "junchen-lu",
-        "name": "Junchen LU",
-        "role": "Student Researcher",
-        "email": "2833538818@qq.com",
-        "interests": [
-          "Intelligent Software Engineering",
-          "Code Repair Agents",
-          "Context-Efficient Code Repair",
-          "Agent Memory"
-        ],
-        "portrait": "/people/junchen-lu.png",
-        "portraitWidth": 1254,
-        "portraitHeight": 1254,
-        "summary": "He studies intelligent agents for code repair, focusing on reducing context consumption and strengthening agent memory. His work explores how agents can retain and retrieve relevant information across repair attempts, aiming to support effective repair under limited context budgets."
-      },
-      {
-        "id": "juntong-ou",
-        "name": "Juntong OU",
-        "role": "Student Researcher",
-        "email": "609254643@qq.com",
-        "interests": [
-          "Intelligent Software Engineering",
-          "Knowledge-Guided Requirements Engineering",
-          "Multi-Agent Collaboration",
-          "Requirements Validation"
-        ],
-        "portrait": "/people/juntong-ou.png",
-        "portraitWidth": 1254,
-        "portraitHeight": 1254,
-        "summary": "He studies knowledge-guided multi-agent collaboration for generating software requirements specifications. His work examines how requirements knowledge can be organized and how agents can collaborate in reasoning about requirements. He also explores feedback from code generation and validation to improve the completeness, traceability, and testability of the resulting specifications."
-      },
-      {
-        "id": "yujie-jiang",
-        "name": "Yujie Jiang",
-        "interests": ["Intelligent Software Engineering"],
-        "summary": "Research in intelligent software engineering."
       },
       {
         "id": "hao-chen",
@@ -199,6 +147,140 @@ export const peopleSections = [
         "portraitWidth": 2543,
         "portraitHeight": 3560,
         "summary": "He studies vision-language models (VLMs) and their applications in embodied robotic systems, focusing on reliable task completion verification. His work examines how conventional success or failure signals may misrepresent the actual outcomes of robotic actions. He explores how visual understanding and semantic reasoning can support task completion assessment, and investigates the accuracy, consistency, and reliability of VLM-based judgments."
+      },
+      {
+        "id": "shiyu-zhou",
+        "name": "Shiyu Zhou",
+        "role": "Student Researcher",
+        "email": "1471273890@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Requirements Recovery",
+          "Program Comprehension",
+          "Requirements Specification"
+        ],
+        "portrait": "/people/shiyu-zhou.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies the relationship between source code and software requirements, focusing on recovering requirements specifications from existing implementations through reverse engineering. His work explores how software behavior expressed in code can be translated into structured, understandable requirements descriptions, with clear connections between requirements and implementation."
+      },
+      {
+        "id": "junchen-lu",
+        "name": "Junchen LU",
+        "role": "Student Researcher",
+        "email": "2833538818@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Code Repair Agents",
+          "Context-Efficient Code Repair",
+          "Agent Memory"
+        ],
+        "portrait": "/people/junchen-lu.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies intelligent agents for code repair, focusing on reducing context consumption and strengthening agent memory. His work explores how agents can retain and retrieve relevant information across repair attempts, aiming to support effective repair under limited context budgets."
+      },
+      {
+        "id": "juntong-ou",
+        "name": "Juntong OU",
+        "role": "Student Researcher",
+        "email": "609254643@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Knowledge-Guided Requirements Engineering",
+          "Multi-Agent Collaboration",
+          "Requirements Validation"
+        ],
+        "portrait": "/people/juntong-ou.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies knowledge-guided multi-agent collaboration for generating software requirements specifications. His work examines how requirements knowledge can be organized and how agents can collaborate in reasoning about requirements. He also explores feedback from code generation and validation to improve the completeness, traceability, and testability of the resulting specifications."
+      },
+      {
+        "id": "zhirui-deng",
+        "name": "Zhirui Deng",
+        "role": "Student Researcher",
+        "email": "1946372457@qq.com",
+        "interests": [
+          "Intelligent Robotics",
+          "Embodied Intelligence",
+          "Motion Planning",
+          "Autonomous Decision-Making",
+          "Dexterous Manipulation and Control",
+          "Intelligent Interaction"
+        ],
+        "portrait": "/people/zhirui-deng.png",
+        "portraitWidth": 725,
+        "portraitHeight": 1072,
+        "summary": "Zhirui studies embodied intelligence and intelligent robotics, with a focus on motion planning and autonomous decision-making, dexterous manipulation and control, and intelligent interaction. The research explores how planning, decision-making, and control can work together to support robots in carrying out tasks and interacting with people and their surroundings."
+      },
+      {
+        "id": "laixin-lu",
+        "name": "Laixin LU",
+        "role": "Student Researcher",
+        "email": "1951653010@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Requirements Understanding",
+          "LLM-Based Code Generation",
+          "Test Generation",
+          "Requirements Alignment"
+        ],
+        "portrait": "/people/laixin-lu.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies intelligent software engineering and AI-assisted code generation, focusing on how large language models interpret natural-language requirements and translate them into reliable programs and test cases. His interests include clarifying ambiguous user needs, making functional and safety constraints explicit, and checking whether generated code and tests remain aligned with those requirements."
+      },
+      {
+        "id": "yujie-jiang",
+        "name": "Yujie Jiang",
+        "role": "Student Researcher",
+        "email": "3381589383@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Context Compression",
+          "LLM-Based Code Generation",
+          "Automated Program Repair",
+          "Repair Experience Reuse"
+        ],
+        "portrait": "/people/yujie-jiang.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies context compression for AI-assisted code generation and repair. His work explores how to select and condense requirements, code, and repair history into context that remains useful for the current task. He is interested in preserving relevant constraints and reusable experience while reducing redundant information, and in understanding how context choices affect code correctness and repair efficiency under limited context budgets."
+      },
+      {
+        "id": "gan-xiao",
+        "name": "Gan Xiao",
+        "role": "Student Researcher",
+        "email": "480609673@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Code Repair Agents",
+          "Context Compression",
+          "Execution Evidence",
+          "Feedback-Guided Repair"
+        ],
+        "portrait": "/people/gan-xiao.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies execution-evidence-aware context compression for software repair agents. His work explores how test outcomes, error messages, and execution traces can guide which information agents retain, summarize, or retrieve during repair. He is interested in preserving evidence needed for fault diagnosis and patch validation while reducing context overhead, and in examining the trade-offs between compression, repair correctness, and computational cost."
+      },
+      {
+        "id": "shunyan-wan",
+        "name": "Shunyan WAN",
+        "role": "Student Researcher",
+        "email": "2829095043@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Agent Memory",
+          "Repair Experience Reuse",
+          "Knowledge Retrieval",
+          "Memory Update Mechanisms"
+        ],
+        "portrait": "/people/shunyan-wan.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies experience preservation and reuse in agent-assisted code generation, debugging, and repair. His work compares working, episodic, and long-term memory, focusing on what agents retain and how that information is organized, retrieved, and updated. He explores how validated repair knowledge can be reused across tasks, with attention to the conditions under which past experience remains relevant and reliable."
       }
     ]
   },
