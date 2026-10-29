@@ -37,20 +37,50 @@ export const peopleSections = [
       {
         "id": "shiyu-zhou",
         "name": "Shiyu Zhou",
-        "interests": ["Intelligent Software Engineering"],
-        "summary": "Research in intelligent software engineering."
+        "role": "Student Researcher",
+        "email": "1471273890@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Requirements Recovery",
+          "Program Comprehension",
+          "Requirements Specification"
+        ],
+        "portrait": "/people/shiyu-zhou.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies the relationship between source code and software requirements, focusing on recovering requirements specifications from existing implementations through reverse engineering. His work explores how software behavior expressed in code can be translated into structured, understandable requirements descriptions, with clear connections between requirements and implementation."
       },
       {
-        "id": "juncheng-lu",
-        "name": "Juncheng Lu",
-        "interests": ["Intelligent Software Engineering"],
-        "summary": "Research in intelligent software engineering."
+        "id": "junchen-lu",
+        "name": "Junchen LU",
+        "role": "Student Researcher",
+        "email": "2833538818@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Code Repair Agents",
+          "Context-Efficient Code Repair",
+          "Agent Memory"
+        ],
+        "portrait": "/people/junchen-lu.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies intelligent agents for code repair, focusing on reducing context consumption and strengthening agent memory. His work explores how agents can retain and retrieve relevant information across repair attempts, aiming to support effective repair under limited context budgets."
       },
       {
         "id": "juntong-ou",
-        "name": "Juntong Ou",
-        "interests": ["Intelligent Software Engineering"],
-        "summary": "Research in intelligent software engineering."
+        "name": "Juntong OU",
+        "role": "Student Researcher",
+        "email": "609254643@qq.com",
+        "interests": [
+          "Intelligent Software Engineering",
+          "Knowledge-Guided Requirements Engineering",
+          "Multi-Agent Collaboration",
+          "Requirements Validation"
+        ],
+        "portrait": "/people/juntong-ou.png",
+        "portraitWidth": 1254,
+        "portraitHeight": 1254,
+        "summary": "He studies knowledge-guided multi-agent collaboration for generating software requirements specifications. His work examines how requirements knowledge can be organized and how agents can collaborate in reasoning about requirements. He also explores feedback from code generation and validation to improve the completeness, traceability, and testability of the resulting specifications."
       },
       {
         "id": "yujie-jiang",

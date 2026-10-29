@@ -106,7 +106,11 @@ SemFaith 作者已确认，依次为 Jiangping Huang、Weidong Yuan、Junchen Xi
 
 2026-10-23：新增学生成员 Changqing Wu。用户提供的姓名为 Changqing Wu，素材目录中唯一对应的 Wu 照片名为 `Changing_WU.jpg`；保留原文件名和原始内容，在网站内使用原样副本 `public/people/changqing-wu.jpg`（2543 × 3560）。邮箱为 `2024214663@stu.cqupt.edu.cn`，入口仅显示 Email，个人页为 `/people/changqing-wu`。简介根据用户材料润色，介绍其视觉语言模型、具身机器人任务完成验证，以及传统成功或失败信号与实际行动结果之间可能不一致的问题；准确性、一致性和可靠性均按研究关注点表述。未提供的论文、项目名、学位、入学年份、单位和个人主页不作推断，不根据邮箱中的数字补填身份信息。
 
-Shiyu Zhou、Juncheng Lu、Juntong Ou、Yujie Jiang 暂无照片，当前不出现在首页、Members 或个人页路由中，原始数据仍保留在 `src/data/people.js`；提供照片后可恢复。此前虚构人物及其生成头像继续留在网站外的历史归档中。
+2026-10-29：补齐 Shiyu Zhou、Junchen LU、Juntong OU 的照片、已提供邮箱和中英文研究介绍，三人同步出现在首页、成员目录及各自的中英文个人页。研究方向分别为从代码恢复需求规格、低上下文开销的智能体代码修复与记忆、知识引导的多智能体协同需求规格生成。简介依据用户提供的材料润色，不增加未经确认的成果、论文或单位信息。Junchen LU 的姓名与照片文件名均已由用户确认，纠正此前隐藏占位记录的 `Juncheng Lu` 拼写，首次启用的个人页使用 `/people/junchen-lu`；其他两人的 ID 保持不变。
+
+按用户要求，三张新照片使用内置 imagegen 在原照基础上调整为更自然、亲和的肖像，保留个人辨识度，柔化表情与光线，改用简洁的开领衬衫。素材目录的原照保留不变；网站使用 `public/people/shiyu-zhou.png`、`junchen-lu.png`、`juntong-ou.png`。完整提示词、原照与成图校验信息见[三位成员肖像处理记录](member-portraits-20261029.md)。
+
+Yujie Jiang 仍未提供照片，当前不出现在首页、Members 或个人页路由中，原始数据保留在 `src/data/people.js`；提供照片后可恢复。此前虚构人物及其生成头像继续留在网站外的历史归档中。
 
 已确认资料维护在 `src/data/people.js`，展示规则在 `src/data/peopleHierarchy.js`。头像和姓名均进入独立个人介绍，个人主页仅在本人提供后填写；不推测邮箱、单位、学位或论文贡献。合作研究者和校友的原始记录保留，不加入当前名单。补充资料时保留各成员 ID。
 
@@ -154,13 +158,13 @@ git diff --check
 
 `dist/` 是本仓库跟踪的构建产物。源代码更新后运行默认生产构建，使 `dist/index.html` 与最新哈希资源一致。
 
-`tests/i18n.test.js` 渲染全部 58 个页面，检查中英文覆盖、各中文页面内部链接与对应英文锚点、本地图片和下载文件、页面 ID 唯一性、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
+`tests/i18n.test.js` 渲染全部 64 个页面，检查中英文覆盖、各中文页面内部链接与对应英文锚点、本地图片和下载文件、页面 ID 唯一性、姓名和正式论文元数据保留、邮箱和照片一致性，以及 SemFaith 的已录用状态。新增页面时同时审阅中文版并更新页面数量断言；新增英文原文时补充译文，不能以放宽未翻译文本检查来代替翻译。
 
 SemFaith 当前为 PRICAI 2026 Accepted（已录用），尚无 DOI 和正式出版信息。DOI 留空符合当前阶段，不列为需要补交的资料；保持已录用状态，Paper 入口继续显示 Coming soon／待公开，待正式信息公布并确认后再更新。作者和 GitHub 已确认；SemFaith 和 ChatREQ 的 GitHub 地址均使用用户提供的链接。
 
 ## 待补真实资料
 
-- 当前八位可见成员的照片和邮箱均已提供，研究简介依据用户材料整理；Hao Chen、Zhirui Huang、Yihang Wang、Jiateng Guo、Weidong Yuan、Zhiwen ZHEN、Changqing Wu 的外部主页地址仍待本人提供。暂时隐藏的成员仍待补照片；不生成占位人物。
+- 当前十一位可见成员的照片和邮箱均已提供，研究简介依据用户材料整理；除 Jiangping Huang 外，其他成员的外部主页地址尚未提供，页面不显示该入口。暂时隐藏的 Yujie Jiang 仍待补照片；不生成占位人物。
 - Weidong Yuan 科研训练项目的正式名称、年份、级别及承担角色；确认后再补充，不推断其与 SemFaith 的关系。
 - 各系统的演示动图。
 
